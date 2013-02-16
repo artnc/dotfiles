@@ -70,14 +70,9 @@ docroot() {
   sudo ln -s $PWD /var/www/html
 }
 
-# Combine multiple PDFs into a singled output.pdf
+# Combine multiple PDFs into a single output.pdf
 
 combinepdf() {
-  # FILES=""
-  # for arg
-  # do
-  #   FILES="$FILES $arg"
-  # done
   gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
   mv ./output-unfinished.pdf ./output.pdf
 }
