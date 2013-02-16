@@ -1,1 +1,24 @@
-/home/art/.config/sublime-text-2/Packages/User/Preferences.sublime-settings
+{
+  "auto_match_enabled": true,
+  "color_scheme": "Packages/Color Scheme - Default/Twilight.tmTheme",
+  "ensure_newline_at_eof_on_save": true,
+  "font_face": "Consolas",
+  "font_size": 9,
+  "highlight_line": true,
+  "highlight_modified_tabs": true,
+  "ignored_packages":
+  [
+    "Vintage"
+  ],
+  "rulers":
+  [
+    80
+  ],
+  "scroll_past_end": false,
+  "scroll_speed": 1.5,
+  "shift_tab_unindent": true,
+  "tab_size": 2,
+  "translate_tabs_to_spaces": true,
+  "trim_trailing_white_space_on_save": true,
+  "word_wrap": true
+}

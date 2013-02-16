@@ -1,1 +1,5 @@
-/home/art/.config/sublime-text-2/Packages/User/Sass.sublime-build
+{
+  "cmd": ["sass --style compressed '$file_name' '$file_base_name.css'"],
+  "selector": "source.sass",
+  "shell": true
+}
