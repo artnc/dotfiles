@@ -12,7 +12,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
 
-plugins=(zsh-syntax-highlighting)
+plugins=(git zsh-syntax-highlighting)
 
 # oh-my-zsh
 
@@ -119,6 +119,6 @@ hds() {
   else
     echo "Creating /mnt/hds and mounting HDS..."
     sudo mkdir -p /mnt/hds
-    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk && echo "Done."; sudo thunar /mnt/hds
+    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk && echo "Done." && sudo thunar /mnt/hds
   fi
 }
