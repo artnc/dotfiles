@@ -110,19 +110,15 @@ hds() {
     # If /mnt/hds already contains files
     if [ "$(ls -A /mnt/hds)" ]; then
       echo "HDS is already mounted. Unmounting..."
-      sudo umount /mnt/hds
-      echo "Done."
+      sudo umount /mnt/hds && echo "Done."
     else
       echo "Mounting HDS..."
-      sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk
-      echo "Done."
+      sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk && echo "Done."
       sudo thunar /mnt/hds
     fi
   else
     echo "Creating /mnt/hds and mounting HDS..."
     sudo mkdir -p /mnt/hds
-    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk
-    echo "Done."
-    sudo thunar /mnt/hds
+    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk && echo "Done."; sudo thunar /mnt/hds
   fi
 }
