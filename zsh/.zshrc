@@ -44,6 +44,8 @@ autoload -U colors && colors
 # PS1="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
 PS1="%{$fg[green]%}%B%* %~%b%{$reset_color%} "            # Minimalist
 
+###############################################################################
+
 # Switch between QWERTY and Dvorak
 
 alias aoeu='setxkbmap us'
@@ -63,26 +65,13 @@ alias py='python -c'
 
 alias power='ssh nc5rk@power5.cs.virginia.edu'
 
-# Set current directory as Apache document root
-
-docroot() {
-  sudo rm -f /var/www/html
-  sudo ln -s $PWD /var/www/html
-}
-
-# Combine multiple PDFs into a single output.pdf
-
-combinepdf() {
-  gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
-  mv ./output-unfinished.pdf ./output.pdf
-}
-
 # Default programs
 
 alias -s c='sublime'
 alias -s conf='sublime'
 alias -s cpp='sublime'
 alias -s css='sublime'
+alias -s h='sublime'
 alias -s hs='sublime'
 alias -s html='sublime'
 alias -s js='sublime'
@@ -95,3 +84,45 @@ alias -s scss='sublime'
 alias -s tex='sublime'
 alias -s txt='sublime'
 alias -s xml='sublime'
+
+###############################################################################
+
+# Combine multiple PDFs into a single output.pdf
+# Example usage: combinepdf input1.pdf input2.pdf input3.pdf
+
+combinepdf() {
+  gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
+  mv ./output-unfinished.pdf ./output.pdf
+}
+
+# Set current directory as Apache document root
+
+docroot() {
+  sudo rm -f /var/www/html
+  sudo ln -s $PWD /var/www/html
+}
+
+# Mount/unmount UVa's home directory service
+
+hds() {
+  # If /mnt/hds exists
+  if [ -d "/mnt/hds" ]; then
+    # If /mnt/hds already contains files
+    if [ "$(ls -A /mnt/hds)" ]; then
+      echo "HDS is already mounted. Unmounting..."
+      sudo umount /mnt/hds
+      echo "Done."
+    else
+      echo "Mounting HDS..."
+      sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk
+      echo "Done."
+      sudo thunar /mnt/hds
+    fi
+  else
+    echo "Creating /mnt/hds and mounting HDS..."
+    sudo mkdir -p /mnt/hds
+    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk
+    echo "Done."
+    sudo thunar /mnt/hds
+  fi
+}
