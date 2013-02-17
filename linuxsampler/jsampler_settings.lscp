@@ -1,0 +1,42 @@
+# Exported by: JSampler - a java front-end for LinuxSampler
+# Version: 0.9
+# Date: Sun Jun 17 10:45:48 EDT 2012
+
+RESET
+
+SET VOLUME 1.0
+
+CREATE MIDI_INPUT_DEVICE ALSA NAME='LinuxSampler'
+SET MIDI_INPUT_PORT_PARAMETER 0 0 NAME='Port 0'
+SET MIDI_INPUT_PORT_PARAMETER 0 0 ALSA_SEQ_BINDINGS=NONE
+
+CREATE AUDIO_OUTPUT_DEVICE ALSA ACTIVE=true CHANNELS=2 SAMPLERATE=44100 CARD='0,0' FRAGMENTS=2 FRAGMENTSIZE=128
+SET AUDIO_OUTPUT_CHANNEL_PARAMETER 0 0 NAME='Channel 0'
+SET AUDIO_OUTPUT_CHANNEL_PARAMETER 0 1 NAME='Channel 1'
+
+REMOVE MIDI_INSTRUMENT_MAP ALL
+ADD MIDI_INSTRUMENT_MAP 'Williams Allegro'
+MAP MIDI_INSTRUMENT NON_MODAL 0 0 1 GIG '/home/art/Downloads/maestro_concert_grand_v2.gig' 0 1.0 ON_DEMAND 'Maestro Concert Grand'
+
+ADD CHANNEL
+SET CHANNEL MIDI_INPUT_DEVICE 0 0
+SET CHANNEL MIDI_INPUT_PORT 0 0
+SET CHANNEL MIDI_INPUT_CHANNEL 0 0
+LOAD ENGINE GIG 0
+SET CHANNEL VOLUME 0 1.0
+SET CHANNEL MIDI_INSTRUMENT_MAP 0 0
+SET CHANNEL AUDIO_OUTPUT_DEVICE 0 0
+LOAD INSTRUMENT NON_MODAL '/home/art/Downloads/maestro_concert_grand_v2.gig' 0 0
+
+
+#jsampler.fantasia: [channel]
+#jsampler.fantasia: channelLane = 1
+#jsampler.fantasia: viewType = NORMAL
+#jsampler.fantasia: expanded = true
+#
+#jsampler.fantasia: [MIDI device]
+#jsampler.fantasia: expanded = false
+#
+#jsampler.fantasia: [audio device]
+#jsampler.fantasia: expanded = false
+#

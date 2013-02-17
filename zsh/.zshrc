@@ -138,7 +138,7 @@ commit() {
   git commit -a -v -m $1
 }
 
-push() {}
+push() {
   remote=`git remote `
   git push $remote master
 }
