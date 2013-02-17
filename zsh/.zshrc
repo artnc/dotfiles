@@ -12,7 +12,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
 
-plugins=(git zsh-syntax-highlighting)
+plugins=(zsh-syntax-highlighting)
 
 # oh-my-zsh
 
@@ -42,7 +42,7 @@ setopt inc_append_history # Immediately append commands to history
 
 autoload -U colors && colors
 # PS1="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
-PS1="%{$fg[green]%}%B%* %~%b%{$reset_color%} "            # Minimalist
+PS1="%{$fg[green]%}%B%* %1~%b%{$reset_color%} "            # Minimalist
 
 ###############################################################################
 
@@ -51,7 +51,7 @@ PS1="%{$fg[green]%}%B%* %~%b%{$reset_color%} "            # Minimalist
 alias aoeu='setxkbmap us'
 alias asdf='setxkbmap dvorak'
 
-# Common yum commands
+# yum commands
 
 alias yu='sudo yum upgrade --skip-broken -y'
 alias yi='sudo yum install'
@@ -65,6 +65,10 @@ alias py='python -c'
 
 alias power='ssh nc5rk@power5.cs.virginia.edu'
 
+# cd into CSM folder
+
+alias csm='cd ~/Documents/Projects/csm'
+
 # Default programs
 
 alias -s c='sublime'
@@ -72,6 +76,7 @@ alias -s conf='sublime'
 alias -s cpp='sublime'
 alias -s css='sublime'
 alias -s h='sublime'
+alias -s hpp='sublime'
 alias -s hs='sublime'
 alias -s html='sublime'
 alias -s js='sublime'
@@ -110,15 +115,32 @@ hds() {
     # If /mnt/hds already contains files
     if [ "$(ls -A /mnt/hds)" ]; then
       echo "HDS is already mounted. Unmounting..."
-      sudo umount /mnt/hds && echo "Done."
+      sudo umount /mnt/hds \
+        && echo "Successfully unmounted."
     else
       echo "Mounting HDS..."
-      sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk && echo "Done."
+      sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk \
+        && echo "Successfully mounted."
       sudo thunar /mnt/hds
     fi
   else
     echo "Creating /mnt/hds and mounting HDS..."
     sudo mkdir -p /mnt/hds
-    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk && echo "Done." && sudo thunar /mnt/hds
+    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk \
+      && echo "Successfully mounted." \
+      && sudo thunar /mnt/hds
   fi
+}
+
+# git commands (easier than oh-my-zsh plugin?)
+
+commit() {
+  git commit -a -v -m $1
+  remote=`git remote `
+  git push $remote master
+}
+
+pull() {
+  remote=`git remote `
+  git pull $remote master
 }
