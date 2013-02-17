@@ -135,9 +135,9 @@ hds() {
 # git commands (easier than oh-my-zsh plugin?)
 
 commit() {
-  git commit -a -v -m $1
-  remote=`git remote `
-  git push $remote master
+  git commit -a -v -m $1 \
+    && remote=`git remote ` \
+    && git push $remote master
 }
 
 pull() {
