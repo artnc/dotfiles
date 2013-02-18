@@ -131,17 +131,17 @@ hds() {
 
 # git commands (easier than oh-my-zsh plugin?)
 
-commit() {
+gc() {
   git add -A
-  git commit -v -m $1
+  git commit -v
 }
 
-push() {
+gp() {
   remote=`git remote `
   git push $remote master
 }
 
-pull() {
+gl() {
   remote=`git remote `
   git pull $remote master
 }
