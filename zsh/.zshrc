@@ -22,8 +22,8 @@ source $ZSH/oh-my-zsh.sh
 
 # Command history settings
 
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=10000
+SAVEHIST=10000
 HISTFILE=~/.zsh_history
 
 # Show how long a command took if it exceeded this (in seconds)
@@ -61,9 +61,10 @@ alias yr='sudo yum remove'
 
 alias power='ssh nc5rk@power5.cs.virginia.edu'
 
-# cd into Projects folder
+# Folder bookmarks
 
 alias p='cd ~/Documents/Projects'
+alias u='cd ~/Documents/UVa'
 
 # Default programs
 
