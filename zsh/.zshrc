@@ -57,17 +57,13 @@ alias yu='sudo yum upgrade --skip-broken -y'
 alias yi='sudo yum install'
 alias yr='sudo yum remove'
 
-# Run Python from command line without IDLE
-
-alias py='python -c'
-
 # SSH aliases
 
 alias power='ssh nc5rk@power5.cs.virginia.edu'
 
-# cd into CSM folder
+# cd into Projects folder
 
-alias csm='cd ~/Documents/Projects/csm'
+alias p='cd ~/Documents/Projects'
 
 # Default programs
 
@@ -135,7 +131,8 @@ hds() {
 # git commands (easier than oh-my-zsh plugin?)
 
 commit() {
-  git commit -a -v -m $1
+  git add -A
+  git commit -v -m $1
 }
 
 push() {
