@@ -44,7 +44,7 @@ setopt prompt_subst       # Prompt expansion
 autoload -U colors && colors
 function gitcolor {
   # Check if we're inside a git repository
-  git status >& /dev/null
+  git rev-parse >& /dev/null
   if [ $? -eq 0 ]; then
     git remote update >& /dev/null
     gitstatus=`git status -uno`
