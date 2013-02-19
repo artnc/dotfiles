@@ -1,4 +1,4 @@
 dotfiles
 ========
 
-Some program settings.
+Some program configuration files.
