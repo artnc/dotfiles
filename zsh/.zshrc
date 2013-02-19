@@ -48,10 +48,10 @@ function gitcolor {
     if [[ ${#gitcolor} -gt 1 ]]; then
       echo 'red'
     else
-      echo 'cyan'
+      echo 'green'
     fi
   else
-    echo 'green'
+    echo 'cyan'
   fi
 }
 # PS1="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
