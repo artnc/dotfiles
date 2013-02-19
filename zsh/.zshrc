@@ -43,29 +43,42 @@ setopt prompt_subst       # Prompt expansion
 
 autoload -U colors && colors
 function gitcolor {
-  if [ -d .git ]; then
+  git status >& /dev/null
+  if [ $? -eq 0 ]; then
     # gitcolor=`git status -s`
     # if [[ ${#gitcolor} -gt 1 ]]; then
     #   echo 'red'
     # else
     #   echo 'green'
     # fi
-    if [[]]; then
-      # Local branch same
-      gitcolor=`git status -s`
-      if [[ ${#gitcolor} -gt 1 ]]; then
-        # Repository dirty
-        echo 'yellow'
-      else
-        # Repository clean
-        echo 'blue'
-      fi
-    elif [[]]
+    git remote update >& /dev/null
+    gitstatus=`git status -uno`
+    echo $gitstatus | grep -q "Changes not staged"
+    if [[ $? -eq 0 ]]; then
+      # Repository dirty
+      echo 'yellow'
+      return
+    fi
+    echo $gitstatus | grep -q "nothing to commit"
+    if [[ $? -eq 0 ]]; then
+      # Repository clean
+      echo 'blue'
+      return
+    fi
+    echo $gitstatus | grep -q "ahead"
+    if [[ $? -eq 0 ]]; then
       # Local branch ahead
       echo 'green'
-    else
+      return
+    fi
+    echo $gitstatus | grep -q "behind"
+    if [[ $? -eq 0 ]]; then
       # Local branch behind
       echo 'red'
+      return
+    fi
+    # Default
+    echo 'magenta'
   else
     # Not inside a repository root
     echo 'cyan'
