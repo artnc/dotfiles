@@ -45,26 +45,8 @@ autoload -U colors && colors
 function gitcolor {
   git status >& /dev/null
   if [ $? -eq 0 ]; then
-    # gitcolor=`git status -s`
-    # if [[ ${#gitcolor} -gt 1 ]]; then
-    #   echo 'red'
-    # else
-    #   echo 'green'
-    # fi
     git remote update >& /dev/null
     gitstatus=`git status -uno`
-    echo $gitstatus | grep -q "Changes not staged"
-    if [[ $? -eq 0 ]]; then
-      # Repository dirty
-      echo 'yellow'
-      return
-    fi
-    echo $gitstatus | grep -q "nothing to commit"
-    if [[ $? -eq 0 ]]; then
-      # Repository clean
-      echo 'blue'
-      return
-    fi
     echo $gitstatus | grep -q "ahead"
     if [[ $? -eq 0 ]]; then
       # Local branch ahead
@@ -75,6 +57,18 @@ function gitcolor {
     if [[ $? -eq 0 ]]; then
       # Local branch behind
       echo 'red'
+      return
+    fi
+    echo $gitstatus | grep -q "Changes not staged"
+    if [[ $? -eq 0 ]]; then
+      # Repository dirty
+      echo 'yellow'
+      return
+    fi
+    echo $gitstatus | grep -q "nothing to commit"
+    if [[ $? -eq 0 ]]; then
+      # Repository clean
+      echo 'blue'
       return
     fi
     # Default
