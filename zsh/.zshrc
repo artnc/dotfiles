@@ -37,12 +37,25 @@ setopt correct            # Spelling correction
 setopt dvorak             # Use Dvorak for spelling correction
 setopt hist_reduce_blanks # Strip unnecessary whitespace from history
 setopt inc_append_history # Immediately append commands to history
+setopt prompt_subst       # Prompt expansion
 
 # Prompt formatting
 
 autoload -U colors && colors
+function gitcolor {
+  if [ -d .git ]; then
+    gitcolor=`git status -s`
+    if [[ ${#gitcolor} -gt 1 ]]; then
+      echo 'red'
+    else
+      echo 'cyan'
+    fi
+  else
+    echo 'green'
+  fi
+}
 # PS1="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
-PS1="%{$fg[green]%}%B%* %1~%b%{$reset_color%} "            # Minimalist
+PROMPT='%{$fg[$(gitcolor)]%}%B%* %1~%b%{$reset_color%} '            # Minimalist
 
 ###############################################################################
 
