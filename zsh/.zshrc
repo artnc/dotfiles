@@ -43,34 +43,36 @@ setopt prompt_subst       # Prompt expansion
 
 autoload -U colors && colors
 function gitcolor {
+  # Check if we're inside a git repository
   git status >& /dev/null
   if [ $? -eq 0 ]; then
     git remote update >& /dev/null
     gitstatus=`git status -uno`
-    echo $gitstatus | grep -q "ahead"
-    if [[ $? -eq 0 ]]; then
-      # Local branch ahead
-      echo 'green'
-      return
-    fi
-    echo $gitstatus | grep -q "behind"
-    if [[ $? -eq 0 ]]; then
-      # Local branch behind
-      echo 'red'
-      return
-    fi
-    echo $gitstatus | grep -q "Changes not staged"
-    if [[ $? -eq 0 ]]; then
-      # Repository dirty
-      echo 'yellow'
-      return
-    fi
-    echo $gitstatus | grep -q "nothing to commit"
-    if [[ $? -eq 0 ]]; then
-      # Repository clean
-      echo 'blue'
-      return
-    fi
+    # Return a color based on git status (this acts like a switch statement)
+      echo $gitstatus | grep -q "ahead"
+      if [[ $? -eq 0 ]]; then
+        # Local branch ahead
+        echo 'green'
+        return
+      fi
+      echo $gitstatus | grep -q "behind"
+      if [[ $? -eq 0 ]]; then
+        # Local branch behind
+        echo 'red'
+        return
+      fi
+      echo $gitstatus | grep -q "Changes not staged"
+      if [[ $? -eq 0 ]]; then
+        # Repository dirty
+        echo 'yellow'
+        return
+      fi
+      echo $gitstatus | grep -q "nothing to commit"
+      if [[ $? -eq 0 ]]; then
+        # Repository clean
+        echo 'blue'
+        return
+      fi
     # Default
     echo 'magenta'
   else
@@ -78,8 +80,8 @@ function gitcolor {
     echo 'cyan'
   fi
 }
-# PS1="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
-PROMPT='%{$fg[$(gitcolor)]%}%B%* %1~%b%{$reset_color%} '            # Minimalist
+# PROMPT="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
+PROMPT='%{$fg[$(gitcolor)]%}%B%* %1~%b%{$reset_color%} '     # Minimalist
 
 ###############################################################################
 
