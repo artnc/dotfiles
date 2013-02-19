@@ -37,6 +37,7 @@ setopt correct            # Spelling correction
 setopt dvorak             # Use Dvorak for spelling correction
 setopt hist_reduce_blanks # Strip unnecessary whitespace from history
 setopt inc_append_history # Immediately append commands to history
+setopt nohup              # Run all background processes with nohup
 setopt prompt_subst       # Enable prompt variable expansion
 
 # Prompt formatting
@@ -172,7 +173,7 @@ hds() {
 
 gc() {
   git add -A
-  git commit -v
+  git commit -v -m $1
 }
 
 gp() {
