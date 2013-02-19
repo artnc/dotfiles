@@ -44,13 +44,30 @@ setopt prompt_subst       # Prompt expansion
 autoload -U colors && colors
 function gitcolor {
   if [ -d .git ]; then
-    gitcolor=`git status -s`
-    if [[ ${#gitcolor} -gt 1 ]]; then
-      echo 'red'
-    else
+    # gitcolor=`git status -s`
+    # if [[ ${#gitcolor} -gt 1 ]]; then
+    #   echo 'red'
+    # else
+    #   echo 'green'
+    # fi
+    if [[]]; then
+      # Local branch same
+      gitcolor=`git status -s`
+      if [[ ${#gitcolor} -gt 1 ]]; then
+        # Repository dirty
+        echo 'yellow'
+      else
+        # Repository clean
+        echo 'blue'
+      fi
+    elif [[]]
+      # Local branch ahead
       echo 'green'
-    fi
+    else
+      # Local branch behind
+      echo 'red'
   else
+    # Not inside a repository root
     echo 'cyan'
   fi
 }
