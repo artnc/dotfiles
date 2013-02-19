@@ -37,7 +37,7 @@ setopt correct            # Spelling correction
 setopt dvorak             # Use Dvorak for spelling correction
 setopt hist_reduce_blanks # Strip unnecessary whitespace from history
 setopt inc_append_history # Immediately append commands to history
-setopt prompt_subst       # Prompt expansion
+setopt prompt_subst       # Enable prompt variable expansion
 
 # Prompt formatting
 
