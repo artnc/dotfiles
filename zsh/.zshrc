@@ -190,6 +190,11 @@ gl() {
   git pull $remote master
 }
 
+gt() {
+  git remote update >& /dev/null
+  git status -uno
+}
+
 # http://stackoverflow.com/a/904023/1436320
 
 mandelbrot() {
