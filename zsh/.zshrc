@@ -37,52 +37,56 @@ setopt correct            # Spelling correction
 setopt dvorak             # Use Dvorak for spelling correction
 setopt hist_reduce_blanks # Strip unnecessary whitespace from history
 setopt inc_append_history # Immediately append commands to history
-setopt nohup              # Run all background processes with nohup
+setopt no_hup             # Run all background processes with nohup
+setopt no_check_jobs      # Since no_hup is enabled, don't ask when exiting
 setopt prompt_subst       # Enable prompt variable expansion
+
+# Color prompt based on git status
+
+# function gitcolor {
+#   # Check if we're inside a git repository
+#   git rev-parse >& /dev/null
+#   if [ $? -eq 0 ]; then
+#     git remote update >& /dev/null
+#     gitstatus=`git status -uno`
+#     # Return a color based on git status (this acts like a switch statement)
+#       echo $gitstatus | grep -q "ahead"
+#       if [[ $? -eq 0 ]]; then
+#         # Local branch ahead
+#         echo 'green'
+#         return
+#       fi
+#       echo $gitstatus | grep -q "behind"
+#       if [[ $? -eq 0 ]]; then
+#         # Local branch behind
+#         echo 'red'
+#         return
+#       fi
+#       echo $gitstatus | grep -q "Changes not staged"
+#       if [[ $? -eq 0 ]]; then
+#         # Repository dirty
+#         echo 'yellow'
+#         return
+#       fi
+#       echo $gitstatus | grep -q "nothing to commit"
+#       if [[ $? -eq 0 ]]; then
+#         # Repository clean
+#         echo 'blue'
+#         return
+#       fi
+#     # Default
+#     echo 'magenta'
+#   else
+#     # Not inside a repository root
+#     echo 'cyan'
+#   fi
+# }
 
 # Prompt formatting
 
 autoload -U colors && colors
-function gitcolor {
-  # Check if we're inside a git repository
-  git rev-parse >& /dev/null
-  if [ $? -eq 0 ]; then
-    git remote update >& /dev/null
-    gitstatus=`git status -uno`
-    # Return a color based on git status (this acts like a switch statement)
-      echo $gitstatus | grep -q "ahead"
-      if [[ $? -eq 0 ]]; then
-        # Local branch ahead
-        echo 'green'
-        return
-      fi
-      echo $gitstatus | grep -q "behind"
-      if [[ $? -eq 0 ]]; then
-        # Local branch behind
-        echo 'red'
-        return
-      fi
-      echo $gitstatus | grep -q "Changes not staged"
-      if [[ $? -eq 0 ]]; then
-        # Repository dirty
-        echo 'yellow'
-        return
-      fi
-      echo $gitstatus | grep -q "nothing to commit"
-      if [[ $? -eq 0 ]]; then
-        # Repository clean
-        echo 'blue'
-        return
-      fi
-    # Default
-    echo 'magenta'
-  else
-    # Not inside a repository root
-    echo 'cyan'
-  fi
-}
 # PROMPT="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
-PROMPT='%{$fg[$(gitcolor)]%}%B%* %1~%b%{$reset_color%} '     # Minimalist
+PROMPT='%{$fg[green]%}%B%* %1~%b%{$reset_color%} '     # Minimalist
 
 ###############################################################################
 
@@ -184,4 +188,21 @@ gp() {
 gl() {
   remote=`git remote `
   git pull $remote master
+}
+
+# http://stackoverflow.com/a/904023/1436320
+
+mandelbrot() {
+  local lines columns color a b p q i pnew
+  ((columns=COLUMNS-1, lines=LINES-1, color=0))
+  for ((b=-1.5; b<=1.5; b+=3.0/lines)) do
+    for ((a=-2.0; a<=1; a+=3.0/columns)) do
+      for ((p=0.0, q=0.0, i=0; p*p+q*q < 4 && i < 32; i++)) do
+        ((pnew=p*p-q*q+a, q=2*p*q+b, p=pnew))
+      done
+      ((color=(i/4)%8))
+      echo -n "\\e[4${color}m "
+    done
+    echo
+  done
 }
