@@ -191,6 +191,7 @@ gl() {
 }
 
 gt() {
+  git add -A
   git remote update >& /dev/null
   git status -uno
 }
