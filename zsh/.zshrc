@@ -18,13 +18,18 @@ plugins=(zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
+# $PATH
+
+export PATH=$PATH:/usr/lib64/openmpi/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib
+
 ###############################################################################
 
 # Command history settings
 
 HISTSIZE=10000
 SAVEHIST=10000
-HISTFILE=~/.zsh_history
+HISTFILE=$HOME/.zsh_history
 
 # Show how long a command took if it exceeded this (in seconds)
 
@@ -107,8 +112,8 @@ alias power='ssh nc5rk@power5.cs.virginia.edu'
 
 # Folder bookmarks
 
-alias p='cd ~/Documents/Projects'
-alias u='cd ~/Documents/UVa'
+alias p='cd $HOME/Documents/Projects'
+alias u='cd $HOME/Documents/UVa'
 
 # Default programs
 
