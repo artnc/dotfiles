@@ -37,14 +37,15 @@ REPORTTIME=10
 
 # Options
 
-setopt auto_cd            # Don't need to type cd to cd
-setopt correct            # Spelling correction
-setopt dvorak             # Use Dvorak for spelling correction
-setopt hist_reduce_blanks # Strip unnecessary whitespace from history
-setopt inc_append_history # Immediately append commands to history
-setopt no_hup             # Run all background processes with nohup
-setopt no_check_jobs      # Since no_hup is enabled, don't ask when exiting
-setopt prompt_subst       # Enable prompt variable expansion
+setopt auto_cd              # Don't need to type cd to cd
+setopt correct              # Spelling correction
+setopt dvorak               # Use Dvorak for spelling correction
+setopt hist_ignore_all_dups # Remove old duplicate commands
+setopt hist_reduce_blanks   # Strip unnecessary whitespace from history
+setopt inc_append_history   # Immediately append commands to history
+setopt no_hup               # Run all background processes with nohup
+setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
+setopt prompt_subst         # Enable prompt variable expansion
 
 # Color prompt based on git status
 
