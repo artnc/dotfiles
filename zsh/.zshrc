@@ -110,6 +110,7 @@ alias yr='sudo yum remove'
 # SSH aliases
 
 alias power='ssh nc5rk@power5.cs.virginia.edu'
+alias tacc='ssh artnc@stampede.tacc.utexas.edu'
 
 # Folder bookmarks
 
@@ -177,6 +178,12 @@ hds() {
       && echo "Successfully mounted." \
       && sudo thunar /mnt/hds
   fi
+}
+
+# Move swap back into main memory (usually done after skype crashes...)
+
+swap() {
+  sudo swapoff -a && sudo swapon -a
 }
 
 # git commands (easier than oh-my-zsh plugin?)
