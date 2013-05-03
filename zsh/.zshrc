@@ -21,7 +21,7 @@ source $ZSH/oh-my-zsh.sh
 # $PATH
 
 export PATH=$PATH:/usr/lib64/openmpi/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib:/usr/lib64
 
 ###############################################################################
 
@@ -47,52 +47,10 @@ setopt no_hup               # Run all background processes with nohup
 setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
 setopt prompt_subst         # Enable prompt variable expansion
 
-# Color prompt based on git status
-
-# function gitcolor {
-#   # Check if we're inside a git repository
-#   git rev-parse >& /dev/null
-#   if [ $? -eq 0 ]; then
-#     git remote update >& /dev/null
-#     gitstatus=`git status -uno`
-#     # Return a color based on git status (this acts like a switch statement)
-#       echo $gitstatus | grep -q "ahead"
-#       if [[ $? -eq 0 ]]; then
-#         # Local branch ahead
-#         echo 'green'
-#         return
-#       fi
-#       echo $gitstatus | grep -q "behind"
-#       if [[ $? -eq 0 ]]; then
-#         # Local branch behind
-#         echo 'red'
-#         return
-#       fi
-#       echo $gitstatus | grep -q "Changes not staged"
-#       if [[ $? -eq 0 ]]; then
-#         # Repository dirty
-#         echo 'yellow'
-#         return
-#       fi
-#       echo $gitstatus | grep -q "nothing to commit"
-#       if [[ $? -eq 0 ]]; then
-#         # Repository clean
-#         echo 'blue'
-#         return
-#       fi
-#     # Default
-#     echo 'magenta'
-#   else
-#     # Not inside a repository root
-#     echo 'cyan'
-#   fi
-# }
-
 # Prompt formatting
 
 autoload -U colors && colors
-# PROMPT="%{$fg[green]%}%B[%*] %n@%m:%~ %#%{$reset_color%b%} " # Verbose
-PROMPT='%{$fg[green]%}%B%* %1~%b%{$reset_color%} '     # Minimalist
+PROMPT='%{$fg[green]%}%B%* %1~%b%{$reset_color%} '
 
 ###############################################################################
 
@@ -245,3 +203,8 @@ mandelbrot() {
     echo
   done
 }
+
+# Set Caps Lock as compose key (probably should be in .xinitrc but specified
+# here instead in order to reduce clutter)
+
+setxkbmap -option compose:caps
