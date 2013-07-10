@@ -18,10 +18,11 @@ plugins=(zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-# $PATH
+# Environment variables
 
 export PATH=$PATH:/usr/lib64/openmpi/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib:/usr/lib64
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0
 
 ###############################################################################
 
@@ -65,6 +66,9 @@ alias yu='sudo yum upgrade --skip-broken -y'
 alias yi='sudo yum install'
 alias yr='sudo yum remove'
 
+# Detailed, colored ls
+alias l='ls -Gl --color=auto'
+
 # SSH aliases
 
 alias power='ssh nc5rk@power5.cs.virginia.edu'
@@ -74,7 +78,7 @@ alias blacklight='ssh artnc@blacklight.psc.teragrid.org'
 # Folder bookmarks
 
 alias p='cd $HOME/Documents/Projects'
-alias u='cd $HOME/Documents/UVa'
+alias u='cd $HOME/Documents/UVa/13F'
 
 # Default programs
 
@@ -164,6 +168,13 @@ swap() {
   fi
 }
 
+# Wait 5 seconds and then begin screencast (press 'q' to stop)
+
+screencast() {
+  sleep 5
+  ffmpeg -f x11grab -s 1600x900 -i :0.0 -sameq /home/art/Desktop/screencast.mp4
+}
+
 # git commands (easier than oh-my-zsh plugin?)
 
 gc() {
@@ -207,4 +218,4 @@ mandelbrot() {
 # Set Caps Lock as compose key (probably should be in .xinitrc but specified
 # here instead in order to reduce clutter)
 
-setxkbmap -option compose:caps
+setxkbmap -option compose:menu
