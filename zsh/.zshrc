@@ -21,7 +21,8 @@ source $ZSH/oh-my-zsh.sh
 # Environment variables
 
 export PATH=$PATH:/usr/lib64/openmpi/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib:/usr/lib64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib:/usr/lib64:/lib64
+export LDFLAGS="$LDFLAGS -lm"
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0
 
 ###############################################################################
@@ -67,7 +68,7 @@ alias yi='sudo yum install'
 alias yr='sudo yum remove'
 
 # Detailed, colored ls
-alias l='ls -Gl --color=auto'
+alias l='ls -AGl --color=auto'
 
 # SSH aliases
 
@@ -196,6 +197,10 @@ gt() {
   git add -A
   git remote update >& /dev/null
   git status -uno
+}
+
+gd() {
+  git diff --color
 }
 
 # http://stackoverflow.com/a/904023/1436320
