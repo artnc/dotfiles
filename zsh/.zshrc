@@ -61,6 +61,10 @@ PROMPT='%{$fg[green]%}%B%* %1~%b%{$reset_color%} '
 alias aoeu='setxkbmap us'
 alias asdf='setxkbmap dvorak'
 
+# VisualVM profiler
+
+alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
+
 # yum commands
 
 alias yu='sudo yum upgrade --skip-broken -y'
@@ -79,6 +83,7 @@ alias blacklight='ssh artnc@blacklight.psc.teragrid.org'
 # Folder bookmarks
 
 alias p='cd $HOME/Documents/Projects'
+alias g='cd $HOME/git'
 alias u='cd $HOME/Documents/UVa/13F'
 
 # Default programs
