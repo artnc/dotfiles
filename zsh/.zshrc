@@ -184,8 +184,12 @@ screencast() {
 # git commands (easier than oh-my-zsh plugin?)
 
 gc() {
-  git add -A
-  git commit -v -m $1
+  if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
+    git add -A
+    git commit -v -m $1
+  else
+    echo "Commit message was ${#1} characters long."
+  fi
 }
 
 gp() {
