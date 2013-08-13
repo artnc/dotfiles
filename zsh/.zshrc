@@ -229,7 +229,7 @@ mandelbrot() {
   done
 }
 
-# Set Caps Lock as compose key (probably should be in .xinitrc but specified
+# Set Menu key as compose key (probably should be in .xinitrc but specified
 # here instead in order to reduce clutter)
 
 setxkbmap -option compose:menu
