@@ -84,7 +84,7 @@ alias blacklight='ssh artnc@blacklight.psc.teragrid.org'
 
 alias p='cd $HOME/Documents/Projects'
 alias g='cd $HOME/git'
-alias u='cd $HOME/Documents/UVa/13F'
+alias u='cd $HOME/Documents/UVa'
 
 # Default programs
 
