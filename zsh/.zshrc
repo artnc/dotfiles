@@ -163,14 +163,14 @@ swap() {
 
   echo -e "Free memory:\t$total_free kB ($((total_free / 1024)) MB)\nUsed swap:\t$used_swap kB ($((used_swap / 1024)) MB)"
   if [[ $used_swap -eq 0 ]]; then
-      echo "Congratulations! No swap is in use."
+    echo "Congratulations! No swap is in use."
   elif [[ $used_swap -lt $total_free ]]; then
-      echo "Freeing swap..."
-      sudo swapoff -a
-      sudo swapon -a
+    echo "Freeing swap..."
+    sudo swapoff -a
+    sudo swapon -a
   else
-      echo "Not enough free memory. Exiting."
-      exit 1
+    echo "Not enough free memory. Exiting."
+    exit 1
   fi
 }
 
