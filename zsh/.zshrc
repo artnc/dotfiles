@@ -233,3 +233,7 @@ mandelbrot() {
 # here instead in order to reduce clutter)
 
 setxkbmap -option compose:menu
+
+# Disable password prompt dialogs
+
+unset SSH_ASKPASS
