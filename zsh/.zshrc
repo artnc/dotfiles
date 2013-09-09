@@ -75,7 +75,7 @@ alias yr='sudo yum remove'
 alias l='ls -AGl --color=auto'
 
 # Python profiler
-alias pyprof='python -m cProfile -s "cumulative"'
+alias pyprof='python -m cProfile -s "time"'
 
 # SSH aliases
 
