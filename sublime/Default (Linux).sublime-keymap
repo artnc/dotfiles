@@ -8,5 +8,7 @@
   { "keys": ["ctrl+-"], "command": "unbound" },
 
   { "keys": ["ctrl+pagedown"], "command": "next_view_in_stack" },
-  { "keys": ["ctrl+pageup"], "command": "prev_view_in_stack" }
+  { "keys": ["ctrl+pageup"], "command": "prev_view_in_stack" },
+
+  { "keys": ["super+shift+j"], "command": "jshint" }
 ]
