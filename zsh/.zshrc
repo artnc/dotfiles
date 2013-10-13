@@ -82,6 +82,7 @@ alias pyprof='python -m cProfile -s "time"'
 alias power='ssh nc5rk@power5.cs.virginia.edu'
 alias stampede='ssh artnc@stampede.tacc.utexas.edu'
 alias blacklight='ssh artnc@blacklight.psc.teragrid.org'
+alias zelda2='ssh root@128.143.10.221'
 
 # Folder bookmarks
 
