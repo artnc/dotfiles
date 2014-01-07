@@ -2,7 +2,7 @@
 	"auto_match_enabled": true,
 	"color_scheme": "Packages/Color Scheme - Default/Twilight.tmTheme",
 	"ensure_newline_at_eof_on_save": true,
-	"font_face": "Consolas",
+	"font_face": "Monospace",
 	"font_size": 9,
 	"highlight_modified_tabs": true,
 	"ignored_packages":

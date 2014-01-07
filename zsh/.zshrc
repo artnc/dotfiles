@@ -20,8 +20,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Environment variables
 
-export PATH=$PATH:/usr/lib64/openmpi/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/openmpi/lib:/usr/lib64:/lib64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
 export LDFLAGS="$LDFLAGS -lm"
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0
 
@@ -77,18 +76,9 @@ alias l='ls -AGl --color=auto'
 # Python profiler
 alias pyprof='python -m cProfile -s "time"'
 
-# SSH aliases
-
-alias power='ssh nc5rk@power5.cs.virginia.edu'
-alias stampede='ssh artnc@stampede.tacc.utexas.edu'
-alias blacklight='ssh artnc@blacklight.psc.teragrid.org'
-alias zelda2='ssh root@128.143.10.221'
-
 # Folder bookmarks
 
-alias p='cd $HOME/Documents/Projects'
 alias g='cd $HOME/git'
-alias u='cd $HOME/Documents/UVa'
 
 # Default programs
 
