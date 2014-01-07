@@ -16,6 +16,8 @@
 	"scroll_past_end": false,
 	"scroll_speed": 1.5,
 	"shift_tab_unindent": true,
+	"show_encoding": true,
+	"show_line_endings": true,
 	"tab_size": 2,
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
