@@ -18,6 +18,10 @@ plugins=(zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
+# Stuff that shouldn't be pushed to public GitHub
+
+source $HOME/Documents/zshrc.sh
+
 # Environment variables
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
@@ -172,7 +176,7 @@ swap() {
 
 screencast() {
   sleep 5
-  ffmpeg -f x11grab -s 1600x900 -i :0.0 -sameq /home/art/Desktop/screencast.mp4
+  ffmpeg -f x11grab -s 1920x1200 -i :0.0 -sameq /home/art/Desktop/screencast.mp4
 }
 
 # git commands (easier than oh-my-zsh plugin?)
@@ -223,10 +227,17 @@ mandelbrot() {
   done
 }
 
-# Set Menu key as compose key (probably should be in .xinitrc but specified
-# here instead in order to reduce clutter)
+###############################################################################
 
-setxkbmap -option compose:menu
+# Touchpad functions
+
+synclient TapButton1=1
+synclient TapButton2=3
+synclient TapButton3=2
+
+# Set compose key
+
+setxkbmap -option compose:caps
 
 # Disable password prompt dialogs
 
