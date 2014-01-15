@@ -201,9 +201,7 @@ gl() {
 }
 
 gt() {
-  git add -A
-  git remote update >& /dev/null
-  git status -uno
+  git status
 }
 
 gd() {
@@ -226,19 +224,3 @@ mandelbrot() {
     echo
   done
 }
-
-###############################################################################
-
-# Touchpad functions
-
-synclient TapButton1=1
-synclient TapButton2=3
-synclient TapButton3=2
-
-# Set compose key
-
-setxkbmap -option compose:caps
-
-# Disable password prompt dialogs
-
-unset SSH_ASKPASS
