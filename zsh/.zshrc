@@ -122,6 +122,18 @@ docroot() {
   sudo ln -s $PWD /var/www/html
 }
 
+# Enable/disable dual monitor at office
+dual() {
+  if xrandr | grep -q "518mm x 324mm"; then
+    xrandr --output HDMI-1 --off
+  elif xrandr | grep -q "HDMI-1 connected"; then
+    xrandr --output HDMI-1 --auto
+    xrandr --output HDMI-1 --right-of eDP-1
+  else
+    echo "Office monitor not found."
+  fi
+}
+
 # Mount/unmount UVa's home directory service
 
 hds() {

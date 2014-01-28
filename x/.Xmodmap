@@ -1,2 +1,4 @@
+! Remap Super_R to Control
+
 remove mod4 = Super_R
 add control = Super_R
