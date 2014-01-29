@@ -122,6 +122,18 @@ docroot() {
   sudo ln -s $PWD /var/www/html
 }
 
+# Start or stop Apache
+
+apache() {
+  if systemctl status httpd.service | grep -q "Active: active"; then
+    sudo systemctl stop httpd.service
+    echo "Apache stopped."
+  else
+    sudo systemctl start httpd.service
+    echo "Apache started."
+  fi
+}
+
 # Enable/disable dual monitor at office
 dual() {
   if xrandr | grep -q "518mm x 324mm"; then
