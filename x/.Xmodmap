@@ -1,4 +1,9 @@
-! Remap Super_R to Control
+! Remap Alt_R to Ctrl
+
+remove mod1 = Alt_R
+add control = Alt_R
+
+! Remap Super_R to Alt
 
 remove mod4 = Super_R
-add control = Super_R
+add mod1 = Super_R

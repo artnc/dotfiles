@@ -215,13 +215,11 @@ gc() {
 }
 
 gp() {
-  remote=`git remote `
-  git push $remote master
+  git push
 }
 
 gl() {
-  remote=`git remote `
-  git pull $remote master
+  git pull
 }
 
 gt() {
