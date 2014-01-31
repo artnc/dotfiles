@@ -214,21 +214,13 @@ gc() {
   fi
 }
 
-gp() {
-  git push
-}
+alias gp='git push'
 
-gl() {
-  git pull
-}
+alias gl='git pull'
 
-gt() {
-  git status
-}
+alias gt='git status'
 
-gd() {
-  git diff --color
-}
+alias gd='git diff --color'
 
 # http://stackoverflow.com/a/904023/1436320
 
