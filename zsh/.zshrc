@@ -55,7 +55,15 @@ setopt prompt_subst         # Enable prompt variable expansion
 # Prompt formatting
 
 autoload -U colors && colors
-PROMPT='%{$fg[green]%}%B%* %1~%b%{$reset_color%} '
+
+function gitprompt {
+  if [ -d .git ]; then
+    branch="$(git branch | sed -n '/\* /s///p')"
+    echo ":$branch"
+  fi
+}
+
+PROMPT='%{$fg[green]%}%B%1~$(gitprompt)%b%{$reset_color%} '
 
 ###############################################################################
 
@@ -215,12 +223,12 @@ gc() {
 }
 
 alias gp='git push'
-
 alias gl='git pull'
-
 alias gt='git status'
-
 alias gd='git diff --color'
+alias gk='git checkout'
+alias gb='git branch'
+alias gm='git merge'
 
 # http://stackoverflow.com/a/904023/1436320
 
