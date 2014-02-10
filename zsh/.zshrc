@@ -59,11 +59,11 @@ autoload -U colors && colors
 function gitprompt {
   if [ -d .git ]; then
     branch="$(git branch | sed -n '/\* /s///p')"
-    echo ":$branch"
+    echo "%B%{$fg[blue]%}:$branch%{$reset_color%}%b"
   fi
 }
 
-PROMPT='%{$fg[green]%}%B%1~$(gitprompt)%b%{$reset_color%} '
+PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 
 ###############################################################################
 
