@@ -222,7 +222,11 @@ gc() {
   fi
 }
 
+alias gg='git log'
+alias ga='git add -A'
+alias gca='git commit --amend'
 alias gp='git push'
+alias gpr='git push review'
 alias gl='git pull'
 alias gt='git status'
 alias gd='git diff --color'
