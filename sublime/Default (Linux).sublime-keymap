@@ -10,5 +10,7 @@
   { "keys": ["ctrl+pagedown"], "command": "next_view_in_stack" },
   { "keys": ["ctrl+pageup"], "command": "prev_view_in_stack" },
 
-  { "keys": ["super+shift+j"], "command": "jshint" }
+  { "keys": ["super+shift+j"], "command": "jshint" },
+
+  { "keys": ["alt+super+i"], "command": "insert_snippet", "args": { "name": "Packages/User/localization.sublime-snippet" } }
 ]

@@ -208,7 +208,7 @@ swap() {
 
 screencast() {
   sleep 5
-  ffmpeg -f x11grab -s 1920x1200 -i :0.0 -sameq /home/art/Desktop/screencast.mp4
+  ffmpeg -f x11grab -s 1920x1200 -i :0.0 -qscale 0 /home/art/Desktop/screencast.mp4
 }
 
 # git commands (easier than oh-my-zsh plugin?)
@@ -231,6 +231,7 @@ alias gl='git pull'
 alias gt='git status'
 alias gd='git diff --color'
 alias gk='git checkout'
+alias gkm='git checkout master'
 alias gb='git branch'
 alias gm='git merge'
 
