@@ -211,6 +211,10 @@ screencast() {
   ffmpeg -f x11grab -s 1920x1200 -i :0.0 -qscale 0 /home/art/Desktop/screencast.mp4
 }
 
+# Pipe stdout to clipboard via echo "foo" | xc
+
+alias xc='xclip -selection clipboard'
+
 # git commands (easier than oh-my-zsh plugin?)
 
 gc() {
