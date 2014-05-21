@@ -1,4 +1,5 @@
 {
-    "strict": false,
-    "undef": false
+    "browser": true,
+    "devel": true,
+    "jquery": true
 }

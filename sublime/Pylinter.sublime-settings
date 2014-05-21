@@ -1,0 +1,28 @@
+{
+    "python_bin": "/home/art/env/bin/python",
+    "pylint_path": "/home/art/env/bin/pylint",
+    "run_on_save": true,
+    "use_icons": true,
+    "disable_outline": true,
+    "message_stay": true,
+    // Ignore Pylint error types. Possible values:
+    // "R" : Refactor for a "good practice" metric violation
+    // "C" : Convention for coding standard violation
+    // "W" : Warning for stylistic problems, or minor programming issues
+    // "E" : Error for important programming issues (i.e. most probably bug)
+    // "F" : Fatal for errors which prevented further processing
+    "ignore": ["R"],
+    "disable": [
+        "C0103", // Invalid %s name "%s"
+        "C0111", // Missing %s docstring
+        "C0301", // Line too long (%s/%s)
+        "E0712", // Catching an exception which doesn't inherit from BaseException: %s
+        "E1101", // %s %r has no %r member
+        "E1103", // %s %r has no %r member (but some types could not be inferred)
+        "W0142", // Used * or ** magic
+        "W0511", // (warning notes in code comments; message varies)
+        "W0603", // Using the global statement
+        "W0613", // Unused argument %r
+        "W0703" // Catching too general exception %s
+    ],
+}

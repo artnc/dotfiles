@@ -4,6 +4,8 @@
 		"JSHint Gutter",
 		"LaTeXTools",
 		"LESS",
-		"Sass"
+		"Pylinter",
+		"Sass",
+		"Theme - Soda"
 	]
 }

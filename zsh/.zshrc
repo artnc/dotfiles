@@ -27,6 +27,7 @@ source $HOME/Documents/zshrc.sh
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
 export LDFLAGS="$LDFLAGS -lm"
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0
+export PATH=$PATH:$JAVA_HOME/bin
 
 ###############################################################################
 
@@ -226,18 +227,22 @@ gc() {
   fi
 }
 
-alias gg='git log'
 alias ga='git add -A'
+alias gb='git branch'
 alias gca='git commit --amend'
-alias gp='git push'
-alias gpr='git push review'
-alias gl='git pull'
-alias gt='git status'
 alias gd='git diff --color'
+alias gg='git log'
 alias gk='git checkout'
 alias gkm='git checkout master'
-alias gb='git branch'
-alias gm='git merge'
+alias gl='git pull'
+alias gp='git push'
+alias gpr='git push tc-review'
+alias gr='git reset'
+alias grh='git reset --hard'
+alias gsl='git stash list'
+alias gsp='git stash pop'
+alias gss='git stash save -u'
+alias gt='git status -uall'
 
 # http://stackoverflow.com/a/904023/1436320
 
