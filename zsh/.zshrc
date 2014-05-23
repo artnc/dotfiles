@@ -60,7 +60,8 @@ autoload -U colors && colors
 function gitprompt {
   if [ -d .git ]; then
     branch="$(git branch | sed -n '/\* /s///p')"
-    echo "%B%{$fg[blue]%}:$branch%{$reset_color%}%b"
+    stashmarker="$([[ $(git stash list 2> /dev/null | tail -n1) != '' ]] && echo '*')"
+    echo "%B%{$fg[blue]%}:$branch$stashmarker%{$reset_color%}%b"
   fi
 }
 
@@ -234,6 +235,7 @@ alias gd='git diff --color'
 alias gg='git log'
 alias gk='git checkout'
 alias gkm='git checkout master'
+alias gkt='git checkout testcenter'
 alias gl='git pull'
 alias gp='git push'
 alias gpr='git push tc-review'
