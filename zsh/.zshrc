@@ -61,7 +61,8 @@ function gitprompt {
   if [ -d .git ]; then
     branch="$(git branch | sed -n '/\* /s///p')"
     stashmarker="$([[ $(git stash list 2> /dev/null | tail -n1) != '' ]] && echo '*')"
-    echo "%B%{$fg[blue]%}:$branch$stashmarker%{$reset_color%}%b"
+    cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
+    echo "%B%{$fg[$cleanliness]%} $branch$stashmarker%{$reset_color%}%b"
   fi
 }
 
