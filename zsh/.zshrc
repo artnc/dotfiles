@@ -60,6 +60,10 @@ autoload -U colors && colors
 function gitprompt {
   if [ -d .git ]; then
     branch="$(git branch | sed -n '/\* /s///p')"
+    if [ "$branch" = "(detached from FETCH_HEAD)" ]; then
+      message="$(git --no-pager log -1 --pretty=%s)"
+      branch="(${message:0:24})"
+    fi
     stashmarker="$([[ $(git stash list 2> /dev/null | tail -n1) != '' ]] && echo '*')"
     cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
     echo "%B%{$fg[$cleanliness]%} $branch$stashmarker%{$reset_color%}%b"
@@ -220,14 +224,13 @@ gc() {
 alias ga='git add -A'
 alias gb='git branch'
 alias gca='git commit --amend'
-alias gd='git diff --color'
+alias gd='git diff'
 alias gg='git log'
 alias gk='git checkout'
 alias gkm='git checkout master'
 alias gkt='git checkout testcenter'
 alias gl='git pull'
 alias gp='git push'
-alias gpr='git push tc-review && git reset --hard HEAD~1'
 alias gr='git reset'
 alias grh='git reset --hard'
 alias gsl='git stash list'
