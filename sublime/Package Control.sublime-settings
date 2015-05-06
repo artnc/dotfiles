@@ -1,12 +1,17 @@
 {
+	"in_process_packages":
+	[
+	],
 	"installed_packages":
 	[
 		"JSHint Gutter",
 		"LaTeXTools",
 		"LESS",
+		"Package Control",
 		"Pylinter",
 		"Sass",
 		"SubLilyPond",
-		"Theme - Soda"
+		"Theme - Soda",
+		"Theme - Spacegray"
 	]
 }
