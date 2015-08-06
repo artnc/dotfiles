@@ -59,7 +59,7 @@ autoload -U colors && colors
 
 function gitprompt {
   if [ -d .git ]; then
-    branch="$(git branch | sed -n '/\* /s///p')"
+    branch="$(git rev-parse --abbrev-ref HEAD)"
     if [ "$branch" = "(detached from FETCH_HEAD)" ]; then
       message="$(git --no-pager log -1 --pretty=%s)"
       branch="(${message:0:24})"
@@ -85,19 +85,25 @@ alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
 
 # yum commands
 
-alias yu='sudo yum upgrade --skip-broken -y'
-alias yi='sudo yum install'
-alias yr='sudo yum remove'
+alias yu='sudo dnf upgrade -y'
+alias yi='sudo dnf install'
+alias yr='sudo dnf remove'
 
 # Detailed, colored ls
+
 alias l='ls -AGl --color=auto'
 
 # Python profiler
+
 alias pyprof='python -m cProfile -s "time"'
 
 # Folder bookmarks
 
 alias g='cd $HOME/git'
+
+# ag with always-used options
+
+alias ag='ag --color-line-number "0;32" --color-path "0;35" --nobreak --noheading'
 
 # Default programs
 
@@ -231,8 +237,9 @@ alias gkm='git checkout master'
 alias gkt='git checkout testcenter'
 alias gl='git pull'
 alias gp='git push'
-alias gr='git reset'
-alias grh='git reset --hard'
+alias gx='git reset'
+alias gxh='git reset --hard'
+alias gls='git review -d'
 alias gsl='git stash list'
 alias gsp='git stash pop'
 alias gss='git stash save -u'
