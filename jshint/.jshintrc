@@ -1,5 +1,6 @@
 {
     "browser": true,
     "devel": true,
+    "expr": true,
     "jquery": true
 }
