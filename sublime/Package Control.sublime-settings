@@ -4,13 +4,16 @@
 	],
 	"installed_packages":
 	[
-		"JSHint Gutter",
+		"JSCS-Formatter",
 		"LaTeXTools",
 		"LESS",
 		"Package Control",
-		"Pylinter",
 		"Sass",
 		"SubLilyPond",
+		"SublimeLinter",
+		"SublimeLinter-jscs",
+		"SublimeLinter-jshint",
+		"SublimeLinter-pylint",
 		"Theme - Soda",
 		"Theme - Spacegray"
 	]

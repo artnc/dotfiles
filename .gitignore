@@ -1,2 +1,3 @@
+*.merged-ca-bundle
 sublime/Package Control.cache/
 sublime/Package Control.last-run
