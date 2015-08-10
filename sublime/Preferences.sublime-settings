@@ -15,7 +15,8 @@
 	"preview_on_click": false,
 	"rulers":
 	[
-		79
+		79,
+		100
 	],
 	"scroll_past_end": false,
 	"scroll_speed": 1.5,
