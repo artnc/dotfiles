@@ -7,22 +7,41 @@
         "gutter_theme_excludes": [],
         "lint_mode": "manual",
         "linters": {
+            "jscs": {
+                "@disable": false,
+                "args": [],
+                "excludes": []
+            },
             "jshint": {
                 "@disable": false,
                 "args": [],
                 "excludes": []
+            },
+            "pylint": {
+                "@disable": false,
+                "args": [],
+                "disable": "",
+                "enable": "",
+                "excludes": [],
+                "paths": [],
+                "rcfile": "",
+                "show-codes": false
             }
         },
         "mark_style": "outline",
         "no_column_highlights_line": false,
         "passive_warnings": false,
         "paths": {
-            "linux": ["/home/art/env/bin"],
+            "linux": [
+                "/home/art/env/bin"
+            ],
             "osx": [],
             "windows": []
         },
         "python_paths": {
-            "linux": ["/home/art/env/bin"],
+            "linux": [
+                "/home/art/env/bin"
+            ],
             "osx": [],
             "windows": []
         },
