@@ -103,7 +103,7 @@ alias g='cd $HOME/git'
 
 # ag with always-used options
 
-alias ag='ag --color-line-number "0;32" --color-path "0;35" --nobreak --noheading'
+alias ag='ag -s --color-line-number "0;32" --color-path "0;35" --nobreak --noheading'
 
 # Default programs
 
