@@ -1,48 +1,40 @@
 # Path to oh-my-zsh config
-
 ZSH=$HOME/.oh-my-zsh
 
 # Theme
-
 ZSH_THEME=""
 
 # Show red dots while waiting for completion
-
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
-
 plugins=(zsh-syntax-highlighting)
 
 # oh-my-zsh
-
 source $ZSH/oh-my-zsh.sh
 
-# Stuff that shouldn't be pushed to public GitHub
+if [[ $(uname -r) =~ "fc" ]]; then
+  # Stuff that shouldn't be pushed to public GitHub
+  source $HOME/Documents/zshrc.sh
 
-source $HOME/Documents/zshrc.sh
-
-# Environment variables
-
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
-export LDFLAGS="$LDFLAGS -lm"
-export JAVA_HOME=/usr/lib/jvm/java-1.7.0
-export PATH=$PATH:$JAVA_HOME/bin
+  # Environment variables
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
+  export LDFLAGS="$LDFLAGS -lm"
+  export JAVA_HOME=/usr/lib/jvm/java-1.7.0
+  export PATH=$PATH:$JAVA_HOME/bin
+fi
 
 ###############################################################################
 
 # Command history settings
-
 HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=$HOME/.zsh_history
 
 # Show how long a command took if it exceeded this (in seconds)
-
 REPORTTIME=10
 
 # Options
-
 setopt auto_cd              # Don't need to type cd to cd
 setopt correct              # Spelling correction
 setopt dvorak               # Use Dvorak for spelling correction
@@ -54,7 +46,6 @@ setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
 setopt prompt_subst         # Enable prompt variable expansion
 
 # Prompt formatting
-
 autoload -U colors && colors
 
 function gitprompt {
@@ -74,77 +65,71 @@ PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 
 ###############################################################################
 
-# Switch between QWERTY and Dvorak
+if [[ $(uname -r) =~ "fc" ]]; then
+  # Switch between QWERTY and Dvorak
+  alias aoeu='setxkbmap us'
+  alias asdf='setxkbmap dvorak'
 
-alias aoeu='setxkbmap us'
-alias asdf='setxkbmap dvorak'
+  # VisualVM profiler
+  alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
 
-# VisualVM profiler
+  # yum commands
+  alias yu='sudo dnf upgrade -y'
+  alias yi='sudo dnf install'
+  alias yr='sudo dnf remove'
 
-alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
+  # Pipe stdout to clipboard via echo "foo" | xc
+  alias xc='xclip -selection clipboard'
 
-# yum commands
-
-alias yu='sudo dnf upgrade -y'
-alias yi='sudo dnf install'
-alias yr='sudo dnf remove'
+  # Default programs
+  alias -s c='sublime'
+  alias -s conf='sublime'
+  alias -s cpp='sublime'
+  alias -s css='sublime'
+  alias -s h='sublime'
+  alias -s hpp='sublime'
+  alias -s hs='sublime'
+  alias -s html='sublime'
+  alias -s js='sublime'
+  alias -s md='sublime'
+  alias -s pdf='evince'
+  alias -s php='sublime'
+  alias -s py='sublime'
+  alias -s sass='sublime'
+  alias -s scss='sublime'
+  alias -s tex='sublime'
+  alias -s txt='sublime'
+  alias -s xml='sublime'
+fi
 
 # Detailed, colored ls
-
 alias l='ls -AGl --color=auto'
 
 # Python profiler
-
 alias pyprof='python -m cProfile -s "time"'
 
 # Folder bookmarks
-
 alias g='cd $HOME/git'
 
 # ag with always-used options
-
 alias ag='ag -s --color-line-number "0;32" --color-path "0;35" --nobreak --noheading'
-
-# Default programs
-
-alias -s c='sublime'
-alias -s conf='sublime'
-alias -s cpp='sublime'
-alias -s css='sublime'
-alias -s h='sublime'
-alias -s hpp='sublime'
-alias -s hs='sublime'
-alias -s html='sublime'
-alias -s js='sublime'
-alias -s md='sublime'
-alias -s pdf='evince'
-alias -s php='sublime'
-alias -s py='sublime'
-alias -s sass='sublime'
-alias -s scss='sublime'
-alias -s tex='sublime'
-alias -s txt='sublime'
-alias -s xml='sublime'
 
 ###############################################################################
 
 # Combine multiple PDFs into a single output.pdf
 # Example usage: combinepdf input1.pdf input2.pdf input3.pdf
-
 combinepdf() {
   gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
   mv ./output-unfinished.pdf ./output.pdf
 }
 
 # Set current directory as Apache document root
-
 docroot() {
   sudo rm -f /var/www/html
   sudo ln -s $PWD /var/www/html
 }
 
 # Start or stop Apache
-
 apache() {
   if systemctl status httpd.service | grep -q "Active: active"; then
     sudo systemctl stop httpd.service
@@ -156,7 +141,6 @@ apache() {
 }
 
 # Mount/unmount UVa's home directory service
-
 hds() {
   # If /mnt/hds exists
   if [ -d "/mnt/hds" ]; then
@@ -182,7 +166,6 @@ hds() {
 
 # Move swap back into main memory (usually done after skype crashes...)
 # http://askubuntu.com/a/90399
-
 swap() {
   free_data="$(free)"
   mem_data="$(echo "$free_data" | grep 'Mem:')"
@@ -206,18 +189,12 @@ swap() {
 }
 
 # Wait 5 seconds and then begin screencast (press 'q' to stop)
-
 screencast() {
   sleep 5
   ffmpeg -f x11grab -s 1920x1200 -i :0.0 -qscale 0 /home/art/Desktop/screencast.mp4
 }
 
-# Pipe stdout to clipboard via echo "foo" | xc
-
-alias xc='xclip -selection clipboard'
-
 # git commands (easier than oh-my-zsh plugin?)
-
 gc() {
   if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
     git add -A
@@ -248,7 +225,6 @@ alias gss='git stash save -u'
 alias gt='git status -uall'
 
 # http://stackoverflow.com/a/904023/1436320
-
 mandelbrot() {
   local lines columns color a b p q i pnew
   ((columns=COLUMNS-1, lines=LINES-1, color=0))
