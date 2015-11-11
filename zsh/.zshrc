@@ -229,6 +229,8 @@ gc() {
 
 alias ga='git add -A'
 alias gb='git branch'
+alias gbb='git bisect bad'
+alias gbg='git bisect good'
 alias gca='git commit --amend'
 alias gd='git diff'
 alias gg='git log'
