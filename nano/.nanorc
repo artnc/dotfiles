@@ -1,0 +1,13 @@
+include /usr/share/nano/css.nanorc
+include /usr/share/nano/html.nanorc
+include /usr/share/nano/javascript.nanorc
+include /usr/share/nano/python.nanorc
+include /usr/share/nano/sh.nanorc
+
+set autoindent
+set casesensitive
+set morespace
+set mouse
+set smooth
+set tabsize 4
+set tabstospaces
