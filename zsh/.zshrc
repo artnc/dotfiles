@@ -1,19 +1,15 @@
-# Path to oh-my-zsh config
-ZSH=$HOME/.oh-my-zsh
+######################################################## Sniff machine identity
 
-# Theme
-ZSH_THEME=""
+[[ $(uname -r) =~ "fc" ]]
+FEDORA_MBP=$?
+[[ $(hostname) = "arbok" ]]
+ARCH_LENOVO=$?
+[[ $(hostname) = "artpi" ]]
+ARCH_RPI=$?
 
-# Show red dots while waiting for completion
-COMPLETION_WAITING_DOTS="true"
+######################################################### Environment variables
 
-# oh-my-zsh plugins
-plugins=(zsh-syntax-highlighting)
-
-# oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-
-if [[ $(uname -r) =~ "fc" ]]; then
+if [ "$FEDORA_MBP" = 0 ]; then
   # Stuff that shouldn't be pushed to public GitHub
   source $HOME/Documents/zshrc.sh
 
@@ -24,7 +20,31 @@ if [[ $(uname -r) =~ "fc" ]]; then
   export PATH=$PATH:$JAVA_HOME/bin
 fi
 
-###############################################################################
+################################################################# Configure zsh
+
+# Path to oh-my-zsh config
+if [ "$ARCH_LENOVO" = 0 ]; then
+  ZSH=/usr/share/oh-my-zsh
+else
+  ZSH=$HOME/.oh-my-zsh
+fi
+
+# Theme
+ZSH_THEME=""
+
+# Show red dots while waiting for completion
+COMPLETION_WAITING_DOTS="true"
+
+# oh-my-zsh plugins
+if [ "$ARCH_LENOVO" = 1 ]; then
+  plugins=(zsh-syntax-highlighting)
+fi
+
+# oh-my-zsh
+source $ZSH/oh-my-zsh.sh
+if [ "$ARCH_LENOVO" = 0 ]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # Command history settings
 HISTSIZE=10000
@@ -45,6 +65,8 @@ setopt no_hup               # Run all background processes with nohup
 setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
 setopt prompt_subst         # Enable prompt variable expansion
 
+######################################################################## Prompt
+
 # Prompt formatting
 autoload -U colors && colors
 
@@ -63,44 +85,51 @@ function gitprompt {
 
 PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 
-###############################################################################
+####################################################################### Aliases
 
-if [[ $(uname -r) =~ "fc" ]]; then
+if [ "$ARCH_RPI" = 1 ]; then
   # Switch between QWERTY and Dvorak
   alias aoeu='setxkbmap us'
   alias asdf='setxkbmap dvorak'
 
-  # VisualVM profiler
-  alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
-
-  # yum commands
+  # Pipe stdout to clipboard via echo "foo" | xc
+  alias xc='xclip -selection clipboard'
+  alias sublime='subl3'
+fi
+if [ "$FEDORA_MBP" = 0 ]; then
+  # DNF
   alias yu='sudo dnf upgrade -y'
   alias yi='sudo dnf install'
   alias yr='sudo dnf remove'
 
-  # Pipe stdout to clipboard via echo "foo" | xc
-  alias xc='xclip -selection clipboard'
-
-  # Default programs
-  alias -s c='sublime'
-  alias -s conf='sublime'
-  alias -s cpp='sublime'
-  alias -s css='sublime'
-  alias -s h='sublime'
-  alias -s hpp='sublime'
-  alias -s hs='sublime'
-  alias -s html='sublime'
-  alias -s js='sublime'
-  alias -s md='sublime'
-  alias -s pdf='evince'
-  alias -s php='sublime'
-  alias -s py='sublime'
-  alias -s sass='sublime'
-  alias -s scss='sublime'
-  alias -s tex='sublime'
-  alias -s txt='sublime'
-  alias -s xml='sublime'
+  # VisualVM profiler
+  alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
 fi
+if [ "$ARCH_LENOVO" = 0 ]; then
+  # Packer
+  alias pi='packer -S'
+  alias pu='packer -Syu'
+fi
+
+# Default programs
+alias -s c='sublime'
+alias -s conf='sublime'
+alias -s cpp='sublime'
+alias -s css='sublime'
+alias -s h='sublime'
+alias -s hpp='sublime'
+alias -s hs='sublime'
+alias -s html='sublime'
+alias -s js='sublime'
+alias -s md='sublime'
+alias -s pdf='evince'
+alias -s php='sublime'
+alias -s py='sublime'
+alias -s sass='sublime'
+alias -s scss='sublime'
+alias -s tex='sublime'
+alias -s txt='sublime'
+alias -s xml='sublime'
 
 # Detailed, colored ls
 alias l='ls -AGl --color=auto'
@@ -114,96 +143,7 @@ alias g='cd $HOME/git'
 # ag with always-used options
 alias ag='ag -s --color-line-number "0;32" --color-path "0;35" --nobreak --noheading'
 
-###############################################################################
-
-# Combine multiple PDFs into a single output.pdf
-# Example usage: combinepdf input1.pdf input2.pdf input3.pdf
-combinepdf() {
-  gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
-  mv ./output-unfinished.pdf ./output.pdf
-}
-
-# Set current directory as Apache document root
-docroot() {
-  sudo rm -f /var/www/html
-  sudo ln -s $PWD /var/www/html
-}
-
-# Start or stop Apache
-apache() {
-  if systemctl status httpd.service | grep -q "Active: active"; then
-    sudo systemctl stop httpd.service
-    echo "Apache stopped."
-  else
-    sudo systemctl start httpd.service
-    echo "Apache started."
-  fi
-}
-
-# Mount/unmount UVa's home directory service
-hds() {
-  # If /mnt/hds exists
-  if [ -d "/mnt/hds" ]; then
-    # If /mnt/hds already contains files
-    if [ "$(ls -A /mnt/hds)" ]; then
-      echo "HDS is already mounted. Unmounting..."
-      sudo umount /mnt/hds \
-        && echo "Successfully unmounted."
-    else
-      echo "Mounting HDS..."
-      sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk \
-        && echo "Successfully mounted."
-      sudo thunar /mnt/hds
-    fi
-  else
-    echo "Creating /mnt/hds and mounting HDS..."
-    sudo mkdir -p /mnt/hds
-    sudo mount -t cifs //home1.Virginia.EDU/nc5rk /mnt/hds -o username=nc5rk \
-      && echo "Successfully mounted." \
-      && sudo thunar /mnt/hds
-  fi
-}
-
-# Move swap back into main memory (usually done after skype crashes...)
-# http://askubuntu.com/a/90399
-swap() {
-  free_data="$(free)"
-  mem_data="$(echo "$free_data" | grep 'Mem:')"
-  free_mem="$(echo "$mem_data" | awk '{print $4}')"
-  buffers="$(echo "$mem_data" | awk '{print $6}')"
-  cache="$(echo "$mem_data" | awk '{print $7}')"
-  total_free=$((free_mem + buffers + cache))
-  used_swap="$(echo "$free_data" | grep 'Swap:' | awk '{print $3}')"
-
-  echo -e "Free memory:\t$total_free kB ($((total_free / 1024)) MB)\nUsed swap:\t$used_swap kB ($((used_swap / 1024)) MB)"
-  if [[ $used_swap -eq 0 ]]; then
-    echo "Congratulations! No swap is in use."
-  elif [[ $used_swap -lt $total_free ]]; then
-    echo "Freeing swap..."
-    sudo swapoff -a
-    sudo swapon -a
-  else
-    echo "Not enough free memory. Exiting."
-    exit 1
-  fi
-}
-
-# Wait 5 seconds and then begin screencast (press 'q' to stop)
-screencast() {
-  sleep 5
-  ffmpeg -f x11grab -s 1920x1200 -i :0.0 -qscale 0 /home/art/Desktop/screencast.mp4
-}
-
-# git commands (easier than oh-my-zsh plugin?)
-gc() {
-  if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
-    git add -A
-    git commit -v -m $1
-  else
-    echo "Commit message was ${#1} characters long."
-  fi
-}
-
+# Git
 alias ga='git add -A'
 alias gb='git branch'
 alias gbb='git bisect bad'
@@ -223,6 +163,37 @@ alias gsl='git stash list'
 alias gsp='git stash pop'
 alias gss='git stash save -u'
 alias gt='git status -uall'
+
+##################################################################### Functions
+
+# Combine multiple PDFs into a single output.pdf
+# Example usage: combinepdf input1.pdf input2.pdf input3.pdf
+combinepdf() {
+  gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
+  mv ./output-unfinished.pdf ./output.pdf
+}
+
+# Set current directory as Apache document root
+docroot() {
+  sudo rm -f /var/www/html
+  sudo ln -s $PWD /var/www/html
+}
+
+# Wait 5 seconds and then begin screencast (press 'q' to stop)
+screencast() {
+  sleep 5
+  ffmpeg -f x11grab -s 1920x1200 -i :0.0 -qscale 0 /home/art/Desktop/screencast.mp4
+}
+
+# git commands (easier than oh-my-zsh plugin?)
+gc() {
+  if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
+    git add -A
+    git commit -v -m $1
+  else
+    echo "Commit message was ${#1} characters long."
+  fi
+}
 
 # http://stackoverflow.com/a/904023/1436320
 mandelbrot() {
