@@ -14,6 +14,7 @@ if [ "$FEDORA_MBP" = 0 ]; then
   source $HOME/Documents/zshrc.sh
 
   # Environment variables
+  export EDITOR="/usr/bin/sublime --wait"
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
   export LDFLAGS="$LDFLAGS -lm"
   export JAVA_HOME=/usr/lib/jvm/java-1.7.0
@@ -209,4 +210,21 @@ mandelbrot() {
     done
     echo
   done
+}
+
+# https://transfer.sh/
+transfer() {
+  if [ $# -eq 0 ]; then
+    echo "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"
+    return 1
+  fi
+  tmpfile=$( mktemp -t transferXXX )
+  if tty -s; then
+    basefile=$(basename "$1" | sed -e 's/[^a-zA-Z0-9._-]/-/g')
+    curl --progress-bar --upload-file "$1" "https://transfer.sh/$basefile" >> $tmpfile
+  else
+    curl --progress-bar --upload-file "-" "https://transfer.sh/$1" >> $tmpfile
+  fi
+  cat $tmpfile
+  rm -f $tmpfile
 }
