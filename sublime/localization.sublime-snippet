@@ -1,3 +1,3 @@
 <snippet>
-    <content><![CDATA[{{#_i}}$SELECTION$1{{/_i}}]]></content>
+    <content><![CDATA[{_i(R$SELECTION$1)}]]></content>
 </snippet>
