@@ -40,20 +40,6 @@ instance=Master
 interval=once
 signal=10
 
-# Memory usage
-#
-# The type defaults to "mem" if the instance is not specified.
-# [memory]
-# label=MEM
-# separator=false
-# interval=30
-
-# [memory]
-# label=SWAP
-# instance=swap
-# separator=false
-# interval=30
-
 # Disk usage
 #
 # The directory defaults to $HOME if the instance is not specified.
@@ -100,6 +86,12 @@ interval=30
 [temperature]
 label=❄
 interval=10
+
+[memory]
+command=~/.config/i3blocks/blocklets/memory
+label=MEM
+instance=mem;perc
+interval=30
 
 # CPU usage
 #

@@ -13,5 +13,12 @@ synclient TapButton3=2  # triple-finger -> middle click
 # https://bbs.archlinux.org/viewtopic.php?id=202812
 source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 
-# Start XFCE (must be last command in this file!)
-exec startxfce4
+# Load modifier key remappings
+[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
+
+# Set wallpaper
+sh ~/.fehbg &
+
+# Start i3 (must be last command in this file!)
+#exec startxfce4
+exec i3
