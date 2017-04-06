@@ -1,11 +1,11 @@
 [user]
 	name = Art Chaidarun
-	email = art@duolingo.com
+	email = art@openai.com
 [color]
 	ui = true
 [core]
-	editor = sublime --wait
 	autocrlf = input
+	editor = nano
 [push]
 	default = simple
 [credential]
