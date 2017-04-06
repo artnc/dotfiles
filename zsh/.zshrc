@@ -1,34 +1,28 @@
 ######################################################## Sniff machine identity
 
-[[ $(uname -r) =~ "fc" ]]
-FEDORA_MBP=$?
+[[ $(hostname) = "abra" ]]
+ARCH_THINKPAD=$?
 [[ $(hostname) = "arbok" ]]
-ARCH_LENOVO=$?
+ARCH_FLEX=$?
 [[ $(hostname) = "artpi" ]]
 ARCH_RPI=$?
 
 ######################################################### Environment variables
 
-if [ "$FEDORA_MBP" = 0 ]; then
-  # Stuff that shouldn't be pushed to public GitHub
-  source $HOME/Documents/zshrc.sh
+# Stuff that shouldn't be pushed to public GitHub
+[[ -s $HOME/Documents/zshrc.sh ]] && source $HOME/Documents/zshrc.sh
 
-  # Environment variables
-  export EDITOR="/usr/bin/sublime --wait"
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/lib64
-  export LDFLAGS="$LDFLAGS -lm"
-  export JAVA_HOME=/usr/lib/jvm/java-1.7.0
-  export PATH=$PATH:$JAVA_HOME/bin
+if [ "$ARCH_FLEX" = 0 ]; then
+  export EDITOR=/usr/bin/nvim
+  export GOPATH=$HOME/go
+  export PATH=$PATH:/home/art/.gem/ruby/2.3.0/bin:$GOPATH/bin
+  export TERM=xterm-256color
 fi
 
 ################################################################# Configure zsh
 
 # Path to oh-my-zsh config
-if [ "$ARCH_LENOVO" = 0 ]; then
-  ZSH=/usr/share/oh-my-zsh
-else
-  ZSH=$HOME/.oh-my-zsh
-fi
+ZSH=/usr/share/oh-my-zsh
 
 # Theme
 ZSH_THEME=""
@@ -37,15 +31,18 @@ ZSH_THEME=""
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
-if [ "$ARCH_LENOVO" = 1 ]; then
+if [ "$ARCH_FLEX" = 1 ]; then
   plugins=(zsh-syntax-highlighting)
 fi
 
 # oh-my-zsh
 source $ZSH/oh-my-zsh.sh
-if [ "$ARCH_LENOVO" = 0 ]; then
+if [ "$ARCH_FLEX" = 0 ]; then
   source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+
+# nvm
+[[ -s /usr/share/nvm/init-nvm.sh ]] && source /usr/share/nvm/init-nvm.sh
 
 # Command history settings
 HISTSIZE=10000
@@ -88,49 +85,36 @@ PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 
 ####################################################################### Aliases
 
-if [ "$ARCH_RPI" = 1 ]; then
-  # Switch between QWERTY and Dvorak
-  alias aoeu='setxkbmap us'
-  alias asdf='setxkbmap dvorak'
+# Switch between QWERTY and Dvorak
+alias aoeu='setxkbmap us'
+alias asdf='setxkbmap dvorak'
 
-  # Pipe stdout to clipboard via echo "foo" | xc
-  alias xc='xclip -selection clipboard'
-  alias sublime='subl3'
-fi
-if [ "$FEDORA_MBP" = 0 ]; then
-  # DNF
-  alias yu='sudo dnf upgrade -y'
-  alias yi='sudo dnf install'
-  alias yr='sudo dnf remove'
+# Pipe stdout to clipboard via echo "foo" | xc
+alias xc='xclip -selection clipboard'
 
-  # VisualVM profiler
-  alias jvisualvm='/usr/java/jdk1.7.0_04/bin/jvisualvm'
-fi
-if [ "$ARCH_LENOVO" = 0 ]; then
-  # Packer
-  alias pi='packer -S'
-  alias pu='packer -Syu'
-fi
+# Pacaur
+alias pi='pacaur -S'
+alias pu='pacaur -Syu'
 
 # Default programs
-alias -s c='sublime'
-alias -s conf='sublime'
-alias -s cpp='sublime'
-alias -s css='sublime'
-alias -s h='sublime'
-alias -s hpp='sublime'
-alias -s hs='sublime'
-alias -s html='sublime'
-alias -s js='sublime'
-alias -s md='sublime'
+alias -s c='subl3'
+alias -s conf='subl3'
+alias -s cpp='subl3'
+alias -s css='subl3'
+alias -s h='subl3'
+alias -s hpp='subl3'
+alias -s hs='subl3'
+alias -s html='subl3'
+alias -s js='subl3'
+alias -s md='subl3'
 alias -s pdf='evince'
-alias -s php='sublime'
-alias -s py='sublime'
-alias -s sass='sublime'
-alias -s scss='sublime'
-alias -s tex='sublime'
-alias -s txt='sublime'
-alias -s xml='sublime'
+alias -s php='subl3'
+alias -s py='subl3'
+alias -s sass='subl3'
+alias -s scss='subl3'
+alias -s tex='subl3'
+alias -s txt='subl3'
+alias -s xml='subl3'
 
 # Detailed, colored ls
 alias l='ls -AGl --color=auto'
