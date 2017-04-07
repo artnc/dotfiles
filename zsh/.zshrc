@@ -10,7 +10,7 @@ ARCH_RPI=$?
 ######################################################### Environment variables
 
 # Stuff that shouldn't be pushed to public GitHub
-[[ -s $HOME/Documents/zshrc.sh ]] && source $HOME/Documents/zshrc.sh
+[[ -s $HOME/Documents/openai.sh ]] && . $HOME/Documents/openai.sh
 
 if [ "$ARCH_FLEX" = 0 ]; then
   export EDITOR=/usr/bin/nvim
@@ -30,19 +30,16 @@ ZSH_THEME=""
 # Show red dots while waiting for completion
 COMPLETION_WAITING_DOTS="true"
 
-# oh-my-zsh plugins
-if [ "$ARCH_FLEX" = 1 ]; then
-  plugins=(zsh-syntax-highlighting)
-fi
-
 # oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-if [ "$ARCH_FLEX" = 0 ]; then
-  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+. $ZSH/oh-my-zsh.sh
+if [ "$ARCH_RPI" = 0 ]; then
+  plugins=(zsh-syntax-highlighting)
+else
+  . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # nvm
-[[ -s /usr/share/nvm/init-nvm.sh ]] && source /usr/share/nvm/init-nvm.sh
+[[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh
 
 # Command history settings
 HISTSIZE=10000
