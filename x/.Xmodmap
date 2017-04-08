@@ -1,9 +1,5 @@
-! Remap Alt_R to Ctrl
-
-remove mod1 = Alt_R
-add control = Alt_R
-
-! Remap Super_R to Alt
-
-remove mod4 = Super_R
-add mod1 = Super_R
+! Remap Caps Lock to Windows key
+! https://faq.i3wm.org/question/490/using-caps-lock-as-mod-key/index.html%3Fanswer=670.html
+clear Lock
+keycode 66 = Hyper_L
+add mod4 = Hyper_L
