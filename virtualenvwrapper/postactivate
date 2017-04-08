@@ -1,0 +1,5 @@
+#!/bin/zsh
+# This hook is sourced after every virtualenv is activated.
+
+# Enter project home directory
+cd $PROJECT_HOME/$(basename $VIRTUAL_ENV)
