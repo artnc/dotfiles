@@ -123,7 +123,7 @@ alias pyprof='python -m cProfile -s "time"'
 alias g='cd $HOME/git'
 
 # ag with always-used options
-alias ag='ag -s --color-line-number "0;32" --color-path "0;35" --nobreak --noheading'
+alias ag='ag --case-sensitive --color-line-number "0;32" --color-path "0;35" --hidden --nobreak --noheading'
 
 # Git
 alias ga='git add -A'

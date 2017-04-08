@@ -61,7 +61,7 @@ signal=10
 # separator=false
 
 [wifi]
-instance=wlp2s0
+instance=wlp4s0
 interval=10
 separator=false
 
