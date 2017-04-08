@@ -12,7 +12,7 @@
 
   // { "keys": ["ctrl+shift+q"], "command": "pylinter" },
 
-  { "keys": ["ctrl+d"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Delete Line.sublime-macro"} },
+  // { "keys": ["ctrl+d"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Delete Line.sublime-macro"} },
 
   { "keys": ["alt+super+i"], "command": "insert_snippet", "args": { "name": "Packages/User/localization.sublime-snippet" } }
 ]
