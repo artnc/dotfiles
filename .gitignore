@@ -1,4 +1,5 @@
 *.merged-ca-bundle
 *.sublime-workspace
+sublime/GoSublime*
 sublime/Package Control.cache/
 sublime/Package Control.last-run
