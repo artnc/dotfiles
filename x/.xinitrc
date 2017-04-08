@@ -19,6 +19,10 @@ source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 # Set wallpaper
 sh ~/.fehbg &
 
+# Autostart programs
+# https://wiki.archlinux.org/index.php/autostarting
+xss-lock -- ~/.config/i3/lock-screen.sh &
+
 # Start i3 (must be last command in this file!)
 #exec startxfce4
 exec i3
