@@ -14,6 +14,7 @@ ln -s ~/git/dotfiles/sublime ~/.config/sublime-text-3/Packages/User
 ln -s ~/git/dotfiles/tmux/.tmux.conf ~/.tmux.conf
 ln -s ~/git/dotfiles/virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
 ln -s ~/git/dotfiles/virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
+ln -s ~/git/dotfiles/x/.xbindkeysrc ~/.xbindkeysrc
 ln -s ~/git/dotfiles/x/.xinitrc ~/.xinitrc
 ln -s ~/git/dotfiles/x/.Xmodmap ~/.Xmodmap
 ln -s ~/git/dotfiles/xfce4-terminal/terminalrc ~/.config/xfce4/terminal/terminalrc

@@ -21,6 +21,7 @@ sh ~/.fehbg &
 
 # Autostart programs
 # https://wiki.archlinux.org/index.php/autostarting
+xbindkeys
 xss-lock -- ~/.config/i3/lock-screen.sh &
 
 # Start i3 (must be last command in this file!)
