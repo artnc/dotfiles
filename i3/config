@@ -87,6 +87,10 @@ bindsym $mod+0 workspace 10
 bindsym $mod+Shift+Tab workspace prev
 bindsym $mod+Tab workspace next
 
+# move workspace to left and right monitors
+bindsym $mod+Shift+bracketleft move workspace to output left
+bindsym $mod+Shift+bracketright move workspace to output right
+
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
@@ -131,6 +135,8 @@ mode "resize" {
 }
 
 bindsym $mod+p mode "resize"
+
+bindsym $mod+l exec ~/.config/i3/lock-screen.sh
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
