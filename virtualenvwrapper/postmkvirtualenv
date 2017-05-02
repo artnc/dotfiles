@@ -11,11 +11,12 @@ mkdir -p $project_dir
 setvirtualenvproject $VIRTUAL_ENV $project_dir
 
 # Create Sublime Text project file inside ~/.virtualenvs
-cat << EOM > $VIRTUAL_ENV/../$project.sublime-project
+[[ -f $VIRTUAL_ENV/../$project.sublime-project ]] || cat << EOM > $VIRTUAL_ENV/../$project.sublime-project
 {
     "folders":
     [
         {
+            "folder_exclude_patterns": ["node_modules"],
             "path": "$project_dir"
         }
     ]
