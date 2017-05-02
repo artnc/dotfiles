@@ -5,10 +5,16 @@
 	],
 	"installed_packages":
 	[
+		"Babel",
+		"DocBlockr",
+		"Dockerfile Syntax Highlighting",
+		"EJS 2",
 		"JSCS-Formatter",
 		"LaTeXTools",
 		"LESS",
+		"nginx",
 		"Package Control",
+		"Pylinter",
 		"Sass",
 		"SubLilyPond",
 		"SublimeLinter",
@@ -16,6 +22,7 @@
 		"SublimeLinter-jshint",
 		"SublimeLinter-pylint",
 		"Theme - Soda",
-		"Theme - Spacegray"
+		"Theme - Spacegray",
+		"TypeScript"
 	]
 }

@@ -1,6 +1,6 @@
 {
-    "python_bin": "/home/art/env/bin/python",
-    "pylint_path": "/home/art/env/bin/pylint",
+    "python_bin": "/usr/bin/python",
+    "pylint_path": "/usr/bin/pylint",
     "run_on_save": true,
     "use_icons": true,
     "disable_outline": true,
