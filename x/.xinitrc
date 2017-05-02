@@ -11,7 +11,7 @@ synclient TapButton3=2  # triple-finger -> middle click
 
 # Enable XFCE notifications
 # https://bbs.archlinux.org/viewtopic.php?id=202812
-source /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
+. /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 
 # Load modifier key remappings
 [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
@@ -23,6 +23,7 @@ sh ~/.fehbg &
 # https://wiki.archlinux.org/index.php/autostarting
 easystroke &
 xbindkeys
+xfce4-power-manager
 xss-lock -- ~/.config/i3/lock-screen.sh &
 
 # Start i3 (must be last command in this file!)
