@@ -16,8 +16,9 @@ if [ "$ARCH_FLEX" = 0 ]; then
   export EDITOR=/usr/bin/nvim
   export GOPATH=$HOME/go
   export PATH=$PATH:/home/art/.gem/ruby/2.3.0/bin:$GOPATH/bin
-  export TERM=xterm-256color
 fi
+
+export TERM=xterm-256color
 
 ################################################################# Configure zsh
 
@@ -113,9 +114,6 @@ alias -s tex='subl3'
 alias -s txt='subl3'
 alias -s xml='subl3'
 
-# Detailed, colored ls
-alias l='ls -AGl --color=auto'
-
 # Python profiler
 alias pyprof='python -m cProfile -s "time"'
 
@@ -125,12 +123,16 @@ alias g='cd $HOME/git'
 # ag with always-used options
 alias ag='ag --case-sensitive --color-line-number "0;32" --color-path "0;35" --hidden --nobreak --noheading'
 
+# Always color diff
+alias diff='diff --color=always'
+
 # Git
 alias ga='git add -A'
 alias gb='git branch'
 alias gbb='git bisect bad'
 alias gbg='git bisect good'
 alias gca='git commit --amend'
+alias gcane='git commit --amend --no-edit'
 alias gd='git diff'
 alias gg='git log'
 alias gk='git checkout'
@@ -147,6 +149,15 @@ alias gss='git stash save -u'
 alias gt='git status -uall'
 
 ##################################################################### Functions
+
+# "p" as in "print". Delegates to `ls` for folders and `less` for files
+p() {
+  if [[ -f $1 ]]; then
+    less $1
+  else
+    ls -AGl $1
+  fi
+}
 
 # Combine multiple PDFs into a single output.pdf
 # Example usage: combinepdf input1.pdf input2.pdf input3.pdf
