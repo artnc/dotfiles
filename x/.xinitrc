@@ -22,6 +22,8 @@ sh ~/.fehbg &
 # Autostart programs
 # https://wiki.archlinux.org/index.php/autostarting
 easystroke &
+numlockx &
+syncthing-gtk &
 xbindkeys
 xfce4-power-manager
 xss-lock -- ~/.config/i3/lock-screen.sh &
