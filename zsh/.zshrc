@@ -120,10 +120,9 @@ alias pyprof='python -m cProfile -s "time"'
 # Folder bookmarks
 alias g='cd $HOME/git'
 
-# ag with always-used options
+# Append always-used options to common commands
 alias ag='ag --case-sensitive --color-line-number "0;32" --color-path "0;35" --hidden --nobreak --noheading'
-
-# Always color diff
+alias df='df -hT'
 alias diff='diff --color=always'
 
 # Git
@@ -147,6 +146,17 @@ alias gsl='git stash list'
 alias gsp='git stash pop'
 alias gss='git stash save -u'
 alias gt='git status -uall'
+
+# Kubernetes
+alias k='kubectl'
+alias kccc='kubectl config current-context'
+alias kcuc='kubectl config use-context'
+alias kd='kubectl describe'
+alias kdj='kubectl describe job'
+alias kdp='kubectl describe pod'
+alias kg='kubectl get'
+alias kgj='kubectl get job'
+alias kgp='kubectl get pod'
 
 ##################################################################### Functions
 
