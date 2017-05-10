@@ -22,9 +22,6 @@ export TERM=xterm-256color
 
 ################################################################# Configure zsh
 
-# Path to oh-my-zsh config
-ZSH=/usr/share/oh-my-zsh
-
 # Theme
 ZSH_THEME=""
 
@@ -32,10 +29,13 @@ ZSH_THEME=""
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh
-. $ZSH/oh-my-zsh.sh
 if [ "$ARCH_RPI" = 0 ]; then
+  ZSH=~/.oh-my-zsh
   plugins=(zsh-syntax-highlighting)
+  . $ZSH/oh-my-zsh.sh
 else
+  ZSH=/usr/share/oh-my-zsh
+  . $ZSH/oh-my-zsh.sh
   . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
