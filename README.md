@@ -10,6 +10,7 @@ ln -s ~/git/dotfiles/git/.gitconfig ~/.gitconfig
 ln -s ~/git/dotfiles/i3 ~/.config/i3
 ln -s ~/git/dotfiles/i3blocks ~/.config/i3blocks
 ln -s ~/git/dotfiles/nano/.nanorc ~/.nanorc
+ln -s ~/git/dotfiles/pylint/.pylintrc ~/.pylintrc
 ln -s ~/git/dotfiles/sublime ~/.config/sublime-text-3/Packages/User
 ln -s ~/git/dotfiles/tmux/.tmux.conf ~/.tmux.conf
 ln -s ~/git/dotfiles/virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
