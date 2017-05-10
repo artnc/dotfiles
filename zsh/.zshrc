@@ -20,6 +20,10 @@ fi
 
 export TERM=xterm-256color
 
+# Google Cloud SDK
+[ -f '/home/art/google-cloud-sdk/path.zsh.inc' ] && . '/home/art/google-cloud-sdk/path.zsh.inc'
+[ -f '/home/art/google-cloud-sdk/completion.zsh.inc' ] && . '/home/art/google-cloud-sdk/completion.zsh.inc'
+
 ################################################################# Configure zsh
 
 # Theme
@@ -114,7 +118,8 @@ alias -s tex='subl3'
 alias -s txt='subl3'
 alias -s xml='subl3'
 
-# Python profiler
+# Python
+alias ipy='ipython'
 alias pyprof='python -m cProfile -s "time"'
 
 # Folder bookmarks
@@ -132,6 +137,7 @@ alias gbb='git bisect bad'
 alias gbg='git bisect good'
 alias gca='git commit --amend'
 alias gcane='git commit --amend --no-edit'
+alias gcm='git commit -m'
 alias gd='git diff'
 alias gg='git log'
 alias gk='git checkout'
