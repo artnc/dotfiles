@@ -88,11 +88,16 @@ PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 ####################################################################### Aliases
 
 # Switch between QWERTY and Dvorak
-alias aoeu='setxkbmap us'
-alias asdf='setxkbmap dvorak'
+alias aoeu='setxkbmap us && xmodmap ~/.Xmodmap'
+alias asdf='setxkbmap dvorak && xmodmap ~/.Xmodmap'
+alias thai='setxkbmap -layout th -variant pat && xmodmap ~/.Xmodmap'
+alias  ้ทงก='setxkbmap dvorak && xmodmap ~/.Xmodmap'
 
 # Pipe stdout to clipboard via echo "foo" | xc
 alias xc='xclip -selection clipboard'
+
+# Linux equivalent of Mac `open`
+alias open='xdg-open'
 
 # Pacaur
 alias pi='pacaur -S'
