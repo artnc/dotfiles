@@ -21,6 +21,7 @@
 		"SublimeLinter-jscs",
 		"SublimeLinter-jshint",
 		"SublimeLinter-pylint",
+		"SublimeLinter-shellcheck",
 		"Terraform",
 		"Theme - Soda",
 		"Theme - Spacegray",
