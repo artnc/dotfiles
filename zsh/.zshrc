@@ -116,7 +116,6 @@ alias -s js='subl3'
 alias -s md='subl3'
 alias -s pdf='evince'
 alias -s php='subl3'
-alias -s py='subl3'
 alias -s sass='subl3'
 alias -s scss='subl3'
 alias -s tex='subl3'
@@ -160,14 +159,29 @@ alias gt='git status -uall'
 
 # Kubernetes
 alias k='kubectl'
+alias kc='kubectl create -f'
 alias kccc='kubectl config current-context'
 alias kcuc='kubectl config use-context'
 alias kd='kubectl describe'
 alias kdj='kubectl describe job'
+alias kdn='kubectl describe node'
 alias kdp='kubectl describe pod'
+alias kds='kubectl describe secret'
+alias ke='kubectl exec -it'
 alias kg='kubectl get'
 alias kgj='kubectl get job'
+alias kgjy='kubectl get job -o yaml'
+alias kgn='kubectl get node'
+alias kgny='kubectl get node -o yaml'
 alias kgp='kubectl get pod'
+alias kgpy='kubectl get pod -o yaml'
+alias kgs='kubectl get secret'
+alias kgsy='kubectl get secret -o yaml'
+alias kl='kubectl logs -f'
+alias kx='kubectl delete'
+alias kxj='kubectl delete job'
+alias kxp='kubectl delete pod'
+alias kxs='kubectl delete secret'
 
 ##################################################################### Functions
 
@@ -178,6 +192,10 @@ p() {
   else
     ls -AGl $1
   fi
+}
+
+ns() {
+  kubectl config set-context $(kubectl config current-context) --namespace=$1 > /dev/null
 }
 
 # Combine multiple PDFs into a single output.pdf
