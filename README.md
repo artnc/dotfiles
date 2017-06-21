@@ -6,6 +6,7 @@ mkdir -p ~/.config/sublime-text-3/Packages
 ln -s ~/git/dotfiles/ag/.agignore ~/.agignore
 ln -s ~/git/dotfiles/easystroke ~/.easystroke
 ln -s ~/git/dotfiles/feh/.fehbg ~/.fehbg
+ln -s ~/git/dotfiles/fontconfig ~/.config/fontconfig
 ln -s ~/git/dotfiles/git/.gitconfig ~/.gitconfig
 ln -s ~/git/dotfiles/i3 ~/.config/i3
 ln -s ~/git/dotfiles/i3blocks ~/.config/i3blocks
