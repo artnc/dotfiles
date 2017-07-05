@@ -146,6 +146,7 @@ bindsym $mod+l exec --no-startup-id ~/.config/i3/lock-screen.sh
 bar {
         position top
         status_command i3blocks
+        tray_output primary
 }
 
 exec --no-startup-id nm-applet
