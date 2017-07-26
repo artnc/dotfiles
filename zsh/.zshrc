@@ -10,7 +10,8 @@ ARCH_RPI=$?
 ######################################################### Environment variables
 
 # Stuff that shouldn't be pushed to public GitHub
-[[ -s $HOME/Documents/openai.sh ]] && . $HOME/Documents/openai.sh
+workrc="$HOME/Documents/Work/Duolingo/duolingo.sh"
+[[ -s "${workrc}" ]] && . "${workrc}"
 
 if [ "$ARCH_FLEX" = 0 ]; then
   export EDITOR=/usr/bin/nvim
@@ -20,9 +21,17 @@ fi
 
 export TERM=xterm-256color
 
-# Google Cloud SDK
-[ -f '/home/art/google-cloud-sdk/path.zsh.inc' ] && . '/home/art/google-cloud-sdk/path.zsh.inc'
-[ -f '/home/art/google-cloud-sdk/completion.zsh.inc' ] && . '/home/art/google-cloud-sdk/completion.zsh.inc'
+# React Native
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# virtualenvwrapper
+if [[ -f /usr/bin/virtualenvwrapper.sh ]]; then
+  export WORKON_HOME=~/.virtualenvs
+  export PROJECT_HOME=~/git
+  . /usr/bin/virtualenvwrapper.sh
+  alias wo='workon'
+fi
 
 ################################################################# Configure zsh
 
@@ -44,7 +53,11 @@ else
 fi
 
 # nvm
+# Adding `--no-use` can speed this up (https://github.com/creationix/nvm/issues/782)
+# but results in a bug where `nvm use` deletes the current directory's node_modules.
+# An alternative possibly worth investigating is zsh-nvm
 [[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh
+# [[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh --no-use
 
 # Command history settings
 HISTSIZE=10000
@@ -226,6 +239,26 @@ gc() {
     echo "Commit message was ${#1} characters long."
   fi
 }
+
+# This function converts HEAD into a GitHub branch. Workflow:
+#   1. Write code while on master
+#   2. Commit change directly onto master
+#   3. Run `gpr` to fork branch, push to GitHub, and reset local master
+gpr() (
+  set -eu
+  local -r BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+    | head -1 \
+    | xargs -0 echo -n \
+    | tr '[:space:]' '-' \
+    | tr -cd '[:alnum:]-' \
+    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
+    | tr '[:upper:]' '[:lower:]' \
+  )
+  git checkout -b "${BRANCH_NAME}"
+  git push --set-upstream origin "${BRANCH_NAME}"
+  git checkout master
+  git reset --hard HEAD~1
+)
 
 # http://stackoverflow.com/a/904023/1436320
 mandelbrot() {
