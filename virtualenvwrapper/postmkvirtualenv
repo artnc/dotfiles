@@ -16,7 +16,10 @@ setvirtualenvproject $VIRTUAL_ENV $project_dir
     "folders":
     [
         {
-            "folder_exclude_patterns": ["node_modules"],
+            "folder_exclude_patterns": [
+                "__pycache__",
+                "node_modules"
+            ],
             "path": "$project_dir"
         }
     ]
