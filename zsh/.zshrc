@@ -1,6 +1,6 @@
 ######################################################## Sniff machine identity
 
-[[ $(hostname) = "abra" ]]
+[[ $(hostname) = "absol" ]]
 ARCH_THINKPAD=$?
 [[ $(hostname) = "arbok" ]]
 ARCH_FLEX=$?
@@ -13,6 +13,21 @@ ARCH_RPI=$?
 workrc="$HOME/Documents/Work/Duolingo/duolingo.sh"
 [[ -s "${workrc}" ]] && . "${workrc}"
 
+if [ "$ARCH_THINKPAD" = 0 ]; then
+  # Ruby
+  export PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+
+  # nodenv
+  export PATH="$HOME/.nodenv/bin:$PATH"
+  eval "$(nodenv init -)"
+
+  # Android Studio
+  export ANDROID_HOME=$HOME/Android/Sdk
+  export ANDROID_NDK_HOME=$HOME/Android/Sdk/ndk-bundle
+  export PATH=$ANDROID_HOME/tools:$PATH
+  export PATH=$ANDROID_HOME/platform-tools:$PATH
+  export PATH=$ANDROID_NDK_HOME:$PATH
+fi
 if [ "$ARCH_FLEX" = 0 ]; then
   export EDITOR=/usr/bin/nvim
   export GOPATH=$HOME/go
