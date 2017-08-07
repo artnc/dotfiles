@@ -56,13 +56,13 @@ if [[ "${DISPLAY}" != "perc" ]]; then
   MEMINFO=$(echo "${MEMINFO}*${ONE_KB}" | bc -l)
 
   if [[ "${MEMINFO}" -ge "${ONE_TB}" ]]; then
-    MEMINFO=$(echo "scale=3;${MEMINFO}/${ONE_TB}" | bc -l)"tb"
+    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_TB}" | bc -l)" TB"
   elif [[ "${MEMINFO}" -ge "${ONE_GB}" ]]; then
-    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_GB}" | bc -l)"gb"
+    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_GB}" | bc -l)" GB"
   elif [[ "${MEMINFO}" -ge "${ONE_MB}" ]]; then
-    MEMINFO=$(echo "scale=1;${MEMINFO}/${ONE_MB}" | bc -l)"mb"
+    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_MB}" | bc -l)" MB"
   else
-    MEMINFO=$(echo "scale=0;${MEMINFO}/${ONE_KB}" | bc -l)"kb"
+    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_KB}" | bc -l)" KB"
   fi
 fi
 

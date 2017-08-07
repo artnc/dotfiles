@@ -90,7 +90,7 @@ interval=10
 [memory]
 command=~/.config/i3blocks/blocklets/memory
 label=MEM
-instance=mem;perc
+instance=mem;used
 interval=30
 
 # CPU usage
