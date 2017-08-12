@@ -1,90 +1,79 @@
-######################################################## Sniff machine identity
+start=$(date +%s.%N)
 
-[[ $(hostname) = "absol" ]]
-ARCH_THINKPAD=$?
-[[ $(hostname) = "arbok" ]]
-ARCH_FLEX=$?
-[[ $(hostname) = "artpi" ]]
-ARCH_RPI=$?
+##################################################################### Functions
 
-######################################################### Environment variables
+# Mainly intended for use inside this .zshrc
+command_exists() {
+  command -v "$1" > /dev/null
+}
+source_if_exists() {
+  [[ -f "$1" ]] && . "$1"
+}
 
-# Stuff that shouldn't be pushed to public GitHub
-workrc="$HOME/Documents/Work/Duolingo/duolingo.sh"
-[[ -s "${workrc}" ]] && . "${workrc}"
+# "p" as in "print". Delegates to `ls` for folders and `less` for files
+p() {
+  if [[ -f $1 ]]; then
+    less "$1"
+  else
+    ls -AGl "$1"
+  fi
+}
 
-if [ "$ARCH_THINKPAD" = 0 ]; then
-  # Ruby
-  export PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+# git commands (easier than oh-my-zsh plugin?)
+gc() {
+  if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
+    git add -A
+    git commit -v -m "$1"
+  else
+    echo "Commit message was ${#1} characters long."
+  fi
+}
 
-  # nodenv
-  export PATH="$HOME/.nodenv/bin:$PATH"
-  eval "$(nodenv init -)"
-
-  # Android Studio
-  export ANDROID_HOME=$HOME/Android/Sdk
-  export ANDROID_NDK_HOME=$HOME/Android/Sdk/ndk-bundle
-  export PATH=$ANDROID_HOME/tools:$PATH
-  export PATH=$ANDROID_HOME/platform-tools:$PATH
-  export PATH=$ANDROID_NDK_HOME:$PATH
-fi
-if [ "$ARCH_FLEX" = 0 ]; then
-  export EDITOR=/usr/bin/nvim
-  export GOPATH=$HOME/go
-  export PATH=$PATH:/home/art/.gem/ruby/2.3.0/bin:$GOPATH/bin
-fi
-
-export TERM=xterm-256color
-
-# React Native
-export ANDROID_HOME=$HOME/Android/Sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-
-# virtualenvwrapper
-if [[ -f /usr/bin/virtualenvwrapper.sh ]]; then
-  export WORKON_HOME=~/.virtualenvs
-  export PROJECT_HOME=~/git
-  . /usr/bin/virtualenvwrapper.sh
-  alias wo='workon'
-fi
+# This function converts HEAD into a GitHub branch. Workflow:
+#   1. Write code while on master
+#   2. Commit change directly onto master
+#   3. Run `gpr` to fork branch, push to GitHub, and reset local master
+gpr() (
+  set -eu
+  local -r BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+    | head -1 \
+    | xargs -0 echo -n \
+    | tr '[:space:]' '-' \
+    | tr -cd '[:alnum:]-' \
+    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
+    | tr '[:upper:]' '[:lower:]' \
+  )
+  git checkout -b "${BRANCH_NAME}"
+  git push --set-upstream origin "${BRANCH_NAME}"
+  git checkout master
+  git reset --hard HEAD~1
+)
 
 ################################################################# Configure zsh
 
 # Theme
-ZSH_THEME=""
+export ZSH_THEME=""
 
 # Show red dots while waiting for completion
-COMPLETION_WAITING_DOTS="true"
+export COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh
-if [ "$ARCH_RPI" = 0 ]; then
-  ZSH=~/.oh-my-zsh
-  plugins=(zsh-syntax-highlighting)
-  . $ZSH/oh-my-zsh.sh
+if [[ -d "${HOME}/.oh-my-zsh" ]]; then
+  ZSH="${HOME}/.oh-my-zsh"
+  plugins=(zsh-syntax-highlighting) . "${ZSH}/oh-my-zsh.sh"
 else
   ZSH=/usr/share/oh-my-zsh
-  . $ZSH/oh-my-zsh.sh
+  . "${ZSH}/oh-my-zsh.sh"
   . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-# nvm
-# Adding `--no-use` can speed this up (https://github.com/creationix/nvm/issues/782)
-# but results in a bug where `nvm use` deletes the current directory's node_modules.
-# An alternative possibly worth investigating is zsh-nvm
-[[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh
-# [[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh --no-use
-
-# fzf
-[[ -s /usr/share/fzf/key-bindings.zsh ]] && . /usr/share/fzf/key-bindings.zsh
-[[ -s /usr/share/fzf/completion.zsh ]] && . /usr/share/fzf/completion.zsh
-
 # Command history settings
-HISTSIZE=10000
-SAVEHIST=10000
-HISTFILE=$HOME/.zsh_history
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE="${HOME}/.zsh_history"
 
 # Show how long a command took if it exceeded this (in seconds)
-REPORTTIME=10
+export REPORTTIME=10
 
 # Options
 setopt auto_cd              # Don't need to type cd to cd
@@ -97,15 +86,13 @@ setopt no_hup               # Run all background processes with nohup
 setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
 setopt prompt_subst         # Enable prompt variable expansion
 
-######################################################################## Prompt
-
 # Prompt formatting
 autoload -U colors && colors
 
 function gitprompt {
   if [ -d .git ]; then
     branch="$(git rev-parse --abbrev-ref HEAD)"
-    if [ "$branch" = "(detached from FETCH_HEAD)" ]; then
+    if [ "${branch}" = "(detached from FETCH_HEAD)" ]; then
       message="$(git --no-pager log -1 --pretty=%s)"
       branch="(${message:0:24})"
     fi
@@ -115,51 +102,59 @@ function gitprompt {
   fi
 }
 
-PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
+export PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 
 ####################################################################### Aliases
 
 # Switch between QWERTY and Dvorak
-alias aoeu='setxkbmap us && xmodmap ~/.Xmodmap'
-alias asdf='setxkbmap dvorak && xmodmap ~/.Xmodmap'
-alias thai='setxkbmap -layout th -variant pat && xmodmap ~/.Xmodmap'
-alias  ้ทงก='setxkbmap dvorak && xmodmap ~/.Xmodmap'
+if command_exists setxkbmap; then
+  alias aoeu='setxkbmap us && xmodmap ${HOME}/.Xmodmap'
+  alias asdf='setxkbmap dvorak && xmodmap ${HOME}/.Xmodmap'
+  alias thai='setxkbmap -layout th -variant pat && xmodmap ${HOME}/.Xmodmap'
+  alias  ้ทงก='setxkbmap dvorak && xmodmap ${HOME}/.Xmodmap'
+fi
 
 # Pipe stdout to clipboard via echo "foo" | xc
-alias xc='xclip -selection clipboard'
+if command_exists xclip; then
+  alias xc='xclip -selection clipboard'
+fi
 
 # Linux equivalent of Mac `open`
 alias open='xdg-open'
 
 # Pacaur
-alias pi='pacaur -S'
-alias pu='pacaur -Syu'
+if command_exists pacaur; then
+  alias pi='pacaur -S'
+  alias pu='pacaur -Syu'
+fi
 
 # Default programs
-alias -s c='subl3'
-alias -s conf='subl3'
-alias -s cpp='subl3'
-alias -s css='subl3'
-alias -s h='subl3'
-alias -s hpp='subl3'
-alias -s hs='subl3'
-alias -s html='subl3'
-alias -s js='subl3'
-alias -s md='subl3'
-alias -s pdf='evince'
-alias -s php='subl3'
-alias -s sass='subl3'
-alias -s scss='subl3'
-alias -s tex='subl3'
-alias -s txt='subl3'
-alias -s xml='subl3'
+if command_exists subl3; then
+  alias -s c='subl3'
+  alias -s conf='subl3'
+  alias -s cpp='subl3'
+  alias -s css='subl3'
+  alias -s h='subl3'
+  alias -s hpp='subl3'
+  alias -s hs='subl3'
+  alias -s html='subl3'
+  alias -s js='subl3'
+  alias -s md='subl3'
+  alias -s pdf='evince'
+  alias -s php='subl3'
+  alias -s sass='subl3'
+  alias -s scss='subl3'
+  alias -s tex='subl3'
+  alias -s txt='subl3'
+  alias -s xml='subl3'
+fi
 
 # Python
 alias ipy='ipython'
 alias pyprof='python -m cProfile -s "time"'
 
 # Folder bookmarks
-alias g='cd $HOME/git'
+alias g='cd ${HOME}/git'
 
 # Append always-used options to common commands
 alias ag='ag --case-sensitive --color-line-number "0;32" --color-path "0;35" --hidden --nobreak --noheading'
@@ -188,125 +183,56 @@ alias gsp='git stash pop'
 alias gss='git stash save -u'
 alias gt='git status -uall'
 
-# Kubernetes
-alias k='kubectl'
-alias kc='kubectl create -f'
-alias kccc='kubectl config current-context'
-alias kcuc='kubectl config use-context'
-alias kd='kubectl describe'
-alias kdj='kubectl describe job'
-alias kdn='kubectl describe node'
-alias kdp='kubectl describe pod'
-alias kds='kubectl describe secret'
-alias ke='kubectl exec -it'
-alias kg='kubectl get'
-alias kgj='kubectl get job'
-alias kgjy='kubectl get job -o yaml'
-alias kgn='kubectl get node'
-alias kgny='kubectl get node -o yaml'
-alias kgp='kubectl get pod'
-alias kgpy='kubectl get pod -o yaml'
-alias kgs='kubectl get secret'
-alias kgsy='kubectl get secret -o yaml'
-alias kl='kubectl logs -f'
-alias kx='kubectl delete'
-alias kxj='kubectl delete job'
-alias kxp='kubectl delete pod'
-alias kxs='kubectl delete secret'
+############################################ Environment variables and sourcing
 
-##################################################################### Functions
+export PATH
 
-# "p" as in "print". Delegates to `ls` for folders and `less` for files
-p() {
-  if [[ -f $1 ]]; then
-    less $1
-  else
-    ls -AGl $1
-  fi
-}
+# Android Studio
+if [[ -d "${HOME}/Android/Sdk" ]]; then
+  export ANDROID_HOME="${HOME}/Android/Sdk"
+  export ANDROID_NDK_HOME="${HOME}/Android/Sdk/ndk-bundle"
+  PATH="${ANDROID_NDK_HOME}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${PATH}"
+fi
 
-ns() {
-  kubectl config set-context $(kubectl config current-context) --namespace=$1 > /dev/null
-}
+# Duolingo
+source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
 
-# Combine multiple PDFs into a single output.pdf
-# Example usage: combinepdf input1.pdf input2.pdf input3.pdf
-combinepdf() {
-  gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=./output-unfinished.pdf -dBATCH $*
-  mv ./output-unfinished.pdf ./output.pdf
-}
+# fzf
+source_if_exists /usr/share/fzf/key-bindings.zsh
+source_if_exists /usr/share/fzf/completion.zsh
 
-# Set current directory as Apache document root
-docroot() {
-  sudo rm -f /var/www/html
-  sudo ln -s $PWD /var/www/html
-}
+# nodenvs
+if [[ -d "${HOME}/.nodenv" ]]; then
+  PATH="${HOME}/.nodenv/bin:${PATH}"
+  eval "$(nodenv init -)"
+fi
 
-# Wait 5 seconds and then begin screencast (press 'q' to stop)
-screencast() {
-  sleep 5
-  ffmpeg -f x11grab -s 1920x1200 -i :0.0 -qscale 0 /home/art/Desktop/screencast.mp4
-}
+# nvim
+command_exists nvim && export EDITOR=/usr/bin/nvim
 
-# git commands (easier than oh-my-zsh plugin?)
-gc() {
-  if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
-    git add -A
-    git commit -v -m $1
-  else
-    echo "Commit message was ${#1} characters long."
-  fi
-}
+# nvm
+# Adding `--no-use` can speed this up
+# (https://github.com/creationix/nvm/issues/782) but results in a bug where `nvm
+# use` deletes the current directory's node_modules. An alternative possibly
+# worth investigating is zsh-nvm
+source_if_exists /usr/share/nvm/init-nvm.sh
+# source_if_exists /usr/share/nvm/init-nvm.sh --no-use
 
-# This function converts HEAD into a GitHub branch. Workflow:
-#   1. Write code while on master
-#   2. Commit change directly onto master
-#   3. Run `gpr` to fork branch, push to GitHub, and reset local master
-gpr() (
-  set -eu
-  local -r BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
-    | head -1 \
-    | xargs -0 echo -n \
-    | tr '[:space:]' '-' \
-    | tr -cd '[:alnum:]-' \
-    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
-    | tr '[:upper:]' '[:lower:]' \
-  )
-  git checkout -b "${BRANCH_NAME}"
-  git push --set-upstream origin "${BRANCH_NAME}"
-  git checkout master
-  git reset --hard HEAD~1
-)
+# Ruby
+command_exists ruby && PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 
-# http://stackoverflow.com/a/904023/1436320
-mandelbrot() {
-  local lines columns color a b p q i pnew
-  ((columns=COLUMNS-1, lines=LINES-1, color=0))
-  for ((b=-1.5; b<=1.5; b+=3.0/lines)) do
-    for ((a=-2.0; a<=1; a+=3.0/columns)) do
-      for ((p=0.0, q=0.0, i=0; p*p+q*q < 4 && i < 32; i++)) do
-        ((pnew=p*p-q*q+a, q=2*p*q+b, p=pnew))
-      done
-      ((color=(i/4)%8))
-      echo -n "\\e[4${color}m "
-    done
-    echo
-  done
-}
+# virtualenvwrapper
+if [[ -f /usr/bin/virtualenvwrapper.sh ]]; then
+  export WORKON_HOME="${HOME}/.virtualenvs"
+  export PROJECT_HOME="${HOME}/git"
+  . /usr/bin/virtualenvwrapper.sh
+  alias wo='workon'
+fi
 
-# https://transfer.sh/
-transfer() {
-  if [ $# -eq 0 ]; then
-    echo "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"
-    return 1
-  fi
-  tmpfile=$( mktemp -t transferXXX )
-  if tty -s; then
-    basefile=$(basename "$1" | sed -e 's/[^a-zA-Z0-9._-]/-/g')
-    curl --progress-bar --upload-file "$1" "https://transfer.sh/$basefile" >> $tmpfile
-  else
-    curl --progress-bar --upload-file "-" "https://transfer.sh/$1" >> $tmpfile
-  fi
-  cat $tmpfile
-  rm -f $tmpfile
-}
+# xfce4-terminal
+export TERM=xterm-256color
+
+###############################################################################
+
+end=$(date +%s.%N)
+echo "\e[2m.zshrc took $((end - start))s"
