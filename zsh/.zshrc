@@ -74,6 +74,10 @@ fi
 [[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh
 # [[ -s /usr/share/nvm/init-nvm.sh ]] && . /usr/share/nvm/init-nvm.sh --no-use
 
+# fzf
+[[ -s /usr/share/fzf/key-bindings.zsh ]] && . /usr/share/fzf/key-bindings.zsh
+[[ -s /usr/share/fzf/completion.zsh ]] && . /usr/share/fzf/completion.zsh
+
 # Command history settings
 HISTSIZE=10000
 SAVEHIST=10000
