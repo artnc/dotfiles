@@ -222,10 +222,10 @@ source_if_exists /usr/share/nvm/init-nvm.sh
 command_exists ruby && PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 
 # virtualenvwrapper
-if [[ -f /usr/bin/virtualenvwrapper.sh ]]; then
+if [[ -d "${HOME}/.virtualenvs" ]]; then
   export WORKON_HOME="${HOME}/.virtualenvs"
   export PROJECT_HOME="${HOME}/git"
-  . /usr/bin/virtualenvwrapper.sh
+  source_if_exists /usr/bin/virtualenvwrapper_lazy.sh
   alias wo='workon'
 fi
 
@@ -235,4 +235,5 @@ export TERM=xterm-256color
 ###############################################################################
 
 end=$(date +%s.%N)
-echo "\e[2m.zshrc took $((end - start))s"
+elapsed=$(printf "%.2f" $(echo "${end} - ${start}" | bc))
+echo "\e[2m.zshrc took ${elapsed}s"
