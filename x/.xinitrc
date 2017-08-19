@@ -21,6 +21,9 @@ command -v synclient > /dev/null && {
 # Set wallpaper
 sh ~/.fehbg &
 
+# Because nvidia driver makes fonts huge by default (?!)
+[[ "$(hostname)" = "absol" ]] && xrandr --output DP-2 --dpi 96 --primary
+
 # Autostart programs
 # https://wiki.archlinux.org/index.php/autostarting
 easystroke &
