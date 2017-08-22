@@ -35,6 +35,7 @@ gc() {
 #   3. Run `gpr` to fork branch, push to GitHub, and reset local master
 gpr() (
   set -eu
+  git log -n 1 | grep -q Chaidarun
   local -r BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
     | head -1 \
     | xargs -0 echo -n \
