@@ -12,10 +12,11 @@ source_if_exists() {
 
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
-  if [[ -f $1 ]]; then
-    less "$1"
+  local -r node="${1:-.}"
+  if [[ -f "$node" ]]; then
+    less "$node"
   else
-    ls -AGl "$1"
+    ls -AGl --color=auto "$node"
   fi
 }
 
