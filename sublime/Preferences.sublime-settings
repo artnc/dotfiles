@@ -29,5 +29,7 @@
 	"theme": "Soda Dark 3.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
+	"typescript_tsdk": "/home/art/git/duolingo-web/node_modules/typescript/lib",
+	"update_check": false,
 	"word_wrap": true
 }
