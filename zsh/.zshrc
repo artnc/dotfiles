@@ -155,13 +155,10 @@ fi
 alias ipy='ipython'
 alias pyprof='python -m cProfile -s "time"'
 
-# Folder bookmarks
-alias g='cd ${HOME}/git'
-
 # Append always-used options to common commands
-alias ag='ag --case-sensitive --color-line-number "0;32" --color-path "0;35" --hidden --nobreak --noheading'
 alias df='df -hT'
 alias diff='diff --color=always'
+alias g='rg --hidden --no-heading'
 
 # Git
 alias ga='git add -A'
