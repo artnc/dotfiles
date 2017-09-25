@@ -60,6 +60,12 @@ signal=10
 # interval=10
 # separator=false
 
+# Author: artnc
+[iface2]
+command=hostname -i
+interval=60
+separator=false
+
 [wifi]
 instance=wlp4s0
 interval=10
