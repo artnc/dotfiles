@@ -20,6 +20,20 @@ p() {
   fi
 }
 
+# ripgrep
+g() {
+  shift
+  # ripgrep's `--sort-files` disables parallelism, so we use `sort` instead
+  rg \
+    --color always \
+    --hidden \
+    --line-number \
+    --max-columns 250 \
+    --no-heading \
+    "$@" \
+    | sort
+}
+
 # git commands (easier than oh-my-zsh plugin?)
 gc() {
   if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
@@ -158,7 +172,6 @@ alias pyprof='python -m cProfile -s "time"'
 # Append always-used options to common commands
 alias df='df -hT'
 alias diff='diff --color=always'
-alias g='rg --hidden --no-heading'
 
 # Git
 alias ga='git add -A'
