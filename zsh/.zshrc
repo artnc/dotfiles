@@ -22,8 +22,7 @@ p() {
 
 # ripgrep
 g() {
-  shift
-  # ripgrep's `--sort-files` disables parallelism, so we use `sort` instead
+  # `--sort-files` disables parallelism, so we use `sort` instead
   rg \
     --color always \
     --hidden \
