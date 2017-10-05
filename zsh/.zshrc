@@ -12,11 +12,11 @@ source_if_exists() {
 
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
-  local -r node="${1:-.}"
-  if [[ -f "$node" ]]; then
-    less "$node"
+  local -r path="${1:-.}"
+  if [[ -f "$path" ]]; then
+    less "$path"
   else
-    ls -AGl --color=auto "$node"
+    ls --almost-all --color=auto --no-group -l "$path"
   fi
 }
 
@@ -33,11 +33,11 @@ g() {
     | sort
 }
 
-# git commands (easier than oh-my-zsh plugin?)
+# Stage all files and commit with message
 gc() {
   if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
-    git add -A
-    git commit -v -m "$1"
+    git add --all
+    git commit --message="$1"
   else
     echo "Commit message was ${#1} characters long."
   fi
@@ -173,7 +173,7 @@ alias df='df -hT'
 alias diff='diff --color=always'
 
 # Git
-alias ga='git add -A'
+alias ga='git add --all'
 alias gb='git branch'
 alias gbd='git branch | grep -v " master$" | xargs git branch -D'
 alias gca='git commit --amend'
@@ -183,16 +183,14 @@ alias gd='git diff'
 alias gg='git log'
 alias gk='git checkout'
 alias gkm='git checkout master'
-alias gkt='git checkout testcenter'
 alias gl='git pull'
 alias gp='git push'
 alias gx='git reset'
 alias gxh='git reset --hard'
-alias gls='git review -d'
 alias gsl='git stash list'
 alias gsp='git stash pop'
-alias gss='git stash save -u'
-alias gt='git status -uall'
+alias gss='git stash save --include-untracked'
+alias gt='git status --untracked-files=all'
 
 ############################################ Environment variables and sourcing
 
