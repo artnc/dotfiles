@@ -12,11 +12,11 @@ source_if_exists() {
 
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
-  local -r path="${1:-.}"
+  local path="${1:-.}"
   if [[ -f "$path" ]]; then
-    less "$path"
+    /usr/bin/less "$path"
   else
-    ls --almost-all --color=auto --no-group -l "$path"
+    /usr/bin/ls --almost-all --color=auto --no-group -l "$path"
   fi
 }
 
