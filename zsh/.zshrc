@@ -105,7 +105,7 @@ setopt prompt_subst         # Enable prompt variable expansion
 autoload -U colors && colors
 
 function gitprompt {
-  if [ -d .git ]; then
+  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     branch="$(git rev-parse --abbrev-ref HEAD)"
     if [ "${branch}" = "(detached from FETCH_HEAD)" ]; then
       message="$(git --no-pager log -1 --pretty=%s)"
