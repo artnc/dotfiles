@@ -20,19 +20,6 @@ p() {
   fi
 }
 
-# ripgrep
-g() {
-  # `--sort-files` disables parallelism, so we use `sort` instead
-  rg \
-    --color always \
-    --hidden \
-    --line-number \
-    --max-columns 250 \
-    --no-heading \
-    "$@" \
-    | sort
-}
-
 # Stage all files and commit with message
 gc() {
   if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
@@ -141,6 +128,11 @@ alias open='xdg-open'
 if command_exists pacaur; then
   alias pi='pacaur -S'
   alias pu='pacaur -Syu'
+fi
+
+# Ripgrep
+if command_exists rg; then
+  alias g='rg --color always --hidden --line-number --max-columns 250 --no-heading --sort-files'
 fi
 
 # Default programs
