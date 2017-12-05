@@ -8,6 +8,9 @@ font pango:DejaVu Sans Mono 9
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# Hide title bar of some programs
+for_window [title="(Android Studio|Mozilla Firefox|File Manager)"] border pixel 0
+
 # start a terminal
 bindsym $mod+Return exec xfce4-terminal
 
