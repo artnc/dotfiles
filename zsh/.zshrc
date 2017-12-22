@@ -127,7 +127,7 @@ alias open='xdg-open'
 # Pacaur
 if command_exists pacaur; then
   alias pi='pacaur -S'
-  alias pu='pacaur --noconfirm --noedit -Syu'
+  alias pu='pacaur --noconfirm --noedit -Syu && paccache -r'
 fi
 
 # Ripgrep
