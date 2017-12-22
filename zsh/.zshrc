@@ -217,17 +217,6 @@ if [[ -d "${HOME}/.nodenv" ]]; then
   eval "$(nodenv init -)"
 fi
 
-# nvim
-command_exists nvim && export EDITOR=/usr/bin/nvim
-
-# nvm
-# Adding `--no-use` can speed this up
-# (https://github.com/creationix/nvm/issues/782) but results in a bug where `nvm
-# use` deletes the current directory's node_modules. An alternative possibly
-# worth investigating is zsh-nvm
-source_if_exists /usr/share/nvm/init-nvm.sh
-# source_if_exists /usr/share/nvm/init-nvm.sh --no-use
-
 # Ruby
 command_exists ruby && PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 
