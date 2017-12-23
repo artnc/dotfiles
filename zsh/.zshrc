@@ -195,6 +195,7 @@ alias gxh='git reset --hard'
 
 ############################################ Environment variables and sourcing
 
+export EDITOR=/usr/bin/nano
 export PATH
 
 # Android Studio
