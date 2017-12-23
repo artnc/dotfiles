@@ -127,7 +127,7 @@ alias open='xdg-open'
 # Pacaur
 if command_exists pacaur; then
   alias pi='pacaur -S'
-  alias pu='pacaur --noconfirm --noedit -Syu && paccache -r'
+  alias pu='pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
   alias px='pacaur -Rs'
 fi
 
