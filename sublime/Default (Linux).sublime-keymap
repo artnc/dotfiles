@@ -10,6 +10,8 @@
   { "keys": ["ctrl+pagedown"], "command": "next_view_in_stack" },
   { "keys": ["ctrl+pageup"], "command": "prev_view_in_stack" },
 
+  { "keys": ["ctrl+y"], "command": "redo" },
+
   // { "keys": ["ctrl+shift+q"], "command": "pylinter" },
 
   // { "keys": ["ctrl+d"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Delete Line.sublime-macro"} },
