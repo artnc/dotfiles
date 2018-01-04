@@ -2,5 +2,5 @@
 # Run `xbindkeys -k` to get the keycodes for a combo
 
 # Paste email (need to sleep so that typing doesn't start while keys are still down)
-"sleep 0.5 && xdotool type artchaidarun@gmail.com"
+"sleep 0.3 && xdotool type artchaidarun@gmail.com"
     Control+Alt+Mod2 + e
