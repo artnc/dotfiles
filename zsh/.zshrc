@@ -59,16 +59,6 @@ export ZSH_THEME=""
 # Show red dots while waiting for completion
 export COMPLETION_WAITING_DOTS="true"
 
-# oh-my-zsh
-if [[ -d "${HOME}/.oh-my-zsh" ]]; then
-  ZSH="${HOME}/.oh-my-zsh"
-  plugins=(zsh-syntax-highlighting) . "${ZSH}/oh-my-zsh.sh"
-else
-  ZSH=/usr/share/oh-my-zsh
-  . "${ZSH}/oh-my-zsh.sh"
-  . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
 # Command history settings
 export HISTSIZE=10000
 export SAVEHIST=10000
@@ -239,6 +229,10 @@ fi
 
 # xfce4-terminal
 export TERM=xterm-256color
+
+# zsh-syntax-highlighting (should appear at end of .zshrc)
+# https://github.com/zsh-users/zsh-syntax-highlighting
+source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ###############################################################################
 
