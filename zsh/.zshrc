@@ -114,15 +114,16 @@ fi
 # Linux equivalent of Mac `open`
 alias open='xdg-open'
 
-# Pacaur
+# pacman / pacaur
 if command_exists pacaur; then
-  pacman_command='pacaur'
+  alias pi='pacaur -S'
+  alias pu='pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
+  alias px='pacaur -Rs'
 else
-  pacman_command='sudo pacman'
+  alias pi='sudo pacman -S'
+  alias pu='sudo pacman -Syu && paccache -rk1 && paccache -ruk0'
+  alias px='sudo pacman -Rs'
 fi
-alias pi="${pacman_command} -S"
-alias pu="${pacman_command} --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0"
-alias px="${pacman_command} -Rs"
 
 # Ripgrep
 if command_exists rg; then
