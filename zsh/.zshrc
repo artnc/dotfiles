@@ -200,8 +200,7 @@ export PATH
 # Android Studio
 if [[ -d "${HOME}/Android/Sdk" ]]; then
   export ANDROID_HOME="${HOME}/Android/Sdk"
-  export ANDROID_NDK_HOME="${HOME}/Android/Sdk/ndk-bundle"
-  PATH="${ANDROID_NDK_HOME}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${PATH}"
+  PATH="${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${PATH}"
 fi
 
 # Duolingo
