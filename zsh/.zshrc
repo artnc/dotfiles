@@ -53,6 +53,12 @@ gpr() (
 
 ################################################################# Configure zsh
 
+# Make Ctrl+Left and Ctrl+Right jump between words. This used to work out of the
+# box but broke around January 2018 for some reason...
+# https://unix.stackexchange.com/a/167045
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
 # Theme
 export ZSH_THEME=""
 
