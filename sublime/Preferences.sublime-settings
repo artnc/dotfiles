@@ -12,7 +12,7 @@
 	[
 		"Vintage"
 	],
-	"node_path": "/home/art/.nvm/versions/node/v6.10.2/bin/node",
+	"node_path": "/home/art/.nodenv/shims/node",
 	"preview_on_click": false,
 	"rulers":
 	[
