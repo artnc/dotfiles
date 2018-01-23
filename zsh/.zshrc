@@ -65,6 +65,12 @@ export ZSH_THEME=""
 # Show red dots while waiting for completion
 export COMPLETION_WAITING_DOTS="true"
 
+# oh-my-zsh
+if [[ -d "/usr/share/oh-my-zsh" ]]; then
+  ZSH=/usr/share/oh-my-zsh
+  . "${ZSH}/oh-my-zsh.sh"
+fi
+
 # Command history settings
 export HISTSIZE=10000
 export SAVEHIST=10000
