@@ -202,6 +202,7 @@ alias gss='git stash save --include-untracked'
 alias gt='git status --untracked-files=all'
 alias gw='git show'
 alias gws='git show --stat'
+alias gww='git show -w'
 alias gx='git reset'
 alias gxh='git reset --hard'
 
