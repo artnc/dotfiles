@@ -100,7 +100,8 @@ function gitprompt {
       message="$(git --no-pager log -1 --pretty=%s)"
       branch="(${message:0:24})"
     fi
-    stashmarker="$([[ $(git stash list 2> /dev/null | tail -n1) != '' ]] && echo '*')"
+    num_stashes="$(git stash list | wc -l)"
+    stashmarker="$([[ "$num_stashes" != '0' ]] && printf '*%.0s' {1..$num_stashes})"
     cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
     echo "%B%{$fg[$cleanliness]%} $branch$stashmarker%{$reset_color%}%b"
   fi
