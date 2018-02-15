@@ -31,13 +31,14 @@ gc() {
 }
 
 # This function converts HEAD into a GitHub branch. Workflow:
-#   1. Write code while on master
+#   1. Write code while on any branch
 #   2. Commit change directly onto master
-#   3. Run `gpr` to fork branch, push to GitHub, and reset local master
+#   3. Run `gpr` to fork branch, push to GitHub, and reset previous branch
 gpr() (
   set -eu
   git log -n 1 | grep -q Chaidarun
-  local -r BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+  local -r PARENT_BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+  local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
     | head -1 \
     | xargs -0 echo -n \
     | tr '[:space:]' '-' \
@@ -45,9 +46,9 @@ gpr() (
     | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
     | tr '[:upper:]' '[:lower:]' \
   )
-  git checkout -b "${BRANCH_NAME}"
-  git push --set-upstream origin "${BRANCH_NAME}"
-  git checkout master
+  git checkout -b "${NEW_BRANCH_NAME}"
+  git push --set-upstream origin "${NEW_BRANCH_NAME}"
+  git checkout "${PARENT_BRANCH_NAME}"
   git reset --hard HEAD~1
 )
 
