@@ -22,5 +22,6 @@ ln -s ~/git/dotfiles/x/.xbindkeysrc ~/.xbindkeysrc
 ln -s ~/git/dotfiles/x/.xinitrc ~/.xinitrc
 ln -s ~/git/dotfiles/x/.Xmodmap ~/.Xmodmap
 ln -s ~/git/dotfiles/xfce4-terminal/terminalrc ~/.config/xfce4/terminal/terminalrc
+ln -s ~/git/dotfiles/yapf ~/.config/yapf
 ln -s ~/git/dotfiles/zsh/.zshrc ~/.zshrc
 ```
