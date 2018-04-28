@@ -5,6 +5,9 @@ set $mod Mod4
 # is used in the bar {} block below.
 font pango:DejaVu Sans Mono 9
 
+# Disable focused window styling by setting it equal to unfocused styling
+client.focused #333333 #222222 #888888 #292d2e #222222
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
