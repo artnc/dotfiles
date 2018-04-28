@@ -174,6 +174,11 @@ alias df='df -hT'
 alias diff='diff --color=always'
 
 # Git
+alias g2='git bisect'
+alias g2b='git bisect bad'
+alias g2g='git bisect good'
+alias g2r='git bisect reset'
+alias g2s='git bisect start'
 alias ga='git add --all'
 alias gb='git branch'
 alias gbd='git branch | grep -v " master$" | xargs git branch -D'
