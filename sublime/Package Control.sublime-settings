@@ -20,8 +20,6 @@
 		"Sass",
 		"SubLilyPond",
 		"SublimeLinter",
-		"SublimeLinter-jscs",
-		"SublimeLinter-jshint",
 		"SublimeLinter-pylint",
 		"SublimeLinter-shellcheck",
 		"Terraform",
