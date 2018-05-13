@@ -9,6 +9,7 @@ ln -s ~/git/dotfiles/easystroke ~/.easystroke
 ln -s ~/git/dotfiles/feh/.fehbg ~/.fehbg
 ln -s ~/git/dotfiles/fontconfig ~/.config/fontconfig
 ln -s ~/git/dotfiles/git/.gitconfig ~/.gitconfig
+ln -s ~/git/dotfiles/gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
 ln -s ~/git/dotfiles/gtk-3.0 ~/.config/gtk-3.0
 ln -s ~/git/dotfiles/i3 ~/.config/i3
 ln -s ~/git/dotfiles/i3blocks ~/.config/i3blocks
