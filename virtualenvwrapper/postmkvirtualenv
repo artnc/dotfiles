@@ -1,9 +1,6 @@
 #!/bin/zsh
 # This hook is sourced after a new virtualenv is activated.
 
-# Install utility libraries
-pip install awscli ipython
-
 # Bind to project directory
 project=`basename $VIRTUAL_ENV`
 project_dir=$PROJECT_HOME/$project
