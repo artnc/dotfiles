@@ -109,6 +109,7 @@ function gitprompt {
 }
 
 export PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
+export RPROMPT='%{$fg[green]%}$(date +"%a %d %b %H:%M:%S")%{$reset_color%}'
 
 ####################################################################### Aliases
 
