@@ -129,6 +129,10 @@ fi
 # Linux equivalent of Mac `open`
 alias open='xdg-open'
 
+# adb install
+alias adbd='adb -d install -d -r'
+alias adbe='adb -e install -d -r'
+
 # pacman / pacaur
 if command_exists pacaur; then
   alias pi='pacaur -S'
