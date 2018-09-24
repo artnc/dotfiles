@@ -14,7 +14,7 @@ source_if_exists() {
 p() {
   local path="${1:-.}"
   if [[ -f "$path" ]]; then
-    /usr/bin/less "$path"
+    /usr/bin/less -N "$path"
   else
     /usr/bin/ls --almost-all --color=auto --no-group -l "$path"
   fi
