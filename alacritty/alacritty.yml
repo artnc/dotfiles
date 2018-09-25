@@ -43,7 +43,7 @@ font:
   offset:
     x: 0.0
     y: 1.0
-  size: 9.0
+  size: 6.0
 hide_cursor_when_typing: false
 key_bindings:
   - { key: V,        mods: Control|Shift,    action: Paste               }
@@ -164,7 +164,7 @@ visual_bell:
   animation: EaseOutExpo
   duration: 0
 window:
-  decorations: false
+  decorations: none
   dimensions:
     columns: 0
     lines: 0
