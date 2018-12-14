@@ -93,6 +93,11 @@ interval=30
 label=❄
 interval=10
 
+[uptime]
+command=uptime | awk '{print $3 " " $4}' | sed 's/,.*//'
+label=UP
+interval=36000
+
 [memory]
 command=~/.config/i3blocks/blocklets/memory
 label=MEM
