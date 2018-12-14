@@ -73,8 +73,8 @@ if [[ -d "/usr/share/oh-my-zsh" ]]; then
 fi
 
 # Command history settings
-export HISTSIZE=10000
-export SAVEHIST=10000
+export HISTSIZE=100000
+export SAVEHIST=100000
 export HISTFILE="${HOME}/.zsh_history"
 
 # Show how long a command took if it exceeded this (in seconds)
@@ -195,6 +195,7 @@ alias gds='git diff --stat'
 alias gdw='git diff -w'
 alias gf='git fetch'
 alias gg='git log'
+alias gh='git cherry-pick'
 alias gk='git checkout'
 alias gkm='git checkout master'
 alias gl='git pull'
