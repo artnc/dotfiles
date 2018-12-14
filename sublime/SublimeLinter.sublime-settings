@@ -15,8 +15,6 @@
         "pylint": {
             "@disable": false,
             "args": [],
-            "disable": "",
-            "enable": "",
             "excludes": [],
             "paths": [],
             "rcfile": "",
