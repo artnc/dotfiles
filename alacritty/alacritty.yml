@@ -26,25 +26,24 @@ colors:
      magenta: '0xff00ff'
      cyan:    '0x00ffff'
      white:   '0xffffff'
-cursor_style: Beam
-custom_cursor_colors: false
+cursor:
+  style: Beam
 draw_bold_text_with_bright_colors: true
 dynamic_title: true
 font:
   bold:
     family: monospace
   glyph_offset:
-    x: 0.0
-    y: 0.0
+    x: 0
+    y: 0
   italic:
     family: monospace
   normal:
     family: monospace
   offset:
-    x: 0.0
-    y: 1.0
-  size: 6.0
-hide_cursor_when_typing: false
+    x: 0
+    y: 1
+  size: 9.0
 key_bindings:
   - { key: V,        mods: Control|Shift,    action: Paste               }
   - { key: C,        mods: Control|Shift,    action: Copy                }
@@ -152,7 +151,8 @@ key_bindings:
 live_config_reload: true
 mouse:
   double_click: { threshold: 300 }
-  faux_scrollback_lines: 1
+  hide_when_typing: false
+  faux_scrolling_lines: 1
   triple_click: { threshold: 300 }
 mouse_bindings:
   - { mouse: Middle, action: PasteSelection }
