@@ -22,7 +22,7 @@
         },
         "shellcheck": {
             "@disable": false,
-            "args": [],
+            "args": ["-x"],
             "exclude": "SC2002",
             "excludes": []
         }
