@@ -23,7 +23,7 @@
         "shellcheck": {
             "@disable": false,
             "args": ["-x"],
-            "exclude": "SC2002",
+            "exclude": "SC2016",
             "excludes": []
         }
     }
