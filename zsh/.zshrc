@@ -34,23 +34,25 @@ gc() {
 #   1. Write code while on any branch
 #   2. Commit change directly onto master
 #   3. Run `gpr` to fork branch, push to GitHub, and reset previous branch
-gpr() (
-  set -eu
-  git log -n 1 | grep -q Chaidarun
-  local -r PARENT_BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-  local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
-    | head -1 \
-    | xargs -0 echo -n \
-    | tr '[:space:]' '-' \
-    | tr -cd '[:alnum:]-' \
-    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
-    | tr '[:upper:]' '[:lower:]' \
+gpr() {
+  (
+    set -eu
+    git log -n 1 | grep -q Chaidarun
+    local -r PARENT_BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+    local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+      | head -1 \
+      | xargs -0 echo -n \
+      | tr '[:space:]' '-' \
+      | tr -cd '[:alnum:]-' \
+      | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
+      | tr '[:upper:]' '[:lower:]' \
+    )
+    git checkout -b "${NEW_BRANCH_NAME}"
+    git push --set-upstream origin "${NEW_BRANCH_NAME}"
+    git checkout "${PARENT_BRANCH_NAME}"
+    git reset --hard HEAD~1
   )
-  git checkout -b "${NEW_BRANCH_NAME}"
-  git push --set-upstream origin "${NEW_BRANCH_NAME}"
-  git checkout "${PARENT_BRANCH_NAME}"
-  git reset --hard HEAD~1
-)
+}
 
 ################################################################# Configure zsh
 
