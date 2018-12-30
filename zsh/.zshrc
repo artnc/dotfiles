@@ -111,6 +111,10 @@ function gitprompt {
 export PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 export RPROMPT=''
 
+# Bash completion compatibility
+autoload bashcompinit
+bashcompinit
+
 ####################################################################### Aliases
 
 # Switch between QWERTY and Dvorak
@@ -233,6 +237,7 @@ fi
 
 # Duolingo
 source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
+source_if_exists "${HOME}/.duolingo/init.sh"
 
 # fzf
 source_if_exists /usr/share/fzf/key-bindings.zsh
