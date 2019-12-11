@@ -43,7 +43,7 @@ font:
   offset:
     x: 0
     y: 1
-  size: 6.0
+  size: 9.0
 key_bindings:
   - { key: V,        mods: Control|Shift,    action: Paste               }
   - { key: C,        mods: Control|Shift,    action: Copy                }
@@ -156,7 +156,6 @@ mouse:
   triple_click: { threshold: 300 }
 mouse_bindings:
   - { mouse: Middle, action: PasteSelection }
-render_timer: false
 selection:
   semantic_escape_chars: ",│`|:\"' ()[]{}<>"
 tabspaces: 8
