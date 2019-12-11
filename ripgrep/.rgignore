@@ -1,3 +1,4 @@
 *.svg
 .git/
+build/
 node_modules/
