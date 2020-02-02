@@ -14,7 +14,7 @@ source_if_exists() {
 p() {
   local path="${1:-.}"
   if [[ -f "$path" ]]; then
-    /usr/bin/less -N "$path"
+    /usr/bin/less "$path"
   else
     /usr/bin/ls --almost-all --color=auto --no-group -l "$path"
   fi
@@ -75,8 +75,8 @@ if [[ -d "/usr/share/oh-my-zsh" ]]; then
 fi
 
 # Command history settings
-export HISTSIZE=100000
-export SAVEHIST=100000
+export HISTSIZE=1000000
+export SAVEHIST=1000000
 export HISTFILE="${HOME}/.zsh_history"
 
 # Show how long a command took if it exceeded this (in seconds)
@@ -97,7 +97,7 @@ setopt prompt_subst         # Enable prompt variable expansion
 autoload -U colors && colors
 
 function gitprompt {
-  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+  if git rev-parse HEAD > /dev/null 2>&1; then
     branch="$(git rev-parse --abbrev-ref HEAD)"
     if [ "${branch}" = "(detached from FETCH_HEAD)" ]; then
       message="$(git --no-pager log -1 --pretty=%s)"
@@ -139,10 +139,16 @@ alias open='xdg-open'
 alias adbd='adb -d install -d -r'
 alias adbe='adb -e install -d -r'
 
+# make
+alias m='make'
+
 # pacman / pacaur
 if command_exists pacaur; then
   alias pi='pacaur -S'
-  alias pu='pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
+  # If a dropbox.desktop file is left over from a previously failed upgrade,
+  # the next upgrade will fail. The package maintainer refuses to fix this :|
+  # https://aur.archlinux.org/packages/dropbox/#comment-717660
+  alias pu='sudo rm -f /usr/share/applications/dropbox.desktop && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
   alias px='pacaur -Rs'
 else
   alias pi='sudo pacman -S'
@@ -152,7 +158,7 @@ fi
 
 # Ripgrep
 if command_exists rg; then
-  alias g='rg --color always --hidden --line-number --max-columns 250 --no-heading --sort-files'
+  alias g='rg --hidden --line-number --max-columns 250 --no-heading --sort-files'
 fi
 
 # Default programs
@@ -182,7 +188,6 @@ alias pyprof='python -m cProfile -s "time"'
 
 # Append always-used options to common commands
 alias df='df -hT'
-alias diff='diff --color=always'
 
 # Git
 alias g2='git bisect'
@@ -226,10 +231,15 @@ alias gww='git show -w'
 alias gx='git reset'
 alias gxh='git reset --hard'
 
+# Sublime Text
+alias s='subl3'
+
 ############################################ Environment variables and sourcing
 
 export EDITOR=/usr/bin/nano
 export PATH
+
+PATH="${HOME}/bin:${PATH}"
 
 # Android Studio
 if [[ -d "${HOME}/Android/Sdk" ]]; then
@@ -244,6 +254,12 @@ source_if_exists "${HOME}/.duolingo/init.sh"
 # fzf
 source_if_exists /usr/share/fzf/key-bindings.zsh
 source_if_exists /usr/share/fzf/completion.zsh
+if command_exists fzf; then
+  if command_exists fd; then
+    export FZF_DEFAULT_COMMAND='fd --type f'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  fi
+fi
 
 # nodenvs
 if [[ -d "${HOME}/.nodenv" ]]; then
@@ -252,7 +268,7 @@ if [[ -d "${HOME}/.nodenv" ]]; then
 fi
 
 # Ruby
-command_exists ruby && PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
+command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
