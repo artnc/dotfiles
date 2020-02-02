@@ -1,0 +1,18 @@
+{
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "editor.minimap.enabled": false,
+    "workbench.startupEditor": "newUntitledFile",
+    "editor.fontFamily": "Monospace",
+    "editor.fontSize": 12,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.wordWrap": "on",
+    "files.exclude": {
+        "**/node_modules": true
+    },
+    "editor.folding": false,
+    "editor.glyphMargin": false,
+    "editor.scrollBeyondLastLine": false,
+    "window.restoreWindows": "all",
+    "workbench.colorTheme": "Predawn Twilight"
+}

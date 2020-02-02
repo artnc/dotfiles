@@ -5,6 +5,7 @@ dotfiles
 mkdir -p ~/.config/sublime-text-3/Packages
 ln -s ~/git/dotfiles/ag/.agignore ~/.agignore
 ln -s ~/git/dotfiles/alacritty ~/.config/alacritty
+ln -s ~/git/dotfiles/code/settings.json ~/.config/Code/User/settings.json
 ln -s ~/git/dotfiles/easystroke ~/.easystroke
 ln -s ~/git/dotfiles/feh/.fehbg ~/.fehbg
 ln -s ~/git/dotfiles/fontconfig ~/.config/fontconfig
