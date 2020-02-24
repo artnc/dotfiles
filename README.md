@@ -14,6 +14,7 @@ ln -s ~/git/dotfiles/gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
 ln -s ~/git/dotfiles/gtk-3.0 ~/.config/gtk-3.0
 ln -s ~/git/dotfiles/i3 ~/.config/i3
 ln -s ~/git/dotfiles/i3blocks ~/.config/i3blocks
+ln -s ~/git/dotfiles/iftop/.iftoprc ~/.iftoprc
 ln -s ~/git/dotfiles/nano/.nanorc ~/.nanorc
 ln -s ~/git/dotfiles/pylint/.pylintrc ~/.pylintrc
 ln -s ~/git/dotfiles/ripgrep/.rgignore ~/.rgignore

@@ -1,0 +1,4 @@
+line-display: one-line-both
+log-scale: no
+show-totals: yes
+use-bytes: yes
