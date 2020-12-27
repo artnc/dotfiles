@@ -7,3 +7,7 @@
     Control+Alt+Mod2 + e
 "sleep 0.3 && xdotool type $(printf %s YXJ0QGR1b2xpbmdvLmNvbQ== | base64 -d)"
     Control+Alt+Mod2 + d
+
+# Toggle between Dvorak and Pattachote
+"if setxkbmap -query | grep -q dvorak; then setxkbmap -layout th -variant pat && xmodmap ${HOME}/.Xmodmap; else setxkbmap dvorak && xmodmap ${HOME}/.Xmodmap; fi"
+    Print
