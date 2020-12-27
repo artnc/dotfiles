@@ -26,13 +26,21 @@ sh ~/.fehbg &
 
 # Autostart programs
 # https://wiki.archlinux.org/index.php/autostarting
+echo 'Starting easystroke...'
 easystroke &
+echo 'Starting ssh-agent...'
+eval `ssh-agent -s`
+# echo 'Starting mullvad-vpn...'
+# mullvad-vpn &
+echo 'Starting numlockx...'
 numlockx &
+echo 'Starting syncthing-gtk...'
 syncthing-gtk &
+echo 'Starting xbindkeys...'
 xbindkeys
-xfce4-power-manager
+echo 'Starting xfce4-power-manager...'
+xfce4-power-manager &
+echo 'Starting xss-lock...'
 xss-lock -- ~/.config/i3/lock-screen.sh &
-
-# Start i3 (must be last command in this file!)
-#exec startxfce4
-exec i3
+echo 'Starting i3...'
+exec i3 # Must be last command in this file!
