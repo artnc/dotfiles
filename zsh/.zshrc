@@ -113,9 +113,9 @@ function gitprompt {
 export PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 export RPROMPT=''
 
-# Bash completion compatibility
-autoload bashcompinit
-bashcompinit
+# Command completions
+autoload -Uz compinit && compinit
+autoload bashcompinit && bashcompinit
 
 ####################################################################### Aliases
 
@@ -148,7 +148,7 @@ if command_exists pacaur; then
   # If a dropbox.desktop file is left over from a previously failed upgrade,
   # the next upgrade will fail. The package maintainer refuses to fix this :|
   # https://aur.archlinux.org/packages/dropbox/#comment-717660
-  alias pu='sudo rm -f /usr/share/applications/dropbox.desktop && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
+  alias pu='sudo rm -f /usr/share/applications/dropbox.desktop ~/.cache/pacaur/dropbox/src/dropbox.desktop && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
   alias px='pacaur -Rs'
 else
   alias pi='sudo pacman -S'
@@ -247,6 +247,11 @@ if [[ -d "${HOME}/Android/Sdk" ]]; then
   PATH="${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${PATH}"
 fi
 
+# direnv
+if command_exists direnv; then
+  eval "$(direnv hook zsh)"
+fi
+
 # Duolingo
 source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
 source_if_exists "${HOME}/.duolingo/init.sh"
@@ -261,14 +266,26 @@ if command_exists fzf; then
   fi
 fi
 
-# nodenvs
+# nodenv
 if [[ -d "${HOME}/.nodenv" ]]; then
   PATH="${HOME}/.nodenv/bin:${PATH}"
   eval "$(nodenv init -)"
 fi
 
+# Rclone
+# https://rclone.org/docs/#environment-variables
+if command_exists rclone; then
+  # https://rclone.org/b2/#fast-list
+  export RCLONE_FAST_LIST=true
+  # https://rclone.org/docs/#p-progress
+  export RCLONE_PROGRESS=true
+  # https://rclone.org/b2/#transfers
+  export RCLONE_TRANSFERS=32
+fi
+
 # Ruby
 command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
+command_exists rbenv && eval "$(rbenv init -)"
 
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
