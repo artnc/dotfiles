@@ -89,6 +89,18 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
+# https://unix.stackexchange.com/a/566593
+bindsym $mod+mod2+KP_1 workspace 1
+bindsym $mod+mod2+KP_2 workspace 2
+bindsym $mod+mod2+KP_3 workspace 3
+bindsym $mod+mod2+KP_4 workspace 4
+bindsym $mod+mod2+KP_5 workspace 5
+bindsym $mod+mod2+KP_6 workspace 6
+bindsym $mod+mod2+KP_7 workspace 7
+bindsym $mod+mod2+KP_8 workspace 8
+bindsym $mod+mod2+KP_9 workspace 9
+bindsym $mod+mod2+KP_0 workspace 10
+
 # switch to previous/next workspace
 bindsym $mod+Shift+Tab workspace prev
 bindsym $mod+Tab workspace next
