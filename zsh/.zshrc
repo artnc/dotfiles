@@ -247,6 +247,9 @@ if [[ -d "${HOME}/Android/Sdk" ]]; then
   PATH="${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${PATH}"
 fi
 
+# awslogs
+PATH="${HOME}/.local/bin:${PATH}"
+
 # direnv
 if command_exists direnv; then
   eval "$(direnv hook zsh)"
