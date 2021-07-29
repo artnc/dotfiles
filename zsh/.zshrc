@@ -162,24 +162,24 @@ if command_exists rg; then
 fi
 
 # Default programs
-if command_exists subl3; then
-  alias -s c='subl3'
-  alias -s conf='subl3'
-  alias -s cpp='subl3'
-  alias -s css='subl3'
-  alias -s h='subl3'
-  alias -s hpp='subl3'
-  alias -s hs='subl3'
-  alias -s html='subl3'
-  alias -s js='subl3'
-  alias -s md='subl3'
+if command_exists subl; then
+  alias -s c='subl'
+  alias -s conf='subl'
+  alias -s cpp='subl'
+  alias -s css='subl'
+  alias -s h='subl'
+  alias -s hpp='subl'
+  alias -s hs='subl'
+  alias -s html='subl'
+  alias -s js='subl'
+  alias -s md='subl'
   alias -s pdf='evince'
-  alias -s php='subl3'
-  alias -s sass='subl3'
-  alias -s scss='subl3'
-  alias -s tex='subl3'
-  alias -s txt='subl3'
-  alias -s xml='subl3'
+  alias -s php='subl'
+  alias -s sass='subl'
+  alias -s scss='subl'
+  alias -s tex='subl'
+  alias -s txt='subl'
+  alias -s xml='subl'
 fi
 
 # Python
@@ -232,7 +232,7 @@ alias gx='git reset'
 alias gxh='git reset --hard'
 
 # Sublime Text
-alias s='subl3'
+alias s='subl'
 
 ############################################ Environment variables and sourcing
 
