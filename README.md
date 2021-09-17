@@ -16,7 +16,6 @@ ln -s ~/git/dotfiles/i3 ~/.config/i3
 ln -s ~/git/dotfiles/i3blocks ~/.config/i3blocks
 ln -s ~/git/dotfiles/iftop/.iftoprc ~/.iftoprc
 ln -s ~/git/dotfiles/nano/.nanorc ~/.nanorc
-ln -s ~/git/dotfiles/powerlevel10k/.p10k.zsh ~/.p10k.zsh
 ln -s ~/git/dotfiles/pylint/.pylintrc ~/.pylintrc
 ln -s ~/git/dotfiles/ripgrep/.rgignore ~/.rgignore
 ln -s ~/git/dotfiles/sublime ~/.config/sublime-text-3/Packages/User
