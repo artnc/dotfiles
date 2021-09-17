@@ -130,6 +130,9 @@ fi
 # Pipe stdout to clipboard via echo "foo" | xc
 if command_exists xclip; then
   alias xc='xclip -selection clipboard'
+  if command_exists jq; then
+    alias xj='xclip -selection clipboard -o | jq -S . | xclip -selection clipboard'
+  fi
 fi
 
 # Linux equivalent of Mac `open`
