@@ -1,5 +1,12 @@
 start=$(date +%s.%N)
 
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 ##################################################################### Functions
 
 # Mainly intended for use inside this .zshrc
@@ -62,16 +69,13 @@ gpr() {
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
-# Theme
-export ZSH_THEME=""
-
 # Show red dots while waiting for completion
 export COMPLETION_WAITING_DOTS="true"
 
-# oh-my-zsh
-if [[ -d "/usr/share/oh-my-zsh" ]]; then
-  ZSH=/usr/share/oh-my-zsh
-  . "${ZSH}/oh-my-zsh.sh"
+# powerlevel10k
+if [[ -f "/usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  . /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+  source_if_exists "${HOME}/.p10k.zsh"
 fi
 
 # Command history settings
@@ -91,27 +95,6 @@ setopt hist_reduce_blanks   # Strip unnecessary whitespace from history
 setopt inc_append_history   # Immediately append commands to history
 setopt no_hup               # Run all background processes with nohup
 setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
-setopt prompt_subst         # Enable prompt variable expansion
-
-# Prompt formatting
-autoload -U colors && colors
-
-function gitprompt {
-  if git rev-parse HEAD > /dev/null 2>&1; then
-    branch="$(git rev-parse --abbrev-ref HEAD)"
-    if [ "${branch}" = "(detached from FETCH_HEAD)" ]; then
-      message="$(git --no-pager log -1 --pretty=%s)"
-      branch="(${message:0:24})"
-    fi
-    num_stashes="$(git stash list | wc -l)"
-    stashmarker="$([[ "$num_stashes" != '0' ]] && printf '*%.0s' {1..$num_stashes})"
-    cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
-    echo "%B%{$fg[$cleanliness]%} $branch$stashmarker%{$reset_color%}%b"
-  fi
-}
-
-export PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
-export RPROMPT=''
 
 # Command completions
 autoload -Uz compinit && compinit
