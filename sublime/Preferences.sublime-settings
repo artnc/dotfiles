@@ -1,6 +1,7 @@
 {
 	"auto_match_enabled": true,
 	"bold_folder_labels": true,
+	"caret_style": "smooth",
 	"color_scheme": "Packages/User/SublimeLinter/Twilight (SL).tmTheme",
 	"enable_tab_scrolling": false,
 	"ensure_newline_at_eof_on_save": true,
@@ -10,7 +11,7 @@
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
-		"Vintage"
+		"Vintage",
 	],
 	"node_path": "/home/art/.nodenv/shims/node",
 	"preview_on_click": false,
@@ -31,5 +32,7 @@
 	"trim_trailing_white_space_on_save": true,
 	"typescript_tsdk": "/home/art/git/duolingo-web/node_modules/typescript/lib",
 	"update_check": false,
-	"word_wrap": true
+	"word_wrap": true,
+	"dark_color_scheme": "Packages/User/SublimeLinter/Twilight (SL).tmTheme",
+	"light_color_scheme": "Packages/EJS 2/Dracula EJS.tmTheme",
 }

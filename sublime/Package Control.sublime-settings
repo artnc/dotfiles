@@ -5,11 +5,11 @@
 	],
 	"installed_packages":
 	[
-		"Babel",
 		"DocBlockr",
 		"Dockerfile Syntax Highlighting",
 		"EditorConfig",
 		"EJS 2",
+		"Elixir",
 		"Jinja2",
 		"Kotlin",
 		"LaTeXTools",
@@ -26,6 +26,6 @@
 		"Terraform",
 		"Theme - Soda",
 		"Theme - Spacegray",
-		"TypeScript"
-	]
+		"TypeScript",
+	],
 }
