@@ -6,8 +6,6 @@ include /usr/share/nano/sh.nanorc
 
 set autoindent
 set casesensitive
-set morespace
 set mouse
-set smooth
 set tabsize 4
 set tabstospaces
