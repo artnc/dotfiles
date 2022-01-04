@@ -8,7 +8,11 @@ create_symlink() {
   local -r dst="${2}"
   local -r dst_dir="$(dirname "${dst}")"
   [[ -d ${dst_dir} ]] || mkdir -p "${dst_dir}"
-  ln -s "${PWD}/${src}" "${dst}"
+  if [[ -n $CODESPACES ]]; then
+    ln -fs "${PWD}/${src}" "${dst}"
+  else
+    ln -s "${PWD}/${src}" "${dst}"
+  fi
 }
 
 create_symlink ag/.agignore ~/.agignore
