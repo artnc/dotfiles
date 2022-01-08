@@ -6,6 +6,7 @@
 [core]
 	autocrlf = input
 	editor = nano
+	pager = less -+FX
 [push]
 	default = simple
 [credential]
