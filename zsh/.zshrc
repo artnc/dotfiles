@@ -234,8 +234,12 @@ alias gww='git show -w'
 alias gx='git reset'
 alias gxh='git reset --hard'
 
-# Sublime Text
-alias s='subl'
+# Sublime Text / VS Code
+if [[ -n "${CODESPACES}" ]]; then
+  alias s='code'
+else
+  alias s='subl'
+fi
 
 ############################################ Environment variables and sourcing
 
