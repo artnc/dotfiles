@@ -17,6 +17,7 @@ create_symlink() {
 
 create_symlink ag/.agignore ~/.agignore
 create_symlink alacritty ~/.config/alacritty
+create_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
 create_symlink code/settings.json ~/.config/Code/User/settings.json
 create_symlink easystroke ~/.easystroke
 create_symlink feh/.fehbg ~/.fehbg
