@@ -6,13 +6,40 @@
     "editor.fontFamily": "Monospace",
     "editor.fontSize": 12,
     "editor.multiCursorModifier": "ctrlCmd",
+    "editor.rulers": [80, 100],
     "editor.wordWrap": "on",
     "files.exclude": {
-        "**/node_modules": true
+        "**/node_modules": true,
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
     },
-    "editor.folding": false,
     "editor.glyphMargin": false,
-    "editor.scrollBeyondLastLine": false,
     "window.restoreWindows": "all",
-    "workbench.colorTheme": "Predawn Twilight"
+    "workbench.editor.untitled.hint": "hidden",
+    "keyboard.dispatch": "keyCode",
+    "git.autofetch": true,
+    "editor.folding": false,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.fontSize": 12,
+    "problems.decorations.enabled": false,
+    "workbench.panel.defaultLocation": "right",
+    "workbench.editor.decorations.badges": false,
+    "workbench.editor.focusRecentEditorAfterClose": false,
+    "workbench.editor.scrollToSwitchTabs": true,
+    "update.mode": "manual",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "workbench.iconTheme": null,
+    "explorer.autoReveal": false,
+    "window.titleBarStyle": "custom",
+    "workbench.colorTheme": "Predawn Twilight",
+    "workbench.colorCustomizations": {
+        "statusBar.background" : "#303030",
+        "statusBarItem.remoteBackground" : "#303030"
+    }
 }
