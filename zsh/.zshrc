@@ -282,6 +282,9 @@ if [[ -d "${HOME}/.nodenv" ]]; then
   eval "$(nodenv init -)"
 fi
 
+# pre-commit
+export SKIP=no-commit-to-branch,swiftformat,swiftlint
+
 # Rclone
 # https://rclone.org/docs/#environment-variables
 if command_exists rclone; then
