@@ -8,7 +8,7 @@ create_symlink() {
   local -r dst="${2}"
   local -r dst_dir="$(dirname "${dst}")"
   [[ -d ${dst_dir} ]] || mkdir -p "${dst_dir}"
-  if [[ -n $CODESPACES ]]; then
+  if [[ -n "${CODESPACES:-}" ]]; then
     ln -fs "${PWD}/${src}" "${dst}"
   else
     ln -s "${PWD}/${src}" "${dst}"
