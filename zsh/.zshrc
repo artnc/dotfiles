@@ -30,15 +30,15 @@ gc() {
   fi
 }
 
-# This function converts HEAD into a GitHub branch. Workflow:
-#   1. Write code while on any branch
-#   2. Commit change directly onto master
-#   3. Run `gpr` to fork branch, push to GitHub, and reset previous branch
+# This function converts the HEAD commit into a new GitHub branch. Workflow:
+#   1. Write code while on any branch, e.g. master
+#   2. Commit change directly onto branch
+#   3. Run `gpr` ("git push to review") to fork a new branch, push it to
+#      GitHub, and reset the original branch to its previous commit
 gpr() {
   (
     set -eu
-    git log -n 1 | grep -q Chaidarun
-    local -r PARENT_BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+    git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
     local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
       | head -1 \
       | xargs -0 echo -n \
@@ -49,7 +49,7 @@ gpr() {
     )
     git checkout -b "${NEW_BRANCH_NAME}"
     git push --set-upstream origin "${NEW_BRANCH_NAME}"
-    git checkout "${PARENT_BRANCH_NAME}"
+    git checkout -
     git reset --hard HEAD~1
   )
 }
@@ -151,7 +151,7 @@ if command_exists pacaur; then
   # If a dropbox.desktop file is left over from a previously failed upgrade,
   # the next upgrade will fail. The package maintainer refuses to fix this :|
   # https://aur.archlinux.org/packages/dropbox/#comment-717660
-  alias pu='sudo rm -f /usr/share/applications/dropbox.desktop ~/.cache/pacaur/dropbox/src/dropbox.desktop && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0'
+  alias pu='sudo rm -f /usr/share/applications/dropbox.desktop ~/.cache/pacaur/dropbox/src/dropbox.desktop && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0 && pacaur -Sac --noconfirm'
   alias px='pacaur -Rs'
 else
   alias pi='sudo pacman -S'
@@ -261,6 +261,9 @@ PATH="${HOME}/.local/bin:${PATH}"
 if command_exists direnv; then
   eval "$(direnv hook zsh)"
 fi
+
+# Docker
+export DOCKER_BUILDKIT=1
 
 # Duolingo
 source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
