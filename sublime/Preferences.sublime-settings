@@ -14,6 +14,7 @@
 		"Vintage",
 	],
 	"node_path": "/home/art/.nodenv/shims/node",
+	"overlay_scroll_bars": "disabled",
 	"preview_on_click": false,
 	"rulers":
 	[
