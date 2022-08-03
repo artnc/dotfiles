@@ -8,6 +8,7 @@
 	editor = nano
 	pager = less -+FX
 [push]
+	autoSetupRemote = true
 	default = simple
 [credential]
 	helper = cache --timeout=864000
