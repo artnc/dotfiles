@@ -2,16 +2,6 @@
     "debug": true,
     "lint_mode": "manual",
     "linters": {
-        "jscs": {
-            "@disable": false,
-            "args": [],
-            "excludes": []
-        },
-        "jshint": {
-            "@disable": false,
-            "args": [],
-            "excludes": []
-        },
         "pylint": {
             "@disable": false,
             "args": [],

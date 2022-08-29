@@ -311,9 +311,6 @@ if [[ -d "${HOME}/.virtualenvs" ]]; then
   alias wo='workon'
 fi
 
-# xfce4-terminal
-export TERM=xterm-256color
-
 # zsh-syntax-highlighting (should appear at end of .zshrc)
 # https://github.com/zsh-users/zsh-syntax-highlighting
 source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

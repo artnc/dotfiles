@@ -8,7 +8,7 @@ create_symlink() {
   local -r dst="${2}"
   local -r dst_dir="$(dirname "${dst}")"
   [[ -d ${dst_dir} ]] || mkdir -p "${dst_dir}"
-  if [[ -n "${CODESPACES:-}" ]]; then
+  if [[ -n ${CODESPACES:-} ]]; then
     ln -fs "${PWD}/${src}" "${dst}"
   else
     ln -s "${PWD}/${src}" "${dst}"
@@ -38,6 +38,4 @@ create_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualen
 create_symlink x/.xbindkeysrc ~/.xbindkeysrc
 create_symlink x/.xinitrc ~/.xinitrc
 create_symlink x/.Xmodmap ~/.Xmodmap
-create_symlink xfce4-terminal/terminalrc ~/.config/xfce4/terminal/terminalrc
-create_symlink yapf ~/.config/yapf
 create_symlink zsh/.zshrc ~/.zshrc

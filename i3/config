@@ -14,9 +14,6 @@ floating_modifier $mod
 # Hide title bar of some programs
 for_window [title="(Android Studio|Mozilla Firefox|File Manager)"] border pixel 0
 
-# start a terminal
-bindsym $mod+Return exec xfce4-terminal
-
 # kill focused window
 bindsym $mod+Shift+apostrophe kill
 
