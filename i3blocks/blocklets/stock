@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eu
+
+ticker="${BLOCK_INSTANCE}"
+
+cache_file="/tmp/stock-${ticker}.txt"
+if date +%a | grep -qE '^Mon|Tue|Wed|Thu|Fri$'; then
+  minute_of_day="$(date '+(%H*60)+%M' | bc)"
+  if ((minute_of_day > 570 && minute_of_day < 960)); then
+    curl -ks \
+      "https://cloud.iexapis.com/stable/stock/${ticker}/quote/latestPrice?token=${IEX_TOKEN}" \
+      > "${cache_file}" || true
+  fi
+fi
+echo "$(cat "${cache_file}" | xargs printf '%.2f')"
