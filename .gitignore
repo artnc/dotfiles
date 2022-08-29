@@ -1,5 +1,6 @@
 *.merged-ca-bundle
 *.sublime-workspace
+gtk-3.0/bookmarks
 sublime/GoSublime*
 sublime/Package Control.cache/
 sublime/Package Control.last-run
