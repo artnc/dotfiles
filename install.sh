@@ -25,6 +25,7 @@ create_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
 create_symlink code/settings.json ~/.config/Code/User/settings.json
 create_symlink easystroke ~/.easystroke
 create_symlink feh/.fehbg ~/.fehbg
+create_symlink git/.git-template ~/.git-template
 create_symlink git/.gitconfig ~/.gitconfig
 create_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
 create_symlink gtk-3.0 ~/.config/gtk-3.0
