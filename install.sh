@@ -9,9 +9,13 @@ create_symlink() {
   local -r dst_dir="$(dirname "${dst}")"
   [[ -d ${dst_dir} ]] || mkdir -p "${dst_dir}"
   if [[ -n ${CODESPACES:-} ]]; then
+    echo "Creating ${dst}..."
     ln -fs "${PWD}/${src}" "${dst}"
+  elif [[ -f ${dst} ]] || [[ -d ${dst} ]]; then
+    echo "Found existing ${dst}"
   else
-    ln -s "${PWD}/${src}" "${dst}"
+    echo "Creating ${dst}..."
+    echo "${PWD}/${src}" "${dst}"
   fi
 }
 
@@ -21,7 +25,6 @@ create_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
 create_symlink code/settings.json ~/.config/Code/User/settings.json
 create_symlink easystroke ~/.easystroke
 create_symlink feh/.fehbg ~/.fehbg
-create_symlink fontconfig ~/.config/fontconfig
 create_symlink git/.gitconfig ~/.gitconfig
 create_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
 create_symlink gtk-3.0 ~/.config/gtk-3.0
