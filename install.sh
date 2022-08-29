@@ -15,7 +15,6 @@ create_symlink() {
     echo "Found existing ${dst}"
   else
     echo "Creating ${dst}..."
-    echo "${PWD}/${src}" "${dst}"
   fi
 }
 
