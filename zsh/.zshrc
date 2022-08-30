@@ -54,6 +54,28 @@ gpr() {
   )
 }
 
+# Open the current directory's Sublime Text project, creating it if needed
+sp() {
+  project_file="${HOME}/.virtualenvs/$(basename "${PWD}").sublime-project"
+  mkdir -p "$(dirname "${project_file}")"
+  if [[ ! -f "${project_file}" ]]; then
+    cat > "${project_file}" << EOM
+{
+  "folders": [
+    {
+      "folder_exclude_patterns": [
+        "__pycache__",
+        "node_modules"
+      ],
+      "path": "${PWD}"
+    }
+  ]
+}
+EOM
+  fi
+  subl "${project_file}"
+}
+
 ################################################################# Configure zsh
 
 # Make Ctrl+Left and Ctrl+Right jump between words. This used to work out of the
