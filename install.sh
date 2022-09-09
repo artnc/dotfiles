@@ -3,6 +3,14 @@
 
 set -eu
 
+# Colored stderr loggers
+logE() {
+  printf '%s%s%s\n' "$(tput setaf 1)" "${1:-}" "$(tput sgr0)" >&2
+}
+logI() {
+  printf '%s%s%s\n' "$(tput setaf 2)" "${1:-}" "$(tput sgr0)" >&2
+}
+
 # Create missing symlinks within home directory
 ensure_symlink() {
   local -r src="${1}"
@@ -10,12 +18,12 @@ ensure_symlink() {
   local -r dst_dir="$(dirname "${dst}")"
   [[ -d ${dst_dir} ]] || mkdir -p "${dst_dir}"
   if [[ -n ${CODESPACES:-} ]]; then
-    echo "Creating ${dst}..."
+    logI "Creating ${dst}..."
     ln -fs "${PWD}/${src}" "${dst}"
   elif [[ -f ${dst} ]] || [[ -d ${dst} ]]; then
-    echo "Found existing ${dst}"
+    logI "Found existing ${dst}"
   else
-    echo "Creating ${dst}..."
+    logI "Creating ${dst}..."
     ln -s "${PWD}/${src}" "${dst}"
   fi
 }
@@ -51,12 +59,23 @@ while read -r repo_path; do
     repo_hash="$(md5sum "${repo_path}" | awk '{print $1}')"
     system_hash="$(md5sum "${system_path}" | awk '{print $1}')"
     if [[ ${repo_hash} == "${system_hash}" ]]; then
-      echo "Found matching ${system_path}"
+      logI "Found matching ${system_path}"
     else
-      echo "Found mismatched ${system_path}"
+      logE "Found mismatched ${system_path}; please resolve conflicts by hand"
       diff "${repo_path}" "${system_path}"
     fi
   else
-    echo "Didn't find ${system_path}"
+    logE "Didn't find ${system_path}; please copy from this repo"
+  fi
+
+  # https://wiki.archlinux.org/title/Pacman/Pacnew_and_Pacsave
+  pacnew_path="${system_path}.pacnew"
+  if [[ -f ${pacnew_path} ]]; then
+    logE "Found ${pacnew_path}; please merge changes into ${system_path} and delete"
+    diff "${system_path}" "${system_path}.pacnew"
+  fi
+  pacsave_path="${system_path}.pacsave"
+  if [[ -f ${pacsave_path} ]]; then
+    logE "Found ${pacsave_path}; please delete if obsolete"
   fi
 done < <(find etc -type f)
