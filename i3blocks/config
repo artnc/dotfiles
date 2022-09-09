@@ -19,6 +19,10 @@ INLABEL=▼
 OUTLABEL=▲ 
 interval=5
 
+[online]
+command=~/.config/i3blocks/blocklets/online
+interval=5
+
 [battery]
 label=⚡ 
 interval=30

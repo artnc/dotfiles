@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Pings Google to check internet connectivity (more trustworthy than NetworkManager applet)
+
+set -eu
+
+if ping -c1 -q 8.8.8.8 > /dev/null; then
+  echo ONLINE
+  echo ON
+  echo '#00ff00'
+else
+  echo OFFLINE
+  echo OFF
+  echo '#ff0000'
+fi
