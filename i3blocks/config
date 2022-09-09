@@ -11,7 +11,7 @@ interval=once
 signal=10
 
 [iface2]
-command=hostname -i | awk '{$1=$1};1'
+command=hostname -i | awk '{print $1}'
 interval=10
 
 [bandwidth]
