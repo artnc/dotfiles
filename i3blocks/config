@@ -28,9 +28,14 @@ label=❄
 interval=10
 
 [uptime]
-command=uptime | awk '{print $3 " " $4}' | sed 's/,.*//'
+command=uptime | awk '{print $3, $4}' | sed 's/,.*//'
 label=UP 
-interval=36000
+interval=3600
+
+[disk]
+command=/usr/bin/df | grep -E '(/|/home)$' | awk '{print $6, $5}' | sort | awk '{print $2}' | sed ':a; N; $!ba; s/\n/ /g'
+label=DISK 
+interval=86400
 
 [memory]
 command=~/.config/i3blocks/blocklets/memory
