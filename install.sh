@@ -62,7 +62,7 @@ while read -r repo_path; do
       logI "Found matching ${system_path}"
     else
       logE "Found mismatched ${system_path}; please resolve conflicts by hand"
-      diff "${repo_path}" "${system_path}"
+      diff "${repo_path}" "${system_path}" || true
     fi
   else
     logE "Didn't find ${system_path}; please copy from this repo"
@@ -72,7 +72,7 @@ while read -r repo_path; do
   pacnew_path="${system_path}.pacnew"
   if [[ -f ${pacnew_path} ]]; then
     logE "Found ${pacnew_path}; please merge changes into ${system_path} and delete"
-    diff "${system_path}" "${system_path}.pacnew"
+    diff "${system_path}" "${system_path}.pacnew" || true
   fi
   pacsave_path="${system_path}.pacsave"
   if [[ -f ${pacsave_path} ]]; then
