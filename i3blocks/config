@@ -48,6 +48,11 @@ label=CPU
 interval=10
 min_width=CPU:99.00%
 
+[utc]
+label=UTC 
+command=date -u '+%H:%M'
+interval=5
+
 [time]
 command=date '+%a %d %b %H:%M:%S'
 interval=1
