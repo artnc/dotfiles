@@ -1,5 +1,0 @@
-{
-  "cmd": ["lilypond '$file_base_name.ly'"],
-  "selector": "source.lilypond",
-  "shell": true
-}

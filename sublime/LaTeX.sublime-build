@@ -1,6 +1,0 @@
-{
-  "cmd": ["pdflatex -shell-escape --file-line-error-style '$file_name'; rm -f '$file_base_name.log' '$file_base_name.aux' '$file_base_name.out'"],
-  // "cmd": ["pdflatex --file-line-error-style '$file_name'; rm -f '$file_base_name.log' '$file_base_name.aux' '$file_base_name.out'; evince '$file_base_name.pdf'"],
-  "selector": "text.tex.latex",
-  "shell": true
-}

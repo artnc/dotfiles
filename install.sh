@@ -41,9 +41,10 @@ ensure_symlink i3 ~/.config/i3
 ensure_symlink i3blocks ~/.config/i3blocks
 ensure_symlink iftop/.iftoprc ~/.iftoprc
 ensure_symlink nano/.nanorc ~/.nanorc
+ensure_symlink node/package.json ~/package.json
 ensure_symlink pylint/.pylintrc ~/.pylintrc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
-ensure_symlink sublime ~/.config/sublime-text-3/Packages/User
+ensure_symlink sublime ~/.config/sublime-text/Packages/User
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
 ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
@@ -79,3 +80,22 @@ while read -r repo_path; do
     logE "Found ${pacsave_path}; please delete if obsolete"
   fi
 done < <(find etc -type f)
+
+# Install TypeScript definitions to home directory so that Sublime Text 4's LSP
+# plugin can always find them, avoiding errors like "cannot find name". To add
+# new definitions, run in home directory:
+#
+#   npm install --no-package-lock --save-dev --save-exact @types/foobar
+#
+# We use package.json instead of package-lock.json because latter is noisier to
+# track and not super necessary for the sole purpose of exposing type
+# definitions
+if [[ -L "${HOME}/package.json" ]] && command -v npm > /dev/null; then
+  pushd "${HOME}" > /dev/null
+  if npm --no-progress --silent install > /dev/null; then
+    logI 'Ensured up-to-date NPM packages'
+  else
+    logE 'Failed to ensure up-to-date NPM packages'
+  fi
+  popd > /dev/null
+fi

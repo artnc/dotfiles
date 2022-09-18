@@ -1,9 +1,8 @@
 {
-	"clients":
-	{
-		"rust-analyzer":
-		{
-			"enabled": true
-		}
-	}
+	"popup_max_characters_width": 60,
+	"show_code_actions": "",
+	"show_code_actions_in_hover": false,
+	"show_code_lens": "",
+	"show_inlay_hints": true,
+	"show_symbol_action_links": false,
 }

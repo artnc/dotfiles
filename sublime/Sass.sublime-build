@@ -1,5 +1,0 @@
-{
-  "cmd": ["sass --style compressed '$file_name' '$file_base_name.css'"],
-  "selector": "source.sass",
-  "shell": true
-}

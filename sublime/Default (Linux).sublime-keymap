@@ -1,20 +1,18 @@
 [
+  // Navigate tabs in displayed order
   { "keys": ["ctrl+tab"], "command": "next_view" },
   { "keys": ["ctrl+shift+tab"], "command": "prev_view" },
 
-
+  // Disable font size adjustments
   { "keys": ["ctrl++"], "command": "unbound" },
   { "keys": ["ctrl+="], "command": "unbound" },
   { "keys": ["ctrl+-"], "command": "unbound" },
 
-  { "keys": ["ctrl+pagedown"], "command": "next_view_in_stack" },
-  { "keys": ["ctrl+pageup"], "command": "prev_view_in_stack" },
+  // Disable useless commands
+  {"keys": ["ctrl+t"], "command": "unbound"},
 
-  { "keys": ["ctrl+y"], "command": "redo" },
-
-  // { "keys": ["ctrl+shift+q"], "command": "pylinter" },
-
-  // { "keys": ["ctrl+d"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Delete Line.sublime-macro"} },
-
-  { "keys": ["alt+super+i"], "command": "insert_snippet", "args": { "name": "Packages/User/localization.sublime-snippet" } }
+  // Map LSP commands to shorter bindings
+  {"keys": ["ctrl+t"], "command": "lsp_symbol_definition"},
+  {"keys": ["ctrl+m"], "command": "lsp_symbol_rename"},
+  {"keys": ["ctrl+r"], "command": "lsp_symbol_references"},
 ]

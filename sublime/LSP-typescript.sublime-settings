@@ -1,0 +1,10 @@
+{
+	"settings": {
+		"javascript.inlayHints.includeInlayEnumMemberValueHints": true,
+		"javascript.inlayHints.includeInlayFunctionLikeReturnTypeHints": true,
+		"javascript.inlayHints.includeInlayPropertyDeclarationTypeHints": true,
+		"typescript.inlayHints.includeInlayEnumMemberValueHints": true,
+		"typescript.inlayHints.includeInlayFunctionLikeReturnTypeHints": true,
+		"typescript.inlayHints.includeInlayPropertyDeclarationTypeHints": true,
+	},
+}
