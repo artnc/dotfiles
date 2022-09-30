@@ -17,4 +17,4 @@
 # minor disadvantage of exposing my list of packages (via the ~/package.json
 # checked into my public dotfiles repo) and the major disadvantage of globally
 # supporting only one version per package.
-/node_modules/
+node_modules/
