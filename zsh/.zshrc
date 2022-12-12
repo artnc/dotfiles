@@ -170,10 +170,8 @@ alias m='make'
 # pacman / pacaur
 if command_exists pacaur; then
   alias pi='pacaur -S'
-  # If a dropbox.desktop file is left over from a previously failed upgrade,
-  # the next upgrade will fail. The package maintainer refuses to fix this :|
-  # https://aur.archlinux.org/packages/dropbox/#comment-717660
-  alias pu='sudo rm -f /usr/share/applications/dropbox.desktop ~/.cache/pacaur/dropbox/src/dropbox.desktop && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0 && pacaur -Sac --noconfirm'
+  # https://unix.stackexchange.com/a/574496
+  alias pu='sudo pacman -Sy archlinux-keyring && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0 && pacaur -Sac --noconfirm'
   alias px='pacaur -Rs'
 else
   alias pi='sudo pacman -S'
