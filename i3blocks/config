@@ -35,7 +35,7 @@ interval=3600
 [disk]
 command=/usr/bin/df | grep -E '(/|/home)$' | awk '{print $6, $5}' | sort | awk '{print $2}' | sed ':a; N; $!ba; s/\n/ /g'
 label=DISK 
-interval=86400
+interval=60
 
 [memory]
 command=~/.config/i3blocks/blocklets/memory
