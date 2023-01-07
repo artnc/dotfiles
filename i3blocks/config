@@ -28,8 +28,14 @@ label=❄
 interval=10
 
 [uptime]
-command=uptime | awk '{print $3, $4}' | sed 's/,.*//'
+command=uptime | awk '{print $3 "d"}'
 label=UP 
+interval=3600
+
+# https://bbs.archlinux.org/viewtopic.php?id=235555
+[upgraded]
+command=echo "$((($(date +%s) - $(date -d "$(grep 'starting full system upgrade' /var/log/pacman.log | tail -1 | cut -c2-25)" +%s)) / 86400))d"
+label=PU 
 interval=3600
 
 [disk]
