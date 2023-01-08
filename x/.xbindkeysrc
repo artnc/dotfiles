@@ -3,6 +3,8 @@
 
 # Paste email (need to sleep so that typing doesn't start while keys are still down)
 # base64-encoded to evade crude GitHub scrapers ¯\_(ツ)_/¯
+"sleep 0.3 && xdotool type $(printf %s YXJ0QGNoYWlkYXJ1bi5jb20= | base64 -d)"
+    Control+Alt+Mod2 + c
 "sleep 0.3 && xdotool type $(printf %s YXJ0Y2hhaWRhcnVuQGdtYWlsLmNvbQ== | base64 -d)"
     Control+Alt+Mod2 + e
 "sleep 0.3 && xdotool type $(printf %s YXJ0QGR1b2xpbmdvLmNvbQ== | base64 -d)"
