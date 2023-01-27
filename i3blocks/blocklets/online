@@ -3,12 +3,10 @@
 
 set -eu
 
+echo NET
+echo NET
 if ping -c1 -q 8.8.8.8 > /dev/null; then
-  echo ONLINE
-  echo ON
   echo '#00ff00'
 else
-  echo OFFLINE
-  echo OFF
   echo '#ff0000'
 fi

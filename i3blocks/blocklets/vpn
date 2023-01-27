@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Checks whether connected to Tailscale
+
+set -eu
+
+echo VPN
+echo VPN
+if ip l | grep -q tailscale; then
+  echo '#00ff00'
+else
+  echo '#ff0000'
+fi

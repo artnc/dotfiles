@@ -19,6 +19,10 @@ interval=5
 command=~/.config/i3blocks/blocklets/online
 interval=5
 
+[vpn]
+command=~/.config/i3blocks/blocklets/vpn
+interval=5
+
 [battery]
 label=⚡ 
 interval=30
