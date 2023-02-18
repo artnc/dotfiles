@@ -9,6 +9,7 @@
 		"EditorConfig",
 		"Kotlin",
 		"LSP",
+		"LSP-copilot",
 		"LSP-typescript",
 		"Package Control",
 		"Sass",
