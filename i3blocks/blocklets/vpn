@@ -5,7 +5,7 @@ set -eu
 
 echo VPN
 echo VPN
-if ip l | grep -q tailscale; then
+if tailscale status &> /dev/null; then
   echo '#00ff00'
 else
   echo '#ff0000'
