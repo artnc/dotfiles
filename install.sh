@@ -27,6 +27,17 @@ ensure_symlink() {
     ln -s "${PWD}/${src}" "${dst}"
   fi
 }
+ensure_symlink_if_artnc() {
+  local -r dst="${2}"
+  if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
+    ensure_symlink "$@"
+  else
+    # This repo contains some very personal but not particularly sensitive
+    # dotfiles (e.g. ~/.gitignore) that are kept here for illustrative purposes
+    # but shouldn't be used by people other than artnc
+    logI "Skipping ${dst} since you're not artnc..."
+  fi
+}
 ensure_symlink ag/.agignore ~/.agignore
 ensure_symlink alacritty ~/.config/alacritty
 ensure_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
@@ -34,7 +45,7 @@ ensure_symlink code/settings.json ~/.config/Code/User/settings.json
 ensure_symlink easystroke ~/.easystroke
 ensure_symlink feh/.fehbg ~/.fehbg
 ensure_symlink git/.git-template ~/.git-template
-ensure_symlink git/.gitconfig ~/.gitconfig
+ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore
 ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
 ensure_symlink gtk-3.0 ~/.config/gtk-3.0
