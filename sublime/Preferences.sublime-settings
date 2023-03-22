@@ -3,12 +3,16 @@
 	"color_scheme": "Packages/Twilight+/Twilight+.tmTheme",
 	"enable_tab_scrolling": false,
 	"fold_buttons": false,
-	"font_size": 9,
+	"font_face": "DejaVu Sans Mono",
+	"font_size": 12,
+	// https://forum.sublimetext.com/t/sublime-text-slow-typing-on-macos/59210
+	"hardware_acceleration": "none",
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
 		"Vintage",
 	],
+	"mini_diff": false,
 	"overlay_scroll_bars": "disabled",
 	"preview_on_click": false,
 	"rulers":

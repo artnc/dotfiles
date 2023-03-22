@@ -1,3 +1,4 @@
+*.pbxproj
 *.svg
 .git/
 build/

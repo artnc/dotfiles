@@ -6,7 +6,7 @@
 [core]
 	autocrlf = input
 	editor = nano
-	excludesfile = /home/art/.gitignore
+	excludesfile = ~/.gitignore
 	pager = less -+FX
 [push]
 	autoSetupRemote = true
@@ -14,4 +14,9 @@
 [credential]
 	helper = cache --timeout=864000
 [init]
-	templateDir = /home/art/.git-template
+	templateDir = ~/.git-template
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

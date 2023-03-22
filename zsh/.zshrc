@@ -1,3 +1,9 @@
+if [[ "$(uname)" = Darwin ]]; then
+  IS_MAC=true
+  alias date='gdate'  # GNU `date` provides nanosecond precision
+else
+  IS_MAC=falsce
+fi
 start=$(date +%s.%N)
 
 ##################################################################### Functions
@@ -13,8 +19,13 @@ source_if_exists() {
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
   local path="${1:-.}"
+  if [[ -L "$path" ]]; then
+    path="$(/usr/bin/readlink -f "$path")"
+  fi
   if [[ -f "$path" ]]; then
     /usr/bin/less "$path"
+  elif [[ $IS_MAC = true ]]; then
+    /bin/ls -AGlo "$path"
   else
     /usr/bin/ls --almost-all --color=auto --no-group -l "$path"
   fi
@@ -125,7 +136,7 @@ function gitprompt {
       message="$(git --no-pager log -1 --pretty=%s)"
       branch="(${message:0:24})"
     fi
-    num_stashes="$(git stash list | wc -l)"
+    num_stashes="$(git stash list | wc -l | awk '{print $1}')"
     stashmarker="$([[ "$num_stashes" != '0' ]] && printf '*%.0s' {1..$num_stashes})"
     cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
     echo "%B%{$fg[$cleanliness]%} $branch$stashmarker%{$reset_color%}%b"
@@ -152,13 +163,22 @@ fi
 # Pipe stdout to clipboard via echo "foo" | xc
 if command_exists xclip; then
   alias xc='xclip -selection clipboard'
+  alias xp='xclip -selection clipboard -o'
   if command_exists jq; then
     alias xj='xclip -selection clipboard -o | jq -S . | xclip -selection clipboard'
+  fi
+elif command_exists pbcopy; then
+  alias xc='pbcopy'
+  alias xp='pbpaste'
+  if command_exists jq; then
+    alias xj='pbpaste | jq -S . | pbcopy'
   fi
 fi
 
 # Linux equivalent of Mac `open`
-alias open='xdg-open'
+if ! command_exists open; then
+  alias open='xdg-open'
+fi
 
 # adb install
 alias adbd='adb -d install -d -r'
@@ -167,8 +187,12 @@ alias adbe='adb -e install -d -r'
 # make
 alias m='make'
 
-# pacman / pacaur
-if command_exists pacaur; then
+# Homebrew / pacman / pacaur
+if command_exists brew; then
+  alias pi='brew install'
+  alias pu='brew upgrade && brew upgrade --cask'
+  alias px='brew uninstall'
+elif command_exists pacaur; then
   alias pi='pacaur -S'
   # https://unix.stackexchange.com/a/574496
   alias pu='sudo pacman -Sy archlinux-keyring && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0 && pacaur -Sac --noconfirm'
@@ -205,12 +229,12 @@ if command_exists subl; then
   alias -s xml='subl'
 fi
 
-# Python
-alias ipy='ipython'
-alias pyprof='python -m cProfile -s "time"'
-
 # Append always-used options to common commands
-alias df='df -hT'
+if [[ $IS_MAC = true ]]; then
+  alias df='df -h'
+else
+  alias df='df -hT'
+fi
 
 # Git
 alias g2='git bisect'
@@ -261,6 +285,17 @@ else
   alias s='subl'
 fi
 
+# SSH
+# https://superuser.com/a/215506
+alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config && ssh'
+
+# Tailscale
+# https://tailscale.com/kb/1080/cli/?tab=macos#using-the-cli
+tailscale_mac='/Applications/Tailscale.app/Contents/MacOS/Tailscale'
+if [[ ${IS_MAC} == true ]] && [[ -f ${tailscale_mac} ]]; then
+  alias tailscale="${tailscale_mac}"
+fi
+
 ############################################ Environment variables and sourcing
 
 export EDITOR=/usr/bin/nano
@@ -284,15 +319,23 @@ fi
 
 # Docker
 export DOCKER_BUILDKIT=1
+if [[ $IS_MAC = true ]]; then
+  # https://stackoverflow.com/a/74148162
+  export DOCKER_HOST="unix://${HOME}/Library/Containers/com.docker.docker/Data/docker.raw.sock"
+fi
 
 # Duolingo
 source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
 source_if_exists "${HOME}/.duolingo/init.sh"
 
 # fzf
-source_if_exists /usr/share/fzf/key-bindings.zsh
-source_if_exists /usr/share/fzf/completion.zsh
 if command_exists fzf; then
+  if [[ $IS_MAC = true ]]; then
+    source_if_exists "${HOME}/.fzf.zsh"
+  else
+    source_if_exists /usr/share/fzf/key-bindings.zsh
+    source_if_exists /usr/share/fzf/completion.zsh
+  fi
   if command_exists fd; then
     export FZF_DEFAULT_COMMAND='fd --type f'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -306,7 +349,11 @@ if [[ -d "${HOME}/.nodenv" ]]; then
 fi
 
 # pre-commit
-export SKIP=no-commit-to-branch,swiftformat,swiftlint
+if [[ $IS_MAC = true ]]; then
+  export SKIP=no-commit-to-branch
+else
+  export SKIP=no-commit-to-branch,swiftlint
+fi
 
 # Rclone
 # https://rclone.org/docs/#environment-variables
@@ -323,6 +370,11 @@ fi
 command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 command_exists rbenv && eval "$(rbenv init -)"
 
+# Sublime Text
+if [[ $IS_MAC = true ]]; then
+  PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin:${PATH}"
+fi
+
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
   export WORKON_HOME="${HOME}/.virtualenvs"
@@ -331,9 +383,18 @@ if [[ -d "${HOME}/.virtualenvs" ]]; then
   alias wo='workon'
 fi
 
+# VSCode
+if [[ $IS_MAC = true ]]; then
+  PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:${PATH}"
+fi
+
 # zsh-syntax-highlighting (should appear at end of .zshrc)
 # https://github.com/zsh-users/zsh-syntax-highlighting
-source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ $IS_MAC = true ]]; then
+  source_if_exists /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+  source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 ###############################################################################
 

@@ -38,56 +38,69 @@ ensure_symlink_if_artnc() {
     logI "Skipping ${dst} since you're not artnc..."
   fi
 }
-ensure_symlink ag/.agignore ~/.agignore
-ensure_symlink alacritty ~/.config/alacritty
-ensure_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
-ensure_symlink code/settings.json ~/.config/Code/User/settings.json
-ensure_symlink easystroke ~/.easystroke
-ensure_symlink feh/.fehbg ~/.fehbg
-ensure_symlink git/.git-template ~/.git-template
-ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
-ensure_symlink git/.gitignore ~/.gitignore
-ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
-ensure_symlink gtk-3.0 ~/.config/gtk-3.0
-ensure_symlink i3 ~/.config/i3
-ensure_symlink i3blocks ~/.config/i3blocks
-ensure_symlink iftop/.iftoprc ~/.iftoprc
-ensure_symlink nano/.nanorc ~/.nanorc
-ensure_symlink pylint/.pylintrc ~/.pylintrc
-ensure_symlink ripgrep/.rgignore ~/.rgignore
-ensure_symlink sublime ~/.config/sublime-text/Packages/User
-ensure_symlink tmux/.tmux.conf ~/.tmux.conf
-ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
-ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
-ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
-ensure_symlink x/.xinitrc ~/.xinitrc
-ensure_symlink x/.Xmodmap ~/.Xmodmap
-ensure_symlink zsh/.zshrc ~/.zshrc
 
-# Audit /etc and other files outside home directory
-while read -r repo_path; do
-  system_path="/${repo_path}"
-  if [[ -f ${system_path} ]]; then
-    repo_hash="$(md5sum "${repo_path}" | awk '{print $1}')"
-    system_hash="$(md5sum "${system_path}" | awk '{print $1}')"
+# Audit /etc and other files that we can't easily symlink
+audit_nonsymlinks() {
+  local -r src="${1}"
+  local -r dst="${2}"
+  if [[ -f ${dst} ]]; then
+    repo_hash="$(md5sum "${src}" | awk '{print $1}')"
+    system_hash="$(md5sum "${dst}" | awk '{print $1}')"
     if [[ ${repo_hash} == "${system_hash}" ]]; then
-      logI "Found matching ${system_path}"
+      logI "Found matching ${dst}"
     else
-      logE "Found mismatched ${system_path}; please resolve conflicts by hand"
-      diff "${repo_path}" "${system_path}" || true
+      logE "Found mismatched ${dst}; please resolve conflicts by hand"
+      diff "${src}" "${dst}" || true
     fi
   else
-    logE "Didn't find ${system_path}; please copy from this repo"
+    logE "Didn't find ${dst}; please copy from this repo"
   fi
 
   # https://wiki.archlinux.org/title/Pacman/Pacnew_and_Pacsave
-  pacnew_path="${system_path}.pacnew"
+  pacnew_path="${dst}.pacnew"
   if [[ -f ${pacnew_path} ]]; then
-    logE "Found ${pacnew_path}; please merge changes into ${system_path} and delete"
-    diff "${system_path}" "${system_path}.pacnew" || true
+    logE "Found ${pacnew_path}; please merge changes into ${dst} and delete"
+    diff "${dst}" "${dst}.pacnew" || true
   fi
-  pacsave_path="${system_path}.pacsave"
+  pacsave_path="${dst}.pacsave"
   if [[ -f ${pacsave_path} ]]; then
     logE "Found ${pacsave_path}; please delete if obsolete"
   fi
-done < <(find etc -type f)
+}
+
+ensure_symlink ag/.agignore ~/.agignore
+ensure_symlink git/.git-template ~/.git-template
+ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
+ensure_symlink git/.gitignore ~/.gitignore
+ensure_symlink nano/.nanorc ~/.nanorc
+ensure_symlink ripgrep/.rgignore ~/.rgignore
+ensure_symlink tmux/.tmux.conf ~/.tmux.conf
+ensure_symlink zsh/.zshrc ~/.zshrc
+if [[ "$(uname)" == Darwin ]]; then
+  ensure_symlink alacritty/alacritty.mac.yml ~/.config/alacritty/alacritty.yml
+  ensure_symlink hammerspoon ~/.hammerspoon
+  ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
+  audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
+  audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
+else
+  ensure_symlink alacritty ~/.config/alacritty
+  ensure_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
+  ensure_symlink code/settings.json ~/.config/Code/User/settings.json
+  ensure_symlink easystroke ~/.easystroke
+  ensure_symlink feh/.fehbg ~/.fehbg
+  ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
+  ensure_symlink gtk-3.0 ~/.config/gtk-3.0
+  ensure_symlink i3 ~/.config/i3
+  ensure_symlink i3blocks ~/.config/i3blocks
+  ensure_symlink iftop/.iftoprc ~/.iftoprc
+  ensure_symlink pylint/.pylintrc ~/.pylintrc
+  ensure_symlink sublime ~/.config/sublime-text/Packages/User
+  ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
+  ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
+  ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
+  ensure_symlink x/.xinitrc ~/.xinitrc
+  ensure_symlink x/.Xmodmap ~/.Xmodmap
+  while read -r src; do
+    audit_nonsymlinks "${src}" "/${repo_path}"
+  done < <(find etc -type f)
+fi

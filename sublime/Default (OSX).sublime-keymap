@@ -1,0 +1,21 @@
+[
+  // Navigate tabs in displayed order
+  { "keys": ["ctrl+tab"], "command": "next_view" },
+  { "keys": ["ctrl+shift+tab"], "command": "prev_view" },
+
+  // Disable font size adjustments
+  { "keys": ["ctrl++"], "command": "unbound" },
+  { "keys": ["ctrl+="], "command": "unbound" },
+  { "keys": ["ctrl+-"], "command": "unbound" },
+
+  // Disable useless commands
+  {"keys": ["ctrl+t"], "command": "unbound"},
+
+  // Map LSP commands to shorter bindings
+  {"keys": ["ctrl+t"], "command": "lsp_symbol_definition"},
+  {"keys": ["ctrl+m"], "command": "lsp_symbol_rename"},
+  {"keys": ["ctrl+r"], "command": "lsp_symbol_references"},
+
+  { "keys": ["f9"], "command": "sort_lines", "args": {"case_sensitive": false} },
+  { "keys": ["ctrl+f9"], "command": "sort_lines", "args": {"case_sensitive": true} },
+]

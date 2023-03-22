@@ -5,11 +5,13 @@
 	],
 	"installed_packages":
 	[
+		"Decent Swift Syntax",
 		"Dockerfile Syntax Highlighting",
 		"EditorConfig",
 		"Kotlin",
 		"LSP",
 		"LSP-copilot",
+		"LSP-SourceKit",
 		"LSP-typescript",
 		"Package Control",
 		"Sass",
