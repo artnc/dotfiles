@@ -23,6 +23,7 @@
 	"scroll_past_end": false,
 	"shift_tab_unindent": true,
 	"show_encoding": true,
+	"show_full_path": true,
 	"show_line_endings": true,
 	"show_tab_close_buttons": false,
 	"tab_size": 2,
