@@ -33,12 +33,19 @@ p() {
 
 # Stage all files and commit with message
 gc() {
-  if (( ${#1} < 70 )); then # GitHub wraps first line after 69 chars
-    git add --all
-    git commit --message="$1"
-  else
+  if (( ${#1} > 69 )); then # GitHub wraps first line after 69 chars
     echo "Commit message was ${#1} characters long."
+    return
   fi
+  [[ -n "${NO_ADD}" ]] || git add --all
+  if git config --get remote.origin.url | grep -qF '/duolingo/'; then
+    GIT_CONFIG_VALUE_1="$(printf %s "moc.ogniloud@tra" | rev)" git commit -m "$1"
+  else
+    git commit -m "$1"
+  fi
+}
+gcna() {
+  NO_ADD=1 gc "${1}"
 }
 
 # This function converts the HEAD commit into a new GitHub branch. Workflow:
@@ -247,7 +254,6 @@ alias gb='git branch'
 alias gbd='git branch | grep -v " master$" | xargs git branch -D'
 alias gca='git commit --amend'
 alias gcane='git commit --amend --no-edit'
-alias gcm='git commit -m'
 alias gd='git diff'
 alias gds='git diff --stat'
 alias gdw='git diff -w'
@@ -340,6 +346,15 @@ if command_exists fzf; then
     export FZF_DEFAULT_COMMAND='fd --type f'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   fi
+fi
+
+# Git
+if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
+  export GIT_CONFIG_COUNT=2
+  export GIT_CONFIG_KEY_0="user.name"
+  export GIT_CONFIG_VALUE_0="Art Chaidarun"
+  export GIT_CONFIG_KEY_1="user.email"
+  export GIT_CONFIG_VALUE_1="$(printf %s "moc.liamg@nuradiahctra" | rev)"
 fi
 
 # nodenv

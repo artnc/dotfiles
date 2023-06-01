@@ -1,6 +1,11 @@
-[user]
-	name = Art Chaidarun
-	email = artchaidarun@gmail.com
+# I previously declared user.name and user.email in this ~/.gitconfig, but that
+# has a few disadvantages: it couples this config to my own identity despite
+# this config's availability in my public dotfiles repo for others to use, it
+# makes my email addresses publicly scrapable from that repo, and it locks me
+# into a single user.email regardless of what repo I'm committing in. So now I
+# instead use Git's GIT_CONFIG_COUNT/GIT_CONFIG_KEY_0/GIT_CONFIG_VALUE_0/etc
+# env vars to set these values dynamically at commit time
+
 [color]
 	ui = true
 [core]
