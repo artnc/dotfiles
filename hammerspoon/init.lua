@@ -144,6 +144,7 @@ local switchToSpace = function(spaceNum)
   end
 
   -- hs.alert(math.floor((hs.timer.absoluteTime() - start) / 1000000) .. "ms")
+  cacheWindows()
 end
 for i=1, 9 do
   hs.hotkey.bind({"alt"}, tostring(i), function() switchToSpace(i) end)
