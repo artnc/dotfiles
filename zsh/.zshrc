@@ -23,7 +23,7 @@ p() {
     path="$(/usr/bin/readlink -f "$path")"
   fi
   if [[ -f "$path" ]]; then
-    /usr/bin/less "$path"
+    /usr/bin/less -M "$path"
   elif [[ $IS_MAC = true ]]; then
     /bin/ls -AGlo "$path"
   else
