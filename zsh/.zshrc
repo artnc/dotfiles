@@ -39,13 +39,13 @@ gc() {
   fi
   [[ -n "${NO_ADD}" ]] || git add --all
   if git config --get remote.origin.url | grep -qF '/duolingo/'; then
-    GIT_CONFIG_VALUE_1="$(printf %s "moc.ogniloud@tra" | rev)" git commit -m "$1"
+    GIT_CONFIG_VALUE_1="$(printf %s "moc.ogniloud@tra" | rev)" git commit -m "$@"
   else
-    git commit -m "$1"
+    git commit -m "$@"
   fi
 }
 gcna() {
-  NO_ADD=1 gc "${1}"
+  NO_ADD=1 gc "$@"
 }
 
 # This function converts the HEAD commit into a new GitHub branch. Workflow:
