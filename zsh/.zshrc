@@ -161,10 +161,10 @@ autoload bashcompinit && bashcompinit
 
 # Switch between QWERTY and Dvorak
 if command_exists setxkbmap; then
-  alias aoeu='setxkbmap us && xmodmap ${HOME}/.Xmodmap'
-  alias asdf='setxkbmap dvorak && xmodmap ${HOME}/.Xmodmap'
+  alias aoeu='setxkbmap us qwerty && xmodmap ${HOME}/.Xmodmap'
+  alias asdf='setxkbmap us dvorak && xmodmap ${HOME}/.Xmodmap'
   alias thai='setxkbmap -layout th -variant pat && xmodmap ${HOME}/.Xmodmap'
-  alias  ้ทงก='setxkbmap dvorak && xmodmap ${HOME}/.Xmodmap'
+  alias  ้ทงก='setxkbmap us dvorak && xmodmap ${HOME}/.Xmodmap'
 fi
 
 # Pipe stdout to clipboard via echo "foo" | xc

@@ -2,7 +2,7 @@
 xset -b
 
 # Switch to Dvorak
-setxkbmap dvorak
+setxkbmap us dvorak
 
 # Touchpad tap settings
 command -v synclient > /dev/null && {
