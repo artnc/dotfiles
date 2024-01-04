@@ -16,6 +16,14 @@ source_if_exists() {
   [[ -f "$1" ]] && . "$1"
 }
 
+# Run the given command and then play a sound to signal completion
+# TODO: Implement for Linux too?
+beep() {
+  afplay '/System/Library/Sounds/Tink.aiff'
+  caffeinate "$@" || true
+  afplay '/System/Library/Sounds/Glass.aiff'
+}
+
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
   local path="${1:-.}"
@@ -212,7 +220,7 @@ fi
 
 # Ripgrep
 if command_exists rg; then
-  alias g='rg --hidden --line-number --max-columns 250 --no-heading --sort-files'
+  alias g='rg --hidden --line-number --max-columns 250 --no-heading --pcre2 --sort-files'
 fi
 
 # Default programs
@@ -302,6 +310,9 @@ if [[ ${IS_MAC} == true ]] && [[ -f ${tailscale_mac} ]]; then
   alias tailscale="${tailscale_mac}"
 fi
 
+# tee
+alias tt='tee "$(tty)"'
+
 ############################################ Environment variables and sourcing
 
 export EDITOR=/usr/bin/nano
@@ -355,6 +366,12 @@ if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
   export GIT_CONFIG_VALUE_0="Art Chaidarun"
   export GIT_CONFIG_KEY_1="user.email"
   export GIT_CONFIG_VALUE_1="$(printf %s "moc.liamg@nuradiahctra" | rev)"
+fi
+
+# Java
+if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
+  export PATH="/opt/homebrew/opt/openjdk@17/bin:${PATH}"
+  export CPPFLAGS='-I/opt/homebrew/opt/openjdk@17/include'
 fi
 
 # nodenv
