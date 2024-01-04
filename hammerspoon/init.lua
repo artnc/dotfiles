@@ -51,13 +51,13 @@ local registeredApps = {
   -- The array of elements at index N correspond to synthetic space N
   {space=1, fn=(function(app, win) return app == "Firefox" and not win:find(" Private Browsing$") end)},
   {space=2, win=" Private Browsing$"},
-  {space=3, app="Sublime Text", layout=hs.geometry.rect(0, 0, 0.55, 1)},
-  {space=3, app="Alacritty", layout=hs.geometry.rect(0.55, 0, 0.45, 1)},
+  {space=3, app="Sublime Text", layout=hs.geometry.rect(0, 0, 0.45, 1)},
+  {space=3, app="Alacritty", layout=hs.geometry.rect(0.45, 0, 0.55, 1)},
   {space=4, app="Slack"},
   {space=5, app="Xcode", layout=hs.geometry.rect(0, 0, 0.66, 1)},
   {space=5, app="Simulator", layout=hs.geometry.rect(0.66, 0, 0.34, 1)},
-  {space=6, app="KeePassXC", layout=hs.layout.left50},
-  {space=6, win="^Zoom$", layout=hs.layout.right50},
+  {space=6, app="KeePassXC", layout=hs.layout.left70},
+  {space=6, win="^Zoom$", layout=hs.layout.right30},
   {space=7, app="Finder"},
   {space=8, app="GIMP"},
   {space=9, win="Zoom Meeting"},
@@ -94,6 +94,8 @@ hs.window.filter.new(true)
   :subscribe(hs.window.filter.windowDestroyed, cacheWindows)
 local screens={
   laptop={uuid="37D8832A-2D66-02CA-B9F7-8F30A301B230", name="Built-in Retina Display"},
+  -- hs.screen.allScreens()[2]
+  -- hs.screen.allScreens()[2]:getUUID()
   horizontal={uuid="0F8F8E39-57DB-49A9-B0C7-B073C0CEB6F1", name="DELL U2723QE"},
   vertical={uuid="6610D292-12B9-41C4-B1A1-BBACC986AA8B", name="DELL P2715Q"},
 }
