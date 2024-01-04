@@ -20,8 +20,5 @@
 	helper = cache --timeout=864000
 [init]
 	templateDir = ~/.git-template
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+[blame]
+	ignoreRevsFile = .git-blame-ignore-revs
