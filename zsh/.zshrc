@@ -353,8 +353,9 @@ if command_exists fzf; then
     source_if_exists /usr/share/fzf/key-bindings.zsh
     source_if_exists /usr/share/fzf/completion.zsh
   fi
-  if command_exists fd; then
-    export FZF_DEFAULT_COMMAND='fd --type f'
+  if command_exists rg; then
+    # https://github.com/junegunn/fzf.vim/issues/121#issuecomment-546360911
+    export FZF_DEFAULT_COMMAND='rg --files --hidden'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   fi
 fi
