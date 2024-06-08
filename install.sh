@@ -77,6 +77,7 @@ ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink zsh/.zshrc ~/.zshrc
 if [[ "$(uname)" == Darwin ]]; then
+  ensure_symlink aerospace ~/.config/aerospace
   ensure_symlink alacritty/alacritty.mac.toml ~/.config/alacritty/alacritty.toml
   ensure_symlink hammerspoon ~/.hammerspoon
   ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
