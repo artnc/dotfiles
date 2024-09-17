@@ -12,6 +12,7 @@
 	[
 		"Vintage",
 	],
+	"index_files": true,
 	"mini_diff": false,
 	"overlay_scroll_bars": "disabled",
 	"preview_on_click": false,
