@@ -2,13 +2,14 @@
 
 enable-normalization-flatten-containers = false
 enable-normalization-opposite-orientation-for-nested-containers = false
-key-mapping.preset = 'dvorak'
 
 [mode.main.binding]
-alt-left = 'focus left'
-alt-down = 'focus down'
-alt-up = 'focus up'
-alt-right = 'focus right'
+# Disabled in favor of i3-like AutoRaise.app:
+# https://github.com/Dimentium/homebrew-autoraise/blob/11608becc696e1b0cadcb93a7059e50378cd3dc6/README.md?plain=1#L33
+# alt-left = 'focus left'
+# alt-down = 'focus down'
+# alt-up = 'focus up'
+# alt-right = 'focus right'
 
 alt-cmd-left = 'move left'
 alt-cmd-down = 'move down'
