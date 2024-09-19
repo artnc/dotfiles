@@ -16,15 +16,21 @@ ensure_symlink() {
   local -r src="${1}"
   local -r dst="${2}"
   local -r dst_dir="$(dirname "${dst}")"
-  [[ -d ${dst_dir} ]] || mkdir -p "${dst_dir}"
+  if [[ ! -d ${dst_dir} && -z ${DRY_RUN:-} ]]; then
+    mkdir -p "${dst_dir}"
+  fi
   if [[ -n ${CODESPACES:-} ]]; then
     logI "Creating ${dst}..."
-    ln -fs "${PWD}/${src}" "${dst}"
+    if [[ -z ${DRY_RUN:-} ]]; then
+      ln -fs "${PWD}/${src}" "${dst}"
+    fi
   elif [[ -f ${dst} ]] || [[ -d ${dst} ]]; then
     logI "Found existing ${dst}"
   else
     logI "Creating ${dst}..."
-    ln -s "${PWD}/${src}" "${dst}"
+    if [[ -z ${DRY_RUN:-} ]]; then
+      ln -s "${PWD}/${src}" "${dst}"
+    fi
   fi
 }
 ensure_symlink_if_artnc() {
@@ -102,6 +108,6 @@ else
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
   while read -r src; do
-    audit_nonsymlinks "${src}" "/${repo_path}"
+    audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)
 fi
