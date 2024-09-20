@@ -366,7 +366,7 @@ if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
   export GIT_CONFIG_KEY_0="user.name"
   export GIT_CONFIG_VALUE_0="Art Chaidarun"
   export GIT_CONFIG_KEY_1="user.email"
-  export GIT_CONFIG_VALUE_1="$(printf %s "moc.liamg@nuradiahctra" | rev)"
+  export GIT_CONFIG_VALUE_1="$(printf %s "moc.nuradiahc@tra" | rev)"
 fi
 
 # Java
