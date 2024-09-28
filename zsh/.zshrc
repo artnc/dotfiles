@@ -202,11 +202,15 @@ alias adbe='adb -e install -d -r'
 # make
 alias m='make'
 
-# Homebrew / pacman / pacaur
+# Homebrew / pacman / pacaur / yay
 if command_exists brew; then
   alias pi='brew install'
   alias pu='brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
+elif command_exists yay; then
+  alias pi='yay -S'
+  alias pu='sudo pacman -Sy --noconfirm archlinux-keyring && yay --noconfirm -Syu && paccache -rk1 && paccache -ruk0 && yay -Sac --noconfirm'
+  alias px='yay -Rncs'
 elif command_exists pacaur; then
   alias pi='pacaur -S'
   # https://unix.stackexchange.com/a/574496
