@@ -9,10 +9,10 @@ start=$(date +%s.%N)
 ##################################################################### Functions
 
 # Mainly intended for use inside this .zshrc
-command_exists() {
+_command_exists() {
   command -v "$1" > /dev/null
 }
-source_if_exists() {
+_source_if_exists() {
   [[ -f "$1" ]] && . "$1"
 }
 
@@ -168,7 +168,7 @@ autoload bashcompinit && bashcompinit
 ####################################################################### Aliases
 
 # Switch between QWERTY and Dvorak
-if command_exists setxkbmap; then
+if _command_exists setxkbmap; then
   alias aoeu='setxkbmap us qwerty && xmodmap ${HOME}/.Xmodmap'
   alias asdf='setxkbmap us dvorak && xmodmap ${HOME}/.Xmodmap'
   alias thai='setxkbmap -layout th -variant pat && xmodmap ${HOME}/.Xmodmap'
@@ -176,22 +176,22 @@ if command_exists setxkbmap; then
 fi
 
 # Pipe stdout to clipboard via echo "foo" | xc
-if command_exists xclip; then
+if _command_exists xclip; then
   alias xc='xclip -selection clipboard'
   alias xp='xclip -selection clipboard -o'
-  if command_exists jq; then
+  if _command_exists jq; then
     alias xj='xclip -selection clipboard -o | jq -S . | xclip -selection clipboard'
   fi
-elif command_exists pbcopy; then
+elif _command_exists pbcopy; then
   alias xc='pbcopy'
   alias xp='pbpaste'
-  if command_exists jq; then
+  if _command_exists jq; then
     alias xj='pbpaste | jq -S . | pbcopy'
   fi
 fi
 
 # Linux equivalent of Mac `open`
-if ! command_exists open; then
+if ! _command_exists open; then
   alias open='xdg-open'
 fi
 
@@ -203,7 +203,7 @@ alias adbe='adb -e install -d -r'
 alias m='make'
 
 # Homebrew / pacman / pacaur / yay
-if command_exists brew; then
+if _command_exists brew; then
   alias pi='brew install'
   alias pu='brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
@@ -214,9 +214,9 @@ else
     _pacman_orphans="$(pacman -Qtdq || true)"
     [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
   )
-  if command_exists yay; then
+  if _command_exists yay; then
     _pacman_helper='yay'
-  elif command_exists pacaur; then
+  elif _command_exists pacaur; then
     _pacman_helper='pacaur'
   else
     _pacman_helper='pacman'
@@ -240,12 +240,12 @@ else
 fi
 
 # Ripgrep
-if command_exists rg; then
+if _command_exists rg; then
   alias g='rg --hidden --line-number --max-columns 250 --no-heading --pcre2 --sort-files'
 fi
 
 # Default programs
-if command_exists subl; then
+if _command_exists subl; then
   alias -s c='subl'
   alias -s conf='subl'
   alias -s cpp='subl'
@@ -351,7 +351,7 @@ fi
 PATH="${HOME}/.local/bin:${PATH}"
 
 # direnv
-if command_exists direnv; then
+if _command_exists direnv; then
   eval "$(direnv hook zsh)"
 fi
 
@@ -363,18 +363,18 @@ if [[ $IS_MAC = true ]]; then
 fi
 
 # Duolingo
-source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
-source_if_exists "${HOME}/.duolingo/init.sh"
+_source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
+_source_if_exists "${HOME}/.duolingo/init.sh"
 
 # fzf
-if command_exists fzf; then
+if _command_exists fzf; then
   if [[ $IS_MAC = true ]]; then
-    source_if_exists "${HOME}/.fzf.zsh"
+    _source_if_exists "${HOME}/.fzf.zsh"
   else
-    source_if_exists /usr/share/fzf/key-bindings.zsh
-    source_if_exists /usr/share/fzf/completion.zsh
+    _source_if_exists /usr/share/fzf/key-bindings.zsh
+    _source_if_exists /usr/share/fzf/completion.zsh
   fi
-  if command_exists rg; then
+  if _command_exists rg; then
     # https://github.com/junegunn/fzf.vim/issues/121#issuecomment-546360911
     export FZF_DEFAULT_COMMAND='rg --files --hidden'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -411,7 +411,7 @@ fi
 
 # Rclone
 # https://rclone.org/docs/#environment-variables
-if command_exists rclone; then
+if _command_exists rclone; then
   # https://rclone.org/b2/#fast-list
   export RCLONE_FAST_LIST=true
   # https://rclone.org/docs/#p-progress
@@ -421,8 +421,8 @@ if command_exists rclone; then
 fi
 
 # Ruby
-command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
-command_exists rbenv && eval "$(rbenv init -)"
+_command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
+_command_exists rbenv && eval "$(rbenv init -)"
 
 # Sublime Text
 if [[ $IS_MAC = true ]]; then
@@ -433,7 +433,7 @@ fi
 if [[ -d "${HOME}/.virtualenvs" ]]; then
   export WORKON_HOME="${HOME}/.virtualenvs"
   export PROJECT_HOME="${HOME}/git"
-  source_if_exists /usr/bin/virtualenvwrapper_lazy.sh
+  _source_if_exists /usr/bin/virtualenvwrapper_lazy.sh
   alias wo='workon'
 fi
 
@@ -445,9 +445,9 @@ fi
 # zsh-syntax-highlighting (should appear at end of .zshrc)
 # https://github.com/zsh-users/zsh-syntax-highlighting
 if [[ $IS_MAC = true ]]; then
-  source_if_exists /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  _source_if_exists /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 else
-  source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  _source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 ###############################################################################
