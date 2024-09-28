@@ -207,23 +207,36 @@ if command_exists brew; then
   alias pi='brew install'
   alias pu='brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
-elif command_exists yay; then
-  alias pi='yay -S'
-  # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
-  # https://unix.stackexchange.com/a/574496
-  alias pu='pacman -Qtdq | sudo pacman -Rns - && sudo pacman -Sy --noconfirm archlinux-keyring && yay --noconfirm -Syu && paccache -rk1 && paccache -ruk0 && yay -Sac --noconfirm'
-  alias px='yay -Rncs'
-elif command_exists pacaur; then
-  alias pi='pacaur -S'
-  # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
-  # https://unix.stackexchange.com/a/574496
-  alias pu='pacman -Qtdq | sudo pacman -Rns - && sudo pacman -Sy archlinux-keyring && pacaur --noconfirm --noedit -Syu && paccache -rk1 && paccache -ruk0 && pacaur -Sac --noconfirm'
-  alias px='pacaur -Rs'
 else
-  alias pi='sudo pacman -S'
-  # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
-  alias pu='pacman -Qtdq | sudo pacman -Rns - && sudo pacman -Syu && paccache -rk1 && paccache -ruk0'
-  alias px='sudo pacman -Rs'
+  _pacman_remove_orphans() (
+    set -e
+    # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
+    _pacman_orphans="$(pacman -Qtdq || true)"
+    [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
+  )
+  if command_exists yay; then
+    _pacman_helper='yay'
+  elif command_exists pacaur; then
+    _pacman_helper='pacaur'
+  else
+    _pacman_helper='pacman'
+  fi
+  alias pi="${_pacman_helper} -S"
+  pu() (
+    set -e
+    _pacman_remove_orphans
+    # https://unix.stackexchange.com/a/574496
+    sudo pacman -Sy --noconfirm archlinux-keyring
+    "${_pacman_helper}" --noconfirm -Syu
+    paccache -rk1
+    paccache -ruk0
+    "${_pacman_helper}" -Sac --noconfirm
+  )
+  px() (
+    set -e
+    "${_pacman_helper}" -Rncs "${1}"
+    _pacman_remove_orphans
+  )
 fi
 
 # Ripgrep
