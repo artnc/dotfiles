@@ -213,6 +213,8 @@ else
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
     _pacman_orphans="$(pacman -Qtdq || true)"
     [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
+    # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
+    pacman -Qqd | sudo pacman -Rsu - 2> /dev/null
   )
   if _command_exists yay; then
     _pacman_helper='yay'
