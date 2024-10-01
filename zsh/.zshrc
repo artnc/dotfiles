@@ -324,7 +324,11 @@ fi
 
 # SSH
 # https://superuser.com/a/215506
-alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config && ssh'
+if [[ -n "$(find "${HOME}/.ssh" -name '*.pem')" ]]; then
+  alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config && ssh'
+else
+  alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/config && ssh'
+fi
 
 # Tailscale
 # https://tailscale.com/kb/1080/cli/?tab=macos#using-the-cli
