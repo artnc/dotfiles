@@ -1,5 +1,16 @@
 ! Remap Caps Lock to Windows key
 ! https://faq.i3wm.org/question/490/using-caps-lock-as-mod-key/index.html%3Fanswer=670.html
+!
+! @artnc: On 2024-10-19, I had to change Hyper_L to Super_L to fix this error:
+!
+!   $ xmodmap ~/.Xmodmap
+!   X Error of failed request:  BadValue (integer parameter out of range for operation)
+!     Major opcode of failed request:  118 (X_SetModifierMapping)
+!     Value in failed request:  0x17
+!     Serial number of failed request:  13
+!     Current serial number in output stream:  13
+!
+! I guessed Super_L from the output of `xmodmap -pm`.
 clear Lock
-keycode 66 = Hyper_L
-add mod4 = Hyper_L
+keycode 66 = Super_L
+add mod4 = Super_L
