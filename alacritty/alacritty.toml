@@ -1,0 +1,46 @@
+live_config_reload = true
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+# XTerm's default colors
+[colors.bright]
+black = "0x7f7f7f"
+blue = "0x5c5cff"
+cyan = "0x00ffff"
+green = "0x00ff00"
+magenta = "0xff00ff"
+red = "0xff0000"
+white = "0xffffff"
+yellow = "0xffff00"
+
+[colors.normal]
+black = "0x000000"
+blue = "0x0000ee"
+cyan = "0x00cdcd"
+green = "0x00cd00"
+magenta = "0xcd00cd"
+red = "0xcd0000"
+white = "0xe5e5e5"
+yellow = "0xcdcd00"
+
+[colors.primary]
+background = "0x000000"
+foreground = "0xffffff"
+
+[cursor]
+style = "Beam"
+
+[font]
+size = 7
+
+[font.offset]
+x = 0
+y = 1
+
+[window]
+decorations = "none"
+
+[window.padding]
+x = 2
+y = 2
