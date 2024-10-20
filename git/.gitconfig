@@ -21,4 +21,7 @@
 [init]
 	templateDir = ~/.git-template
 [blame]
-	ignoreRevsFile = .git-blame-ignore-revs
+	# Commenting this out for now to avoid annoying `fatal: could not open object
+	# name list: .git-blame-ignore-revs` error in repos that don't
+	# have .git-blame-ignore-revs
+	# ignoreRevsFile = .git-blame-ignore-revs
