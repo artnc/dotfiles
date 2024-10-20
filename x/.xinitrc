@@ -5,11 +5,11 @@ xset -b
 setxkbmap us dvorak
 
 # Touchpad tap settings
-command -v synclient > /dev/null && {
+if command -v synclient > /dev/null; then
   synclient TapButton1=1  # single-finger -> left click
   synclient TapButton2=3  # double-finger -> right click
   synclient TapButton3=2  # triple-finger -> middle click
-}
+fi
 
 # Enable XFCE notifications
 # https://bbs.archlinux.org/viewtopic.php?id=202812
