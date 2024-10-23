@@ -330,6 +330,17 @@ else
   alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/config && ssh'
 fi
 
+# systemctl
+if _command_exists systemctl; then
+  alias sc='sudo systemctl'
+  alias scs='sudo systemctl start'
+  alias scx='sudo systemctl stop'
+  alias scr='sudo systemctl restart'
+  alias sce='sudo systemctl enable'
+  alias scd='sudo systemctl disable'
+  alias sct='sudo systemctl status'
+fi
+
 # Tailscale
 # https://tailscale.com/kb/1080/cli/?tab=macos#using-the-cli
 tailscale_mac='/Applications/Tailscale.app/Contents/MacOS/Tailscale'
