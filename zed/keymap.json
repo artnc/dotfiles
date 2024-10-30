@@ -1,0 +1,19 @@
+// https://zed.dev/docs/key-bindings
+// `zed: open default keymap`
+[
+  {
+    "bindings": {
+      "cmd-ctrl-p": ["projects::OpenRecent", {"create_new_window": false }],
+      "ctrl-shift-k": "editor::DeleteLine"
+    },
+    "context": "Editor"
+  },
+  {
+    "bindings": {
+      // Supposedly `false` is already the default, but not IME
+      // https://github.com/zed-industries/zed/discussions/6653
+      "alt-cmd-o": ["projects::OpenRecent", {"create_new_window": false }]
+    },
+    "context": "Workspace"
+  }
+]
