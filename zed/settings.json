@@ -20,16 +20,27 @@
   // Options: https://github.com/zed-industries/zed/blob/main/assets/themes/one/one.json
   "experimental.theme_overrides": {
     "editor.background": "#191919",
-    "editor.document_highlight.read_background": "#555",
     "editor.gutter.background": "#191919",
     "panel.background": "#191919",
     "players": [
        {
          "cursor": "#ffffffff",
-         "selection": "#555"
        }
     ]
   },
+  "file_scan_exclusions": [
+    // Custom:
+    "**/node_modules",
+    // Defaults:
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings"
+  ],
   "format_on_save": "off",
   "git": {
     "inline_blame": {
@@ -49,6 +60,7 @@
     "enabled": false
   },
   "project_panel": {
+    "auto_reveal_entries": false,
     "button": false,
     "file_icons": false,
     "folder_icons": false,

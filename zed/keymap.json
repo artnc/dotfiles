@@ -3,17 +3,17 @@
 [
   {
     "bindings": {
-      "cmd-ctrl-p": ["projects::OpenRecent", {"create_new_window": false }],
-      "ctrl-shift-k": "editor::DeleteLine"
-    },
-    "context": "Editor"
+      // Supposedly `false` is already the default, but not IME
+      // https://github.com/zed-industries/zed/discussions/6653
+      "cmd-ctrl-p": ["projects::OpenRecent", {"create_new_window": false }]
+    }
   },
   {
     "bindings": {
-      // Supposedly `false` is already the default, but not IME
-      // https://github.com/zed-industries/zed/discussions/6653
-      "alt-cmd-o": ["projects::OpenRecent", {"create_new_window": false }]
+      "cmd-y": "editor::Redo",
+      "ctrl-shift-k": "editor::DeleteLine",
+      "f9": "editor::SortLinesCaseInsensitive"
     },
-    "context": "Workspace"
+    "context": "Editor"
   }
 ]
