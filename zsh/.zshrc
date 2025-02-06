@@ -318,10 +318,10 @@ alias gxh='git reset --hard'
 # Sublime Text / VS Code / Zed
 if [[ -n "${CODESPACES}" ]]; then
   alias s='code'
+elif _command_exists subl; then
+  alias s='subl'
 elif _command_exists zed; then
   alias s='zed'
-else
-  alias s='subl'
 fi
 
 # SSH
