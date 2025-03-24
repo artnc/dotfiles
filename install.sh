@@ -25,7 +25,11 @@ ensure_symlink() {
       ln -fs "${PWD}/${src}" "${dst}"
     fi
   elif [[ -f ${dst} ]] || [[ -d ${dst} ]]; then
-    logI "Found existing ${dst}"
+    if [[ -L ${dst} ]]; then
+      logI "Found existing ${dst}"
+    else
+      logE "Found unsymlinked ${dst}"
+    fi
   else
     logI "Creating ${dst}..."
     if [[ -z ${DRY_RUN:-} ]]; then
@@ -85,6 +89,10 @@ ensure_symlink zsh/.zshrc ~/.zshrc
 if [[ "$(uname)" == Darwin ]]; then
   ensure_symlink aerospace ~/.config/aerospace
   ensure_symlink alacritty/alacritty.mac.toml ~/.config/alacritty/alacritty.toml
+  ensure_symlink code/keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
+  ensure_symlink code/keybindings.json ~/Library/Application\ Support/Cursor/User/keybindings.json
+  ensure_symlink code/settings.json ~/Library/Application\ Support/Code/User/settings.json
+  ensure_symlink code/settings.json ~/Library/Application\ Support/Cursor/User/settings.json
   ensure_symlink hammerspoon ~/.hammerspoon
   ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
   audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
