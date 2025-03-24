@@ -1,5 +1,9 @@
 # Based on https://nikitabobko.github.io/AeroSpace/config-examples#i3-like-config
 
+# Note that macOS blocks AeroSpace shortcuts from working whenever a password
+# field has focus, e.g. KeePassXC login screen :|
+# https://github.com/nikitabobko/AeroSpace/discussions/959
+
 enable-normalization-flatten-containers = false
 enable-normalization-opposite-orientation-for-nested-containers = false
 
