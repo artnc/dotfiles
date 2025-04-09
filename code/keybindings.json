@@ -155,7 +155,7 @@
         "command": "-workbench.action.openEditorAtIndex9"
     },
     {
-        "key": "cmd+0",
+        "key": "cmd+9",
         "command": "workbench.action.lastEditorInGroup"
     },
     {
