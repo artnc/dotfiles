@@ -2,7 +2,7 @@ if [[ "$(uname)" = Darwin ]]; then
   IS_MAC=true
   alias date='gdate'  # GNU `date` provides nanosecond precision
 else
-  IS_MAC=falsce
+  IS_MAC=false
 fi
 start=$(date +%s.%N)
 
