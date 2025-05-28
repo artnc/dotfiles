@@ -445,11 +445,6 @@ fi
 _command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 _command_exists rbenv && eval "$(rbenv init -)"
 
-# Sublime Text
-if [[ $IS_MAC = true ]]; then
-  PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin:${PATH}"
-fi
-
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
   export WORKON_HOME="${HOME}/.virtualenvs"
