@@ -1,5 +1,6 @@
 {
   "breadcrumbs.enabled": false,
+  "chat.agent.enabled": true,
   "crashReporting.enabled": "off",
   "editor.find.addExtraSpaceOnTop": false,
   "editor.folding": false,
@@ -10,6 +11,7 @@
   "editor.inlineSuggest.enabled": true,
   "editor.lineHeight": 1.25,
   "editor.matchBrackets": "never",
+  "editor.minimap.enabled": false,
   "editor.multiCursorModifier": "ctrlCmd",
   "editor.overviewRulerBorder": false,
   "editor.renderLineHighlight": "none",
