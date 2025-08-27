@@ -79,6 +79,7 @@ audit_nonsymlinks() {
 }
 
 ensure_symlink ag/.agignore ~/.agignore
+ensure_symlink claude/settings.json ~/.claude/settings.json
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore

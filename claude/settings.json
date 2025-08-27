@@ -1,0 +1,12 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npx tsc:*)"
+    ],
+    "defaultMode": "acceptEdits",
+    "deny": []
+  },
+  "theme": "dark-daltonized"
+}

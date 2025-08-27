@@ -241,6 +241,11 @@ else
   )
 fi
 
+# Claude
+if _command_exists claude && _command_exists nodenv; then
+  alias c='NODENV_VERSION=$(nodenv global) claude'
+fi
+
 # Ripgrep
 if _command_exists rg; then
   alias g='rg --hidden --line-number --max-columns 250 --no-heading --pcre2 --sort-files'
