@@ -5,6 +5,11 @@
 	"fold_buttons": false,
 	"font_face": "DejaVu Sans Mono",
 	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"index_files": true,
 	"mini_diff": false,
 	"overlay_scroll_bars": "disabled",
 	"preview_on_click": false,
