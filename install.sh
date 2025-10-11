@@ -78,32 +78,20 @@ audit_nonsymlinks() {
   fi
 }
 
-ensure_symlink ag/.agignore ~/.agignore
-ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
-ensure_symlink claude/settings.json ~/.claude/settings.json
-ensure_symlink git/.git-template ~/.git-template
-ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
-ensure_symlink git/.gitignore ~/.gitignore
-ensure_symlink nano/.nanorc ~/.nanorc
-ensure_symlink ripgrep/.rgignore ~/.rgignore
-ensure_symlink tmux/.tmux.conf ~/.tmux.conf
-ensure_symlink zsh/.zshrc ~/.zshrc
 if [[ "$(uname)" == Darwin ]]; then
+  vscode_parent_dir="${HOME}/Library/Application Support"
   ensure_symlink aerospace ~/.config/aerospace
   ensure_symlink alacritty/alacritty.mac.toml ~/.config/alacritty/alacritty.toml
-  ensure_symlink code/keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
-  ensure_symlink code/keybindings.json ~/Library/Application\ Support/Cursor/User/keybindings.json
-  ensure_symlink code/settings.json ~/Library/Application\ Support/Code/User/settings.json
-  ensure_symlink code/settings.json ~/Library/Application\ Support/Cursor/User/settings.json
+  ensure_symlink code/extensions.cursor.json ~/.cursor/extensions/extensions.json
+  ensure_symlink code/extensions.vscode.json ~/.vscode/extensions/extensions.json
   ensure_symlink hammerspoon ~/.hammerspoon
   ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
   audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
   audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
 else
+  vscode_parent_dir="${HOME}/.config"
   ensure_symlink alacritty ~/.config/alacritty
-  ensure_symlink code/keybindings.json ~/.config/Code/User/keybindings.json
-  ensure_symlink code/settings.json ~/.config/Code/User/settings.json
   ensure_symlink easystroke ~/.easystroke
   ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
@@ -122,3 +110,17 @@ else
     audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)
 fi
+ensure_symlink ag/.agignore ~/.agignore
+ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
+ensure_symlink claude/settings.json ~/.claude/settings.json
+ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings.json"
+ensure_symlink code/keybindings.json "${vscode_parent_dir}/Cursor/User/keybindings.json"
+ensure_symlink code/settings.json "${vscode_parent_dir}/Code/User/settings.json"
+ensure_symlink code/settings.json "${vscode_parent_dir}/Cursor/User/settings.json"
+ensure_symlink git/.git-template ~/.git-template
+ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
+ensure_symlink git/.gitignore ~/.gitignore
+ensure_symlink nano/.nanorc ~/.nanorc
+ensure_symlink ripgrep/.rgignore ~/.rgignore
+ensure_symlink tmux/.tmux.conf ~/.tmux.conf
+ensure_symlink zsh/.zshrc ~/.zshrc
