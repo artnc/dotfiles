@@ -39,6 +39,8 @@
   "git.autofetch": true,
   "git.decorations.enabled": false,
   "git.enabled": false,
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
   "keyboard.dispatch": "keyCode",
   "makefile.configureOnOpen": false,
   "problems.decorations.enabled": false,
