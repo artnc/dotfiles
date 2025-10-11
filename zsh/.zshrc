@@ -323,6 +323,10 @@ alias gxh='git reset --hard'
 # Sublime Text / VS Code / Zed
 if [[ -n "${CODESPACES}" ]]; then
   alias s='code'
+elif _command_exists code; then
+  # Preferring VSCode over Cursor for now because Cursor lacks Unity extension
+  # and I'm using Claude Code instead for AI anyway
+  alias s='code'
 elif _command_exists cursor; then
   alias s='cursor'
 elif _command_exists subl; then
