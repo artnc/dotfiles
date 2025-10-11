@@ -51,6 +51,7 @@
   "window.restoreWindows": "all",
   "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${profileName}",
   "window.titleBarStyle": "custom",
+  "workbench.activityBar.location": "hidden",
   "workbench.colorCustomizations": {
     "statusBar.background": "#303030",
     "statusBarItem.remoteBackground": "#303030"
