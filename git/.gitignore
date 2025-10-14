@@ -1,3 +1,5 @@
+.DS_Store
+
 # I almost always run Node.js stuff inside Docker, I still install NPM packages
 # locally so that Sublime Text's LSP-typescript plugin can find definitions,
 # I'm currently of the opinion that gitignores for files used by unenforced
