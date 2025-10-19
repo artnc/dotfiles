@@ -251,27 +251,6 @@ if _command_exists rg; then
   alias g='rg --crlf --engine=auto --hidden --line-number --max-columns=250 --multiline --no-heading --sort-files'
 fi
 
-# Default programs
-if _command_exists subl; then
-  alias -s c='subl'
-  alias -s conf='subl'
-  alias -s cpp='subl'
-  alias -s css='subl'
-  alias -s h='subl'
-  alias -s hpp='subl'
-  alias -s hs='subl'
-  alias -s html='subl'
-  alias -s js='subl'
-  alias -s md='subl'
-  alias -s pdf='evince'
-  alias -s php='subl'
-  alias -s sass='subl'
-  alias -s scss='subl'
-  alias -s tex='subl'
-  alias -s txt='subl'
-  alias -s xml='subl'
-fi
-
 # Append always-used options to common commands
 if [[ $IS_MAC = true ]]; then
   alias df='df -h'
@@ -334,6 +313,23 @@ elif _command_exists subl; then
 elif _command_exists zed; then
   alias s='zed'
 fi
+alias -s c='s'
+alias -s conf='s'
+alias -s cpp='s'
+alias -s css='s'
+alias -s h='s'
+alias -s hpp='s'
+alias -s hs='s'
+alias -s html='s'
+alias -s js='s'
+alias -s md='s'
+alias -s pdf='evince'
+alias -s php='s'
+alias -s sass='s'
+alias -s scss='s'
+alias -s tex='s'
+alias -s txt='s'
+alias -s xml='s'
 
 # SSH
 # https://superuser.com/a/215506
