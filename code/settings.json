@@ -45,6 +45,7 @@
   "makefile.configureOnOpen": false,
   "problems.decorations.enabled": false,
   "scm.diffDecorations": "none",
+  "search.searchEditor.reusePriorSearchConfiguration": true,
   "security.workspace.trust.untrustedFiles": "open",
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.fontSize": 12,
