@@ -1,0 +1,9 @@
+gerane.theme-twilight
+github.copilot
+github.copilot-chat
+ms-dotnettools.csdevkit
+ms-dotnettools.csharp
+ms-dotnettools.vscode-dotnet-runtime
+ms-vsliveshare.vsliveshare
+stkb.rewrap
+visualstudiotoolsforunity.vstuc

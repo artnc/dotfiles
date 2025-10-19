@@ -49,41 +49,53 @@ ensure_symlink_if_artnc() {
   fi
 }
 
+os_name="$(uname)"
+
 # Audit /etc and other files that we can't easily symlink
 audit_nonsymlinks() {
   local -r src="${1}"
   local -r dst="${2}"
-  if [[ -f ${dst} ]]; then
-    repo_hash="$(md5sum "${src}" | awk '{print $1}')"
-    system_hash="$(md5sum "${dst}" | awk '{print $1}')"
-    if [[ ${repo_hash} == "${system_hash}" ]]; then
-      logI "Found matching ${dst}"
-    else
+  local -r dst_contents="${3:-${dst}}"
+  if [[ -f ${dst_contents} || -p ${dst_contents} ]]; then
+    differences="$(diff "${src}" "${dst_contents}" || true)"
+    if [[ -n ${differences} ]]; then
       logE "Found mismatched ${dst}; please resolve conflicts by hand"
-      diff "${src}" "${dst}" || true
+      echo "${differences}"
+    else
+      logI "Found matching ${dst}"
     fi
   else
     logE "Didn't find ${dst}; please copy from this repo"
   fi
 
   # https://wiki.archlinux.org/title/Pacman/Pacnew_and_Pacsave
-  pacnew_path="${dst}.pacnew"
-  if [[ -f ${pacnew_path} ]]; then
-    logE "Found ${pacnew_path}; please merge changes into ${dst} and delete"
-    diff "${dst}" "${dst}.pacnew" || true
-  fi
-  pacsave_path="${dst}.pacsave"
-  if [[ -f ${pacsave_path} ]]; then
-    logE "Found ${pacsave_path}; please delete if obsolete"
+  if [[ ${os_name} != Darwin ]]; then
+    pacnew_path="${dst}.pacnew"
+    if [[ -f ${pacnew_path} ]]; then
+      logE "Found ${pacnew_path}; please merge changes into ${dst} and delete"
+      diff "${dst}" "${dst}.pacnew" || true
+    fi
+    pacsave_path="${dst}.pacsave"
+    if [[ -f ${pacsave_path} ]]; then
+      logE "Found ${pacsave_path}; please delete if obsolete"
+    fi
   fi
 }
 
-if [[ "$(uname)" == Darwin ]]; then
+# Audit VSCode extensions, whose manifest isn't portable because it contains
+# absolute paths. (We can't just use VSCode Settings Sync either because that
+# works with only VSCode, not Cursor)
+audit_vscode_extensions() {
+  audit_nonsymlinks "${1}" "${2}" <(jq -r '.[].identifier.id' "${2}" | sort)
+}
+
+# Process all dotfiles
+if [[ ${os_name} == Darwin ]]; then
   vscode_parent_dir="${HOME}/Library/Application Support"
   ensure_symlink aerospace ~/.config/aerospace
   ensure_symlink alacritty/alacritty.mac.toml ~/.config/alacritty/alacritty.toml
-  ensure_symlink code/extensions.cursor.json ~/.cursor/extensions/extensions.json
-  ensure_symlink code/extensions.vscode.json ~/.vscode/extensions/extensions.json
+  audit_vscode_extensions code/extensions.cursor.txt ~/.cursor/extensions/extensions.json
+  audit_vscode_extensions code/extensions.vscode.txt ~/.vscode/extensions/extensions.json
   ensure_symlink hammerspoon ~/.hammerspoon
   ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
