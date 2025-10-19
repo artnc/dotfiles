@@ -24,6 +24,33 @@ beep() {
   afplay '/System/Library/Sounds/Glass.aiff'
 }
 
+# Claude
+c() {
+  # Use real Docker executable instead of any shims
+  image_id="$(/usr/local/bin/docker build -q - << EOF | head -1
+FROM alpine:3.22.2
+RUN apk add --no-cache bash npm && npm install -g @anthropic-ai/claude-code
+EOF
+)"
+  # Run dangerously inside Docker sandbox
+  docker_cmd=(
+    /usr/local/bin/docker
+    run --rm -it
+    -e IS_SANDBOX=1 # Disables `--dangerously-skip-permissions cannot be used with root/sudo privileges`
+    -v "${HOME}:/root:ro" # Give readonly access to global CLAUDE.md
+    -v "/tmp:/tmp:ro" # Give readonly access to /tmp
+    -v "/private/tmp:/private/tmp:ro"
+    -v "${HOME}:${HOME}:ro" # Make symlinks that reference host paths still work
+    -v "${HOME}/.claude:/root/.claude" # Let Claude write to its own files
+    -v "${HOME}/.claude.json:/root/.claude.json"
+    -v "${HOME}/.claude.json.backup:/root/.claude.json.backup"
+    -v "${PWD}:/code" # Mount current directory
+    -w /code
+    "${image_id}"
+  )
+  "${docker_cmd[@]}" claude --dangerously-skip-permissions "$@"
+}
+
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
   local path="${1:-.}"
@@ -239,11 +266,6 @@ else
     "${_pacman_helper}" -Rncs "${1}"
     _pacman_remove_orphans
   )
-fi
-
-# Claude
-if _command_exists claude && _command_exists nodenv; then
-  alias c='NODENV_VERSION=$(nodenv global) claude'
 fi
 
 # Ripgrep
