@@ -428,7 +428,7 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # nodenv
 if [[ -d "${HOME}/.nodenv" ]]; then
   PATH="${HOME}/.nodenv/bin:${PATH}"
-  eval "$(nodenv init -)"
+  eval "$(nodenv init - --no-rehash zsh)"
 fi
 
 # pre-commit
@@ -451,7 +451,7 @@ fi
 
 # Ruby
 _command_exists ruby && PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
-_command_exists rbenv && eval "$(rbenv init -)"
+_command_exists rbenv && eval "$(rbenv init - --no-rehash zsh)"
 
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
