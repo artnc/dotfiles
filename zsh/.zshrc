@@ -248,7 +248,7 @@ fi
 
 # Ripgrep
 if _command_exists rg; then
-  alias g='rg --hidden --line-number --max-columns 250 --no-heading --pcre2 --sort-files'
+  alias g='rg --crlf --engine=auto --hidden --line-number --max-columns=250 --multiline --no-heading --sort-files'
 fi
 
 # Default programs
