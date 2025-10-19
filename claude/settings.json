@@ -2,8 +2,10 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
-      "Bash(npm install)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Read(//Applications/**)",
+      "Read(//private/tmp/**)",
+      "Read(//Users/art/Library/**)"
     ],
     "defaultMode": "acceptEdits",
     "deny": []
