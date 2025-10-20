@@ -35,7 +35,7 @@ EOF
   # Run dangerously inside Docker sandbox
   docker_cmd=(
     /usr/local/bin/docker
-    run --rm -it
+    run --rm -it --init
     -e IS_SANDBOX=1 # Disables `--dangerously-skip-permissions cannot be used with root/sudo privileges`
     -v "${HOME}:/root:ro" # Give readonly access to global CLAUDE.md
     -v "${HOME}:${HOME}:ro" # Make symlinks that reference host paths still work
