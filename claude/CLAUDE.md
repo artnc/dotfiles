@@ -27,6 +27,7 @@ In Bash source code:
 - Prefer single quotes (unless the string contains an interpolation).
 - Always use lowercase snake_case for non-environment variable names.
 - Always use `[[` instead of `[`.
+- Always include curly braces when interpolating variables, e.g. `${foo}` instead of `$foo`.
 - Always include this shebang line: `#!/usr/bin/env bash`
 
 In C# source code:

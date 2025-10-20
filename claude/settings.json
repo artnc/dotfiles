@@ -2,6 +2,7 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
+      "Bash(chmod:*)",
       "Bash(npx tsc:*)",
       "Read(//Applications/**)",
       "Read(//private/tmp/**)",
