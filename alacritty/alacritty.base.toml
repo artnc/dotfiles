@@ -29,12 +29,6 @@ foreground = "0xffffff"
 [cursor]
 style = "Beam"
 
-[font]
-size = 12
-
-[font.normal]
-family = "DejaVu Sans Mono"
-
 [font.offset]
 x = 0
 y = 1

@@ -93,7 +93,7 @@ audit_vscode_extensions() {
 if [[ ${os_name} == Darwin ]]; then
   vscode_parent_dir="${HOME}/Library/Application Support"
   ensure_symlink aerospace ~/.config/aerospace
-  ensure_symlink alacritty/alacritty.mac.toml ~/.config/alacritty/alacritty.toml
+  ensure_symlink alacritty/alacritty.macos.toml ~/.config/alacritty/alacritty.toml
   audit_vscode_extensions code/extensions.cursor.txt ~/.cursor/extensions/extensions.json
   audit_vscode_extensions code/extensions.vscode.txt ~/.vscode/extensions/extensions.json
   ensure_symlink hammerspoon ~/.hammerspoon
@@ -103,7 +103,7 @@ if [[ ${os_name} == Darwin ]]; then
   audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
 else
   vscode_parent_dir="${HOME}/.config"
-  ensure_symlink alacritty ~/.config/alacritty
+  ensure_symlink alacritty/alacritty.linux.toml ~/.config/alacritty/alacritty.toml
   ensure_symlink easystroke ~/.easystroke
   ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
@@ -122,6 +122,7 @@ else
     audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)
 fi
+ensure_symlink alacritty/alacritty.base.toml ~/.config/alacritty/alacritty.base.toml
 ensure_symlink ag/.agignore ~/.agignore
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json

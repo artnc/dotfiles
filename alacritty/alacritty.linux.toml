@@ -1,0 +1,5 @@
+[general]
+import = ["alacritty.base.toml"]
+
+[font]
+size = 7
