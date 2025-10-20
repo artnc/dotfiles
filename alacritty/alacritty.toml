@@ -40,7 +40,7 @@ y = 1
 live_config_reload = true
 
 [window]
-decorations = "none"
+decorations = "None"
 
 [window.padding]
 x = 2
