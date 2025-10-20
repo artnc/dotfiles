@@ -38,9 +38,9 @@ EOF
     run --rm -it
     -e IS_SANDBOX=1 # Disables `--dangerously-skip-permissions cannot be used with root/sudo privileges`
     -v "${HOME}:/root:ro" # Give readonly access to global CLAUDE.md
-    -v "/tmp:/tmp:ro" # Give readonly access to /tmp
-    -v "/private/tmp:/private/tmp:ro"
     -v "${HOME}:${HOME}:ro" # Make symlinks that reference host paths still work
+    -v "/tmp:/tmp" # Give write access to /tmp
+    -v "/private/tmp:/private/tmp"
     -v "${HOME}/.claude:/root/.claude" # Let Claude write to its own files
     -v "${HOME}/.claude.json:/root/.claude.json"
     -v "${HOME}/.claude.json.backup:/root/.claude.json.backup"
