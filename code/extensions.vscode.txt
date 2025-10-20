@@ -6,4 +6,5 @@ ms-dotnettools.csharp
 ms-dotnettools.vscode-dotnet-runtime
 ms-vsliveshare.vsliveshare
 stkb.rewrap
+tamasfe.even-better-toml
 visualstudiotoolsforunity.vstuc

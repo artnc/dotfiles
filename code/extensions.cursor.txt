@@ -3,3 +3,4 @@ golang.go
 ms-vscode.makefile-tools
 ms-vsliveshare.vsliveshare
 stkb.rewrap
+tamasfe.even-better-toml
