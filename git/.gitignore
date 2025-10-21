@@ -1,3 +1,7 @@
+# Claude project settings
+.claude/settings.local.json
+
+# macOS litter
 .DS_Store
 
 # I almost always run Node.js stuff inside Docker, I still install NPM packages
