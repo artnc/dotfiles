@@ -1,6 +1,7 @@
 {
   "breadcrumbs.enabled": false,
   "chat.agent.enabled": true,
+  "chat.commandCenter.enabled": false,
   "crashReporting.enabled": "off",
   "editor.find.addExtraSpaceOnTop": false,
   "editor.folding": false,
@@ -73,6 +74,7 @@
   "workbench.editor.tabSizing": "shrink",
   "workbench.editor.wrapTabs": true,
   "workbench.iconTheme": null,
+  "workbench.layoutControl.enabled": false,
   "workbench.panel.defaultLocation": "right",
   "workbench.startupEditor": "newUntitledFile"
 }
