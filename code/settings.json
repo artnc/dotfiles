@@ -51,6 +51,7 @@
   "terminal.integrated.fontSize": 12,
   "update.mode": "manual",
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "window.commandCenter": false,
   "window.restoreWindows": "all",
   "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${profileName}",
   "window.titleBarStyle": "custom",
