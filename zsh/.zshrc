@@ -246,6 +246,9 @@ if _command_exists claude && _command_exists nodenv; then
   alias c='NODENV_VERSION=22.13.1 claude'
 fi
 
+# fastmod
+alias fastmod='fastmod --accept-all --hidden'
+
 # Ripgrep
 if _command_exists rg; then
   alias g='rg --crlf --engine=auto --hidden --line-number --max-columns=250 --multiline --no-heading --sort-files'
