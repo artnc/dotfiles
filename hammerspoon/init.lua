@@ -10,7 +10,10 @@ hs.hotkey.bind({"cmd"}, 'M', function() end) -- Minimize to dock
 hs.hotkey.bind({"cmd", "ctrl"}, 'F', function() end) -- Fullscreen
 
 -- Auto-type email
-local typeEmail = function(email) return function() hs.eventtap.keyStrokes(email) end end
-hs.hotkey.bind({"alt", "shift"}, "C", typeEmail(string.reverse("moc.nuradiahc@tra")))
-hs.hotkey.bind({"alt", "shift"}, "D", typeEmail(string.reverse("moc.ogniloud@tra")))
-hs.hotkey.bind({"alt", "shift"}, "E", typeEmail(string.reverse("moc.liamg@nuradiahctra")))
+local typeKeystrokes = function(email) return function() hs.eventtap.keyStrokes(email) end end
+hs.hotkey.bind({"alt", "shift"}, "C", typeKeystrokes(string.reverse("moc.nuradiahc@tra")))
+hs.hotkey.bind({"alt", "shift"}, "D", typeKeystrokes(string.reverse("moc.ogniloud@tra")))
+hs.hotkey.bind({"alt", "shift"}, "E", typeKeystrokes(string.reverse("moc.liamg@nuradiahctra")))
+
+-- Auto-type Claude Code keyword
+hs.hotkey.bind({"alt", "shift"}, "U", typeKeystrokes(". ultrathink"))
