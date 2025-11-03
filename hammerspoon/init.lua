@@ -17,3 +17,40 @@ hs.hotkey.bind({"alt", "shift"}, "E", typeKeystrokes(string.reverse("moc.liamg@n
 
 -- Auto-type Claude Code keyword
 hs.hotkey.bind({"alt", "shift"}, "U", typeKeystrokes(". ultrathink"))
+
+-- Auto-refresh Slack upon focus and then periodically while focused
+local slackRefreshInterval = 300 -- 5 minutes
+local slackLastRefresh = 0
+local slackFocusTimer = nil
+local refreshSlack = function()
+  hs.eventtap.keyStroke({"cmd", "shift"}, "r")
+  slackLastRefresh = hs.timer.secondsSinceEpoch()
+end
+hs.application.watcher.new(function(appName, eventType, appObject)
+  if appName ~= "Slack" then
+    return
+  end
+  if eventType == hs.application.watcher.activated then
+    -- Refresh on focus
+    local now = hs.timer.secondsSinceEpoch()
+    if (now - slackLastRefresh) >= slackRefreshInterval then
+      hs.timer.doAfter(0.1, refreshSlack)
+    end
+
+    -- Start timer
+    if slackFocusTimer then
+      slackFocusTimer:stop()
+    end
+    slackFocusTimer = hs.timer.new(slackRefreshInterval, function()
+      if hs.application.frontmostApplication():name() == "Slack" then
+        refreshSlack()
+      end
+    end):start()
+  elseif eventType == hs.application.watcher.deactivated then
+    -- Stop timer
+    if slackFocusTimer then
+      slackFocusTimer:stop()
+      slackFocusTimer = nil
+    end
+  end
+end):start()
