@@ -21,6 +21,7 @@
 [credential]
   helper = cache --timeout=864000
 [init]
+  defaultBranch = master
   templateDir = ~/.git-template
 [push]
   autoSetupRemote = true
