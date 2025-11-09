@@ -1,3 +1,6 @@
+# Load X resources
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
 # Mute system bell
 xset -b
 

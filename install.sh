@@ -113,6 +113,7 @@ else
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   ensure_symlink pylint/.pylintrc ~/.pylintrc
   ensure_symlink sublime ~/.config/sublime-text/Packages/User
+  ensure_symlink urxvt/.Xresources ~/.Xresources
   ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
   ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
   ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc

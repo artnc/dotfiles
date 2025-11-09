@@ -12,7 +12,7 @@ client.focused #333333 #222222 #888888 #292d2e #222222
 floating_modifier $mod
 
 # Hide title bar of some programs
-for_window [title="(Android Studio|Mozilla Firefox|File Manager)"] border pixel 0
+for_window [title="(Android Studio|Mozilla Firefox|File Manager|urxvt)"] border pixel 0
 
 # kill focused window
 bindsym $mod+Shift+apostrophe kill
