@@ -26,10 +26,12 @@ URxvt.intensityStyles: true
 URxvt.internalBorder: 2
 URxvt.iso14755_52: false
 URxvt.iso14755: false
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
 URxvt.letterSpace: 0
 URxvt.matcher.button: 1
 URxvt.mouseWheelScrollPage: false
-URxvt.perl-ext-common: default,matcher,readline,tabbed
+URxvt.perl-ext-common: default,matcher,readline,selection-to-clipboard,tabbed
 URxvt.saveLines: 10000
 URxvt.scrollBar: false
 URxvt.scrollTtyKeypress: true
