@@ -1,6 +1,3 @@
-# Claude project settings
-.claude/settings.local.json
-
 # macOS litter
 .DS_Store
 
