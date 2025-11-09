@@ -19,7 +19,7 @@ hs.hotkey.bind({"alt", "shift"}, "E", typeKeystrokes(string.reverse("moc.liamg@n
 hs.hotkey.bind({"alt", "shift"}, "U", typeKeystrokes(". ultrathink"))
 
 -- Auto-refresh Slack upon focus and then periodically while focused
-local slackRefreshInterval = 300 -- 5 minutes
+local slackRefreshInterval = 1200 -- seconds
 local slackLastRefresh = 0
 local slackFocusTimer = nil
 local refreshSlack = function()
