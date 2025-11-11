@@ -408,6 +408,16 @@ if _command_exists fzf; then
     export FZF_DEFAULT_COMMAND='rg --files --hidden'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   fi
+
+  # Make `gk **<TAB>` show a menu of most recent branches
+  _fzf_complete_gk() {
+    _fzf_complete --preview='git log --oneline -10 {}' -- "$@" < <(
+      git reflog --format='%gs' |
+      sed -n 's/checkout: moving from .* to \(.*\)/\1/p' |
+      awk '!seen[$0]++' |
+      head -10
+    )
+  }
 fi
 
 # Git
