@@ -80,6 +80,19 @@ gpr() {
   )
 }
 
+# Convert all .mov files in /tmp to .mp4
+mp4 () {
+  while read -r mov_file; do
+    local base_name="${mov_file%.mov}"
+    local mp4_file="${base_name}.mp4"
+    if [[ ! -f "${mp4_file}" ]]; then
+      echo "Creating ${mp4_file}..."
+      ffmpeg -i "${mov_file}" -loglevel error -vcodec h264 "${mp4_file}"
+    fi
+  done < <(find -H /tmp -maxdepth 1 -type f -name '*.mov' | sort)
+  echo 'Done!'
+}
+
 # Open the current directory's Sublime Text project, creating it if needed
 sp() {
   project_file="${HOME}/.virtualenvs/$(basename "${PWD}").sublime-project"
