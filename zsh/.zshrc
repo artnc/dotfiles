@@ -442,6 +442,9 @@ if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
   export GIT_CONFIG_VALUE_1="$(printf %s "moc.nuradiahc@tra" | rev)"
 fi
 
+# Homebrew
+export PATH="/opt/homebrew/bin:${PATH}"
+
 # Java
 if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
   export PATH="/opt/homebrew/opt/openjdk@17/bin:${PATH}"
