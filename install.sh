@@ -89,7 +89,8 @@ audit_vscode_extensions() {
   audit_nonsymlinks "${1}" "${2}" <(jq -r '.[].identifier.id' "${2}" | sort)
 }
 
-# Process all dotfiles
+# Process all dotfiles. Symlinks for programs that I'm not currently using but
+# might try again in the future are commented out for posterity
 if [[ ${os_name} == Darwin ]]; then
   vscode_parent_dir="${HOME}/Library/Application Support"
   ensure_symlink aerospace ~/.config/aerospace
@@ -97,24 +98,25 @@ if [[ ${os_name} == Darwin ]]; then
   audit_vscode_extensions code/extensions.cursor.txt ~/.cursor/extensions/extensions.json
   audit_vscode_extensions code/extensions.vscode.txt ~/.vscode/extensions/extensions.json
   ensure_symlink hammerspoon ~/.hammerspoon
-  ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
+  # ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
   audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
   audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
 else
   vscode_parent_dir="${HOME}/.config"
   ensure_symlink alacritty/alacritty.linux.toml ~/.config/alacritty/alacritty.toml
-  ensure_symlink easystroke ~/.easystroke
-  ensure_symlink feh/.fehbg ~/.fehbg
+  # ensure_symlink easystroke ~/.easystroke
+  # ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0
   ensure_symlink i3 ~/.config/i3
   ensure_symlink i3blocks ~/.config/i3blocks
   ensure_symlink iftop/.iftoprc ~/.iftoprc
-  ensure_symlink pylint/.pylintrc ~/.pylintrc
-  ensure_symlink sublime ~/.config/sublime-text/Packages/User
-  ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
-  ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
+  # ensure_symlink pylint/.pylintrc ~/.pylintrc
+  # ensure_symlink sublime ~/.config/sublime-text/Packages/User
+  # ensure_symlink urxvt/.Xresources ~/.Xresources
+  # ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
+  # ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
   ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
@@ -123,7 +125,7 @@ else
   done < <(find etc -type f)
 fi
 ensure_symlink alacritty/alacritty.base.toml ~/.config/alacritty/alacritty.base.toml
-ensure_symlink ag/.agignore ~/.agignore
+# ensure_symlink ag/.agignore ~/.agignore
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json
 ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings.json"
