@@ -24,6 +24,57 @@ beep() {
   afplay '/System/Library/Sounds/Glass.aiff'
 }
 
+# Transfer Claude permission declarations from local repo to global settings
+cp() {
+  local local_settings=".claude/settings.local.json"
+  local global_settings="${HOME}/.claude/settings.json"
+  if [[ ! -f "${local_settings}" ]]; then
+    echo 'Current directory has no local Claude settings'
+    return 1
+  fi
+  new_json="$(yq ". *+ load(\"${local_settings}\")" "${global_settings}" | jq -S .)"
+  echo "${new_json}" > "${global_settings}"
+  rm "${local_settings}"
+  echo "Successfully merged permissions from ${local_settings} to ${global_settings}"
+}
+
+# Claude (dockerized)
+dc() {
+  # Use real Docker executable instead of any shims
+  image_id="$(/usr/local/bin/docker build -q - << EODOCKERFILE | head -1
+FROM alpine:latest
+RUN <<EOF
+set -eu
+apk update && apk add --no-cache \
+  bash \
+  curl \
+  npm
+npm install -g @anthropic-ai/claude-code
+EOF
+
+# https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+EODOCKERFILE
+)"
+  # Run dangerously inside Docker sandbox
+  docker_cmd=(
+    /usr/local/bin/docker
+    run --rm -it --init
+    -e IS_SANDBOX=1 # Disables `--dangerously-skip-permissions cannot be used with root/sudo privileges`
+    -v "$(readlink ~/.claude/CLAUDE.md):/root/CLAUDE.md:ro" # Give readonly access to global CLAUDE.md
+    -v "${HOME}/Library/AppSupport/UnityMCP:${HOME}/Library/AppSupport/UnityMCP" # Unity MCP
+    -v "/tmp:/tmp" # Use host's /tmp
+    -v "/private/tmp:/private/tmp" # macOS /tmp is a symlink to /private/tmp
+    -v "${HOME}/.claude:/root/.claude" # Let Claude write to its own file
+    -v "${HOME}/.claude.json:/root/.claude.json" # Let Claude write to its own file
+    -v "${HOME}/.claude.json.backup:/root/.claude.json.backup" # Let Claude write to its own file
+    -v "${PWD}:${PWD}" # Mount current directory at same path to preserve Claude history
+    -w "${PWD}"
+    "${image_id}"
+  )
+  "${docker_cmd[@]}" claude --dangerously-skip-permissions "$@"
+}
+
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
   local path="${1:-.}"
