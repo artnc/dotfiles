@@ -25,7 +25,7 @@ beep() {
 }
 
 # Transfer Claude permission declarations from local repo to global settings
-cp() {
+claudeperms() {
   local local_settings=".claude/settings.local.json"
   local global_settings="${HOME}/.claude/settings.json"
   if [[ ! -f "${local_settings}" ]]; then
