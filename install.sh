@@ -114,6 +114,7 @@ else
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   # ensure_symlink pylint/.pylintrc ~/.pylintrc
   # ensure_symlink sublime ~/.config/sublime-text/Packages/User
+  ensure_symlink thunar/thunar.xml  ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
   # ensure_symlink urxvt/.Xresources ~/.Xresources
   # ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
   # ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
