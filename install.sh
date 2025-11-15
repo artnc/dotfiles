@@ -97,6 +97,7 @@ if [[ ${os_name} == Darwin ]]; then
   ensure_symlink alacritty/alacritty.macos.toml ~/.config/alacritty/alacritty.toml
   audit_vscode_extensions code/extensions.cursor.txt ~/.cursor/extensions/extensions.json
   audit_vscode_extensions code/extensions.vscode.txt ~/.vscode/extensions/extensions.json
+  ensure_symlink ghostty/config-macos ~/.config/ghostty/config
   ensure_symlink hammerspoon ~/.hammerspoon
   # ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
@@ -107,6 +108,7 @@ else
   ensure_symlink alacritty/alacritty.linux.toml ~/.config/alacritty/alacritty.toml
   # ensure_symlink easystroke ~/.easystroke
   # ensure_symlink feh/.fehbg ~/.fehbg
+  ensure_symlink ghostty/config-linux ~/.config/ghostty/config
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0
   ensure_symlink i3 ~/.config/i3
@@ -133,7 +135,7 @@ ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings
 ensure_symlink code/keybindings.json "${vscode_parent_dir}/Cursor/User/keybindings.json"
 ensure_symlink code/settings.json "${vscode_parent_dir}/Code/User/settings.json"
 ensure_symlink code/settings.json "${vscode_parent_dir}/Cursor/User/settings.json"
-ensure_symlink ghostty ~/.config/ghostty
+ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore
