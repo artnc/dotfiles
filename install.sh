@@ -132,6 +132,7 @@ ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings
 ensure_symlink code/keybindings.json "${vscode_parent_dir}/Cursor/User/keybindings.json"
 ensure_symlink code/settings.json "${vscode_parent_dir}/Code/User/settings.json"
 ensure_symlink code/settings.json "${vscode_parent_dir}/Cursor/User/settings.json"
+ensure_symlink ghostty ~/.config/ghostty
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore
