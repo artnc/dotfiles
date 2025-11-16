@@ -51,6 +51,7 @@
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.fontSize": 12,
   "update.mode": "manual",
+  "update.showReleaseNotes": false,
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "window.commandCenter": false,
   "window.restoreWindows": "all",
