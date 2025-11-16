@@ -297,6 +297,14 @@ else
     paccache -rk1
     paccache -ruk0
     "${_pacman_helper}" -Sac --noconfirm
+    if _command_exists xmodmap; then
+      xmodmap ~/.Xmodmap
+    fi
+    if _command_exists synclient; then
+      synclient TapButton1=1
+      synclient TapButton2=3
+      synclient TapButton3=2
+    fi
   )
   px() (
     set -e
