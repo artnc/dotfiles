@@ -306,7 +306,7 @@ else
 fi
 
 # Claude
-if _command_exists claude && _command_exists nodenv; then
+if _command_exists claude; then
   alias c='NODENV_VERSION=22.13.1 claude'
 fi
 
