@@ -154,7 +154,7 @@ mode "resize" {
 
 bindsym $mod+p mode "resize"
 
-bindsym $mod+l exec --no-startup-id ~/.config/i3/lock-screen.sh
+bindsym $mod+l exec --no-startup-id xsecurelock
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)

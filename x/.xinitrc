@@ -44,6 +44,6 @@ xbindkeys
 echo 'Starting xfce4-power-manager...'
 xfce4-power-manager &
 echo 'Starting xss-lock...'
-xss-lock -- ~/.config/i3/lock-screen.sh &
+xss-lock -- xsecurelock &
 echo 'Starting i3...'
 exec i3 # Must be last command in this file!
