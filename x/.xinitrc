@@ -29,16 +29,10 @@ sh ~/.fehbg &
 
 # Autostart programs
 # https://wiki.archlinux.org/index.php/autostarting
-echo 'Starting easystroke...'
-easystroke &
-echo 'Starting ssh-agent...'
-eval `ssh-agent -s`
-# echo 'Starting mullvad-vpn...'
-# mullvad-vpn &
+# echo 'Starting ssh-agent...'
+# eval `ssh-agent -s`
 echo 'Starting numlockx...'
 numlockx &
-echo 'Starting syncthing-gtk...'
-syncthing-gtk &
 echo 'Starting xbindkeys...'
 xbindkeys
 echo 'Starting xfce4-power-manager...'
