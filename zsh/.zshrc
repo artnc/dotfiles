@@ -75,6 +75,25 @@ EODOCKERFILE
   "${docker_cmd[@]}" claude --dangerously-skip-permissions "$@"
 }
 
+# Mount/unmount LUKS-encrypted HDD
+hdd() {
+  local -r mount_name='seagate'
+  local -r mount_point="/mnt/${mount_name}"
+  local -r mapper_path="/dev/mapper/${mount_name}"
+  if mount | grep -qF "${mount_point}"; then
+    # Unmount
+    sudo umount "${mapper_path}"
+    sleep
+    sudo cryptsetup luksClose "${mount_name}"
+  else
+    # Mount
+    sudo cryptsetup luksOpen /dev/sda1 "${mount_name}"
+    sleep
+    sudo mkdir -p "${mount_point}"
+    sudo mount "${mapper_path}" "${mount_point}"
+  fi
+}
+
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
 p() {
   local path="${1:-.}"
