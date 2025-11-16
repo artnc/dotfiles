@@ -464,8 +464,7 @@ if _command_exists fzf; then
   if [[ $IS_MAC = true ]]; then
     _source_if_exists "${HOME}/.fzf.zsh"
   else
-    _source_if_exists /usr/share/fzf/key-bindings.zsh
-    _source_if_exists /usr/share/fzf/completion.zsh
+    source <(fzf --zsh)
   fi
   if _command_exists rg; then
     # https://github.com/junegunn/fzf.vim/issues/121#issuecomment-546360911
