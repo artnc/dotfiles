@@ -32,7 +32,8 @@ claudeperms() {
     echo 'Current directory has no local Claude settings'
     return 1
   fi
-  new_json="$(yq ". *+ load(\"${local_settings}\")" "${global_settings}" | jq -S .)"
+  new_json="$(yq ". *+ load(\"${local_settings}\")" "${global_settings}" \
+    | jq -S 'walk(if type == "array" then sort else . end)')"
   echo "${new_json}" > "${global_settings}"
   rm "${local_settings}"
   echo "Successfully merged permissions from ${local_settings} to ${global_settings}"
