@@ -1,6 +1,19 @@
 {
   "alwaysThinkingEnabled": true,
   "enableAllProjectMcpServers": true,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "afplay '/System/Library/Sounds/Glass.aiff'",
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  },
   "includeCoAuthoredBy": false,
   "model": "opus",
   "permissions": {
