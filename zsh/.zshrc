@@ -587,6 +587,10 @@ if [[ $IS_MAC = true ]]; then
   PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:${PATH}"
 fi
 
+# X
+# https://stackoverflow.com/a/79028896
+export DISPLAY=:0
+
 # zsh-syntax-highlighting (should appear at end of .zshrc)
 # https://github.com/zsh-users/zsh-syntax-highlighting
 if [[ $IS_MAC = true ]]; then
