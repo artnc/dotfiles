@@ -455,6 +455,9 @@ fi
 # tee
 alias tt='tee "$(tty)"'
 
+# ts
+alias ts="ts -i %.s | awk '{sub(/^[0-9]+\.[0-9]+/, sprintf(\"%4d\", \$1 * 1000)); print}'"
+
 ############################################ Environment variables and sourcing
 
 export EDITOR=/usr/bin/nano
