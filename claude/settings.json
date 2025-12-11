@@ -6,7 +6,7 @@
       {
         "hooks": [
           {
-            "command": "afplay '/System/Library/Sounds/Glass.aiff'",
+            "command": "say 'Claude finished'",
             "type": "command"
           }
         ],
@@ -25,10 +25,14 @@
       "Bash(git checkout:*)",
       "Bash(git log:*)",
       "Bash(git mv:*)",
+      "Bash(git show:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
       "Bash(npx tsc:*)",
       "Bash(python3:*)",
       "Bash(tree:*)",
       "Bash(unzip:*)",
+      "Bash(xargs basename:*)",
       "Read(//Applications/**)",
       "Read(//Users/art/Library/**)",
       "Read(//private/tmp/**)",
