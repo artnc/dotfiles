@@ -339,7 +339,7 @@ if _command_exists claude; then
 fi
 
 # fastmod
-alias fastmod='fastmod --accept-all --hidden'
+alias fm='fastmod --accept-all --hidden'
 
 # Ripgrep
 if _command_exists rg; then
