@@ -81,5 +81,6 @@
   "workbench.iconTheme": null,
   "workbench.layoutControl.enabled": false,
   "workbench.panel.defaultLocation": "right",
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
   "workbench.startupEditor": "newUntitledFile"
 }
