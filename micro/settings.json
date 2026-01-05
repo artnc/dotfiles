@@ -1,0 +1,19 @@
+{
+  "*.py": {
+    "tabsize": 4
+  },
+  "colorcolumn": 80,
+  "colorscheme": "twilight",
+  "cursorline": true,
+  "hltaberrors": true,
+  "hltrailingws": true,
+  "ignorecase": false,
+  "keymenu": true,
+  "mkparents": true,
+  "savecursor": true,
+  "scrollbar": true,
+  "softwrap": true,
+  "tabmovement": true,
+  "tabsize": 2,
+  "tabstospaces": true
+}

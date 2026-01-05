@@ -116,7 +116,7 @@ else
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   # ensure_symlink pylint/.pylintrc ~/.pylintrc
   # ensure_symlink sublime ~/.config/sublime-text/Packages/User
-  ensure_symlink thunar/thunar.xml  ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
+  ensure_symlink thunar/thunar.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
   # ensure_symlink urxvt/.Xresources ~/.Xresources
   # ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
   # ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
@@ -139,6 +139,7 @@ ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore
+ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
