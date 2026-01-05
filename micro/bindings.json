@@ -1,0 +1,5 @@
+{
+    "Alt-/": "lua:comment.comment",
+    "CtrlSpace": "command:copilot.complete",
+    "CtrlUnderscore": "lua:comment.comment"
+}

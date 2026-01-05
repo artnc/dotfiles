@@ -1,0 +1,7 @@
+{
+  "Description": "GitHub Copilot integration for micro editor",
+  "Name": "copilot",
+  "Tags": ["copilot", "ai", "completion"],
+  "Version": "0.1.0",
+  "Website": "https://github.com/features/copilot"
+}

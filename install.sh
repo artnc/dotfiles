@@ -139,6 +139,8 @@ ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore
+ensure_symlink micro/bindings.json ~/.config/micro/bindings.json
+ensure_symlink micro/plug/copilot ~/.config/micro/plug/copilot
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
