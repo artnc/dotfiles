@@ -394,6 +394,11 @@ alias gww='git show -w'
 alias gx='git reset'
 alias gxh='git reset --hard'
 
+# micro
+if _command_exists micro; then
+  alias e='micro'
+fi
+
 # Sublime Text / VS Code / Zed
 if [[ -n "${CODESPACES}" ]]; then
   alias s='code'
