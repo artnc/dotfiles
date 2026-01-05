@@ -298,7 +298,7 @@ else
     _pacman_orphans="$(pacman -Qtdq || true)"
     [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
     # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
-    pacman -Qqd | sudo pacman -Rsu - &> /dev/null
+    pacman -Qqd | sudo pacman -Rsu -
   )
   if _command_exists yay; then
     _pacman_helper='yay'
