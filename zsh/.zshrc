@@ -465,7 +465,7 @@ alias ts="ts -i %.s | awk '{sub(/^[0-9]+\.[0-9]+/, sprintf(\"%4d\", \$1 * 1000))
 
 ############################################ Environment variables and sourcing
 
-export EDITOR=/usr/bin/nano
+export EDITOR=/usr/bin/micro
 export PATH
 
 PATH="${HOME}/bin:${PATH}"

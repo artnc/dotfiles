@@ -17,7 +17,7 @@
   ui = true
 [core]
   autocrlf = input
-  editor = nano
+  editor = micro
   excludesfile = ~/.gitignore
   pager = less -+FX
 [credential]
