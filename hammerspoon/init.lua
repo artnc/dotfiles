@@ -15,9 +15,6 @@ hs.hotkey.bind({"alt", "shift"}, "C", typeKeystrokes(string.reverse("moc.nuradia
 hs.hotkey.bind({"alt", "shift"}, "D", typeKeystrokes(string.reverse("moc.ogniloud@tra")))
 hs.hotkey.bind({"alt", "shift"}, "E", typeKeystrokes(string.reverse("moc.liamg@nuradiahctra")))
 
--- Auto-type Claude Code keyword
-hs.hotkey.bind({"alt", "shift"}, "U", typeKeystrokes(". ultrathink"))
-
 -- Auto-refresh Slack upon focus and then periodically while focused
 local slackRefreshInterval = 1200 -- seconds
 local slackLastRefresh = 0
