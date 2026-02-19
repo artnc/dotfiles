@@ -62,5 +62,10 @@
     "defaultMode": "acceptEdits",
     "deny": []
   },
+  "sandbox": {
+    "autoAllowBashIfSandboxed": true,
+    "enabled": true
+  },
+  "skipDangerousModePermissionPrompt": true,
   "theme": "dark-daltonized"
 }
