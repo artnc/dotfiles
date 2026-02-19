@@ -1,9 +1,14 @@
+Never modify, create, or delete any files or directories outside of the current working directory or /tmp.
+
 In all programming languages:
 
 - Always use 2-space indentation unless stated otherwise.
+- Always use braces around `if` statements' bodies, even if it's a single line.
 - Always sort literal dictionary keys and interface members alphabetically.
+- Prefer writing as little code as possible (but don't remove code comments just to decrease line count). Avoid code duplication.
 - Avoid single-use local variables, single-use helper functions, and single-use type definitions. Prefer to simply inline them instead.
 - Prefer to log before performing actions ("Doing thing...") rather than afterward ("Did thing").
+- Prefer single-letter parameter names when defining simple lambdas (i.e. anonymous functions) as function predicates. For example: `.sort(key=lambda r: len(r))` in Python and `.filter(e => e.isCorrect)` in TypeScript.
 - Never run linters or code formatters. I'll do that myself.
 
 In TypeScript and JavaScript source code:
@@ -21,6 +26,8 @@ In Python source code:
 - Always use 4-space indentation.
 - Always use `re.search` instead of `re.match`.
 - Prefer double quotes (unless the string contains double quotes).
+- Use the walrus operator := where possible.
+- Prefer multiple args when printing space-delimited info, e.g. `print(a, "b", c)` instead of `print(f"{a} b {c}")`.
 
 In Bash source code:
 
