@@ -24,58 +24,6 @@ beep() {
   afplay '/System/Library/Sounds/Glass.aiff'
 }
 
-# Transfer Claude permission declarations from local repo to global settings
-claudeperms() {
-  local local_settings=".claude/settings.local.json"
-  local global_settings="${HOME}/.claude/settings.json"
-  if [[ ! -f "${local_settings}" ]]; then
-    echo 'Current directory has no local Claude settings'
-    return 1
-  fi
-  new_json="$(yq ". *+ load(\"${local_settings}\")" "${global_settings}" \
-    | jq -S 'walk(if type == "array" then sort else . end)')"
-  echo "${new_json}" > "${global_settings}"
-  rm "${local_settings}"
-  echo "Successfully merged permissions from ${local_settings} to ${global_settings}"
-}
-
-# Claude (dockerized)
-dc() {
-  # Use real Docker executable instead of any shims
-  image_id="$(/usr/local/bin/docker build -q - << EODOCKERFILE | head -1
-FROM alpine:latest
-RUN <<EOF
-set -eu
-apk update && apk add --no-cache \
-  bash \
-  curl \
-  npm
-npm install -g @anthropic-ai/claude-code
-EOF
-
-# https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-EODOCKERFILE
-)"
-  # Run dangerously inside Docker sandbox
-  docker_cmd=(
-    /usr/local/bin/docker
-    run --rm -it --init
-    -e IS_SANDBOX=1 # Disables `--dangerously-skip-permissions cannot be used with root/sudo privileges`
-    -v "$(readlink ~/.claude/CLAUDE.md):/root/CLAUDE.md:ro" # Give readonly access to global CLAUDE.md
-    -v "${HOME}/Library/AppSupport/UnityMCP:${HOME}/Library/AppSupport/UnityMCP" # Unity MCP
-    -v "/tmp:/tmp" # Use host's /tmp
-    -v "/private/tmp:/private/tmp" # macOS /tmp is a symlink to /private/tmp
-    -v "${HOME}/.claude:/root/.claude" # Let Claude write to its own file
-    -v "${HOME}/.claude.json:/root/.claude.json" # Let Claude write to its own file
-    -v "${HOME}/.claude.json.backup:/root/.claude.json.backup" # Let Claude write to its own file
-    -v "${PWD}:${PWD}" # Mount current directory at same path to preserve Claude history
-    -w "${PWD}"
-    "${image_id}"
-  )
-  "${docker_cmd[@]}" claude --dangerously-skip-permissions "$@"
-}
-
 # Mount/unmount LUKS-encrypted HDD
 hdd() {
   local -r mount_name='seagate'
@@ -251,6 +199,9 @@ autoload bashcompinit && bashcompinit
 
 ####################################################################### Aliases
 
+export PATH
+PATH="${HOME}/.local/bin:${HOME}/bin:${PATH}"
+
 # Switch between QWERTY and Dvorak
 if _command_exists setxkbmap; then
   alias aoeu='setxkbmap us && xmodmap ${HOME}/.Xmodmap'
@@ -335,7 +286,7 @@ fi
 
 # Claude
 if _command_exists claude; then
-  alias c='NODENV_VERSION=22.13.1 claude'
+  alias c='claude --dangerously-skip-permissions'
 fi
 
 # fastmod
@@ -466,18 +417,12 @@ alias ts="ts -i %.s | awk '{sub(/^[0-9]+\.[0-9]+/, sprintf(\"%4d\", \$1 * 1000))
 ############################################ Environment variables and sourcing
 
 export EDITOR=/usr/bin/micro
-export PATH
-
-PATH="${HOME}/bin:${PATH}"
 
 # Android Studio
 if [[ -d "${HOME}/Android/Sdk" ]]; then
   export ANDROID_HOME="${HOME}/Android/Sdk"
   PATH="${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${PATH}"
 fi
-
-# awslogs
-PATH="${HOME}/.local/bin:${PATH}"
 
 # direnv
 if _command_exists direnv; then
@@ -486,10 +431,6 @@ fi
 
 # Docker
 export DOCKER_BUILDKIT=1
-if [[ $IS_MAC = true ]]; then
-  # https://stackoverflow.com/a/74148162
-  export DOCKER_HOST="unix://${HOME}/Library/Containers/com.docker.docker/Data/docker.raw.sock"
-fi
 
 # Duolingo
 _source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
@@ -497,11 +438,7 @@ _source_if_exists "${HOME}/.duolingo/init.sh"
 
 # fzf
 if _command_exists fzf; then
-  if [[ $IS_MAC = true ]]; then
-    _source_if_exists "${HOME}/.fzf.zsh"
-  else
-    source <(fzf --zsh)
-  fi
+  source <(fzf --zsh)
   if _command_exists rg; then
     # https://github.com/junegunn/fzf.vim/issues/121#issuecomment-546360911
     export FZF_DEFAULT_COMMAND='rg --files --hidden'
@@ -510,11 +447,11 @@ if _command_exists fzf; then
 
   # Make `gk **<TAB>` show a menu of most recent branches
   _fzf_complete_gk() {
-    _fzf_complete --preview='git log --oneline -10 {}' -- "$@" < <(
+    _fzf_complete --preview='git log --oneline -50 {}' -- "$@" < <(
       git reflog --format='%gs' |
       sed -n 's/checkout: moving from .* to \(.*\)/\1/p' |
       awk '!seen[$0]++' |
-      head -10
+      head -50
     )
   }
 fi
@@ -529,11 +466,15 @@ if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
 fi
 
 # Homebrew
-export PATH="/opt/homebrew/bin:${PATH}"
+PATH="/opt/homebrew/sbin:${PATH}" # iftop uses sbin for some reason
+PATH="/opt/homebrew/bin:${PATH}" # literally everything else
+
+export PATH="${HOMEBREW_PREFIX}/opt/openssl/bin:$PATH"
+
 
 # Java
 if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
-  export PATH="/opt/homebrew/opt/openjdk@17/bin:${PATH}"
+  PATH="/opt/homebrew/opt/openjdk@17/bin:${PATH}"
   export CPPFLAGS='-I/opt/homebrew/opt/openjdk@17/include'
 fi
 
@@ -543,10 +484,7 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # nodenv
 if [[ -d "${HOME}/.nodenv" ]]; then
   PATH="${HOME}/.nodenv/bin:${PATH}"
-  nodenv() {
-    eval "$(command nodenv init - --no-rehash zsh)"
-    nodenv "$@"
-  }
+  eval "$(command nodenv init - --no-rehash zsh)"
 fi
 
 # pre-commit
@@ -569,17 +507,10 @@ fi
 
 # Ruby
 if _command_exists ruby; then
-  ruby() {
-    PATH="$(command ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
-    unfunction ruby
-    ruby "$@"
-  }
+  PATH="$(command ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
 fi
 if _command_exists rbenv; then
-  rbenv() {
-    eval "$(command rbenv init - --no-rehash zsh)"
-    rbenv "$@"
-  }
+  eval "$(command rbenv init - --no-rehash zsh)"
 fi
 
 # virtualenvwrapper
