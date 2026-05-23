@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Shows Claude.ai usage: "CC <session%> <session_reset>h <weekly%> <weekly_reset>h".
+# Reads ORG_ID and SESSION_KEY from ~/.config/claude-usage/env.
+# Get SESSION_KEY from the `sessionKey` cookie at claude.ai (devtools > Application > Cookies).
+
+set -eu
+
+config_file="${HOME}/.config/claude-usage/env"
+fallback='CC ?'
+
+if [[ ! -r ${config_file} ]]; then
+  echo "${fallback}"
+  echo "${fallback}"
+  exit 0
+fi
+
+# shellcheck source=/dev/null
+source "${config_file}"
+
+response="$(curl -fsS --max-time 10 --compressed \
+  "https://claude.ai/api/organizations/${ORG_ID}/usage" \
+  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:150.0) Gecko/20100101 Firefox/150.0' \
+  -H 'Accept: */*' \
+  -H 'Referer: https://claude.ai/settings/usage' \
+  -H 'anthropic-client-platform: web_claude_ai' \
+  -H 'content-type: application/json' \
+  -H "Cookie: sessionKey=${SESSION_KEY}" 2> /dev/null)" || {
+  echo "${fallback}"
+  echo "${fallback}"
+  exit 0
+}
+
+parsed="$(echo "${response}" | jq -r \
+  '[(.five_hour.utilization // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || {
+  echo "${fallback}"
+  echo "${fallback}"
+  exit 0
+}
+
+IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
+
+now_ts="$(date +%s)"
+hours_until() {
+  local iso="$1"
+  if [[ -z ${iso} ]]; then
+    echo '?'
+    return
+  fi
+  local reset_ts
+  reset_ts="$(date -d "${iso}" +%s 2> /dev/null)" || {
+    echo '?'
+    return
+  }
+  local diff=$(((reset_ts - now_ts) / 3600))
+  if ((diff < 0)); then
+    diff=0
+  fi
+  echo "${diff}"
+}
+
+output="CC ${session_pct}% $(hours_until "${session_reset}")h ${weekly_pct}% $(hours_until "${weekly_reset}")h"
+echo "${output}"
+echo "${output}"
