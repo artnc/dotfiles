@@ -234,6 +234,39 @@ fi
 alias adbd='adb -d install -d -r'
 alias adbe='adb -e install -d -r'
 
+# Deploy current Android project to phone over Tailscale wireless debugging
+phone() {
+  if [[ -z "${1}" ]]; then
+    echo 'Usage: phone <wireless-debugging-port>' >&2
+    return 1
+  fi
+  local addr="$(tailscale ip -4 pixel-10-pro):${1}"
+  echo "Connecting to ${addr}..."
+  adb connect "${addr}" >/dev/null || return 1
+  echo 'Building APK...'
+  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease || return 1
+  local apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
+  if [[ -z "${apk}" ]]; then
+    echo 'No release APK found' >&2
+    return 1
+  fi
+  echo "Installing ${apk}..."
+  adb -s "${addr}" install -r --user 0 "${apk}" || return 1
+  local pkg="$(sed -nE 's/.*applicationId = "([^"]+)".*/\1/p' app/build.gradle.kts | head -1)"
+  local activity="$(awk '
+    /<activity/ && !/<\/activity/ { in_activity=1; name="" }
+    in_activity && !name && match($0, /android:name="[^"]+"/) {
+      name = substr($0, RSTART+14, RLENGTH-15)
+    }
+    /android.intent.category.LAUNCHER/ && in_activity { print name; exit }
+    /<\/activity>|<activity[^>]*\/>/ { in_activity=0 }
+  ' app/src/main/AndroidManifest.xml)"
+  if [[ -n "${pkg}" && -n "${activity}" ]]; then
+    echo 'Launching app...'
+    adb -s "${addr}" shell am start --user 0 -n "${pkg}/${activity}"
+  fi
+}
+
 # make
 alias m='make'
 
