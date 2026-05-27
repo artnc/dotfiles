@@ -386,6 +386,12 @@ fi
 # Sublime Text / VS Code / Zed
 if [[ -n "${CODESPACES}" ]]; then
   alias s='code'
+elif [[ -n "${SSH_CONNECTION}" ]]; then
+  if _command_exists micro; then
+    alias s='micro'
+  elif _command_exists nano; then
+    alias s='nano'
+  fi
 elif _command_exists code; then
   # Preferring VSCode over Cursor for now because Cursor lacks Unity extension
   # and I'm using Claude Code instead for AI anyway
