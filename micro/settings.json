@@ -3,6 +3,7 @@
     "tabsize": 4
   },
   "colorcolumn": 80,
+  "copilot": false,
   "colorscheme": "twilight",
   "cursorline": true,
   "hltaberrors": true,
