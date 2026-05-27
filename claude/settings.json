@@ -53,5 +53,5 @@
     "command": "jq -r '.workspace.current_dir'",
     "type": "command"
   },
-  "theme": "dark-daltonized"
+  "theme": "dark"
 }
