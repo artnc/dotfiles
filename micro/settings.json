@@ -19,8 +19,8 @@
   "scrollspeed": 4,
   "smartpaste": true,
   "softwrap": true,
-  "statusformatl": "$(filename) $(modified)$(overwrite)($(line),$(col)) $(status.paste)| ft:$(opt:filetype)",
-  "statusformatr": "",
+  "statusformatl": "$(filename)",
+  "statusformatr": "$(modified)$(overwrite)($(line),$(col)) $(status.paste)| ft:$(opt:filetype)",
   "tabsize": 2,
   "tabstospaces": true,
   "wordwrap": true
