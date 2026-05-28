@@ -4,11 +4,11 @@ set -eu
 
 # Show notification and play sound
 if [[ "$(uname)" == Darwin ]]; then
-  osascript -e 'display notification "Claude finished" with title "Claude Code" sound name "default"'
+  osascript -e 'display notification "Claude finished" with title "Claude Code"'
 else
   notify-send 'Claude Code' 'Claude finished'
-  paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2> /dev/null || true
 fi
+printf '\a' > /dev/tty 2> /dev/null || true
 
 # Transfer Claude permission declarations from local repo to global settings
 global_settings="${HOME}/.claude/settings.json"

@@ -1,8 +1,11 @@
-[general]
-import = ["alacritty.base.toml"]
+[bell]
+command = { program = "afplay", args = ["/System/Library/Sounds/Glass.aiff"] }
 
 [font]
 size = 12
 
 [font.normal]
 family = "DejaVu Sans Mono"
+
+[general]
+import = ["alacritty.base.toml"]
