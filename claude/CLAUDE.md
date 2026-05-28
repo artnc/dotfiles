@@ -1,4 +1,4 @@
-Never modify, create, or delete any files or directories outside of the current working directory or /tmp.
+Never modify, create, or delete any files or directories outside of the current working directory or /tmp. Never run `git commit` for me; I'll always create the commits myself.
 
 In all programming languages:
 
