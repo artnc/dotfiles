@@ -10,6 +10,7 @@
   "Alt-9": "command:tabswitch 9",
   "Alt-Down": "MoveLinesDown",
   "Alt-Up": "MoveLinesUp",
+  "Alt-q": "command:rewrapcomment",
   "Ctrl-Shift-d": "DuplicateLine",
   "Ctrl-Shift-Down": "SpawnMultiCursorDown",
   "Ctrl-Shift-k": "CutLine",

@@ -1,0 +1,6 @@
+{
+  "Description": "Reflow the comment/paragraph at the cursor at the colorcolumn width, matching VS Code's Rewrap extension behavior",
+  "Name": "rewrap",
+  "Tags": ["comment", "format", "wrap"],
+  "Version": "0.1.0"
+}
