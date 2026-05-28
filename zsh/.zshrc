@@ -422,14 +422,6 @@ alias -s tex='s'
 alias -s txt='s'
 alias -s xml='s'
 
-# SSH
-# https://superuser.com/a/215506
-if [[ -n "$(find "${HOME}/.ssh" -name '*.pem')" ]]; then
-  alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config && ssh'
-else
-  alias ssh='chmod 700 ~/.ssh && chmod 600 ~/.ssh/config && ssh'
-fi
-
 # systemctl
 if _command_exists systemctl; then
   alias sc='sudo systemctl'
@@ -552,6 +544,44 @@ fi
 if _command_exists rbenv; then
   eval "$(command rbenv init - --no-rehash zsh)"
 fi
+
+# SSH / mosh
+ssh() {
+  set -eu
+
+  # Syncthing sometimes messes with perms. https://superuser.com/a/215506
+  if [[ -d "${HOME}/.ssh" ]]; then
+    chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config
+  fi
+
+  # Translate -p flag, which mosh treats differently from ssh
+  local ssh_port=() mosh_args=()
+  while (( $# > 0 )); do
+    case "${1}" in
+      -p)
+        ssh_port=(-p "${2}")
+        shift 2
+        ;;
+      *)
+        mosh_args+=("${1}")
+        shift
+        ;;
+    esac
+  done
+
+  # Use mosh only if present on both local and remote. ControlMaster reuses the
+  # probe's auth session and typed password for the real connection
+  local socket="${HOME}/.ssh/mosh-probe-$$"
+  if _command_exists mosh && command ssh \
+      -o ControlMaster=auto \
+      -o ControlPath="${socket}" \
+      -o ControlPersist=15 \
+      "${ssh_port[@]}" "${mosh_args[@]}" 'command -v mosh-server' > /dev/null 2>&1; then
+    mosh --predict=experimental --ssh="ssh ${ssh_port[*]} -o ControlPath=${socket}" "${mosh_args[@]}"
+  else
+    command ssh -o ControlPath="${socket}" "${ssh_port[@]}" "${mosh_args[@]}"
+  fi
+}
 
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
