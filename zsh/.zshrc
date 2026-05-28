@@ -173,8 +173,11 @@ setopt dvorak               # Use Dvorak for spelling correction
 setopt hist_ignore_all_dups # Remove old duplicate commands
 setopt hist_reduce_blanks   # Strip unnecessary whitespace from history
 setopt inc_append_history   # Immediately append commands to history
-setopt no_hup               # Run all background processes with nohup
+setopt no_beep              # Don't ring the terminal bell on ZLE errors
 setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
+setopt no_hist_beep         # Don't ring the bell on missing history entries
+setopt no_hup               # Run all background processes with nohup
+setopt no_list_beep         # Don't ring the bell on ambiguous tab completion
 setopt prompt_subst         # Enable prompt variable expansion
 
 # Prompt formatting
