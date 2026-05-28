@@ -514,6 +514,9 @@ if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
   export CPPFLAGS='-I/opt/homebrew/opt/openjdk@17/include'
 fi
 
+# less
+export LESS=-q
+
 # .NET
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
