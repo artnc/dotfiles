@@ -1,0 +1,6 @@
+{
+  "Description": "Make Shift-click extend the selection from the cursor's previous location to the click point (default GUI text-editor behavior)",
+  "Name": "shiftclick",
+  "Tags": ["mouse", "selection"],
+  "Version": "0.1.0"
+}

@@ -37,6 +37,15 @@ y = 1
 [general]
 live_config_reload = true
 
+# By default Alacritty intercepts Shift+click for its own selection extension
+# even when a TUI app has captured the mouse. Forward it instead so micro
+# (and other apps) can implement GUI-style shift-click selection extension
+[[mouse.bindings]]
+action = "ReceiveChar"
+mode = "Mouse"
+mods = "Shift"
+mouse = "Left"
+
 [window]
 decorations = "None"
 

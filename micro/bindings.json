@@ -28,5 +28,6 @@
   "Ctrl-n": "AddTab",
   "Ctrl-p": "command:fzfinder",
   "Ctrl-r": "command:reload",
-  "Ctrl-w": "command:smartquit"
+  "Ctrl-w": "command:smartquit",
+  "ShiftMouseLeft": "lua:shiftclick.shiftClick"
 }
