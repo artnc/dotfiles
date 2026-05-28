@@ -10,6 +10,8 @@ In all programming languages:
 - Prefer to log before performing actions ("Doing thing...") rather than afterward ("Did thing").
 - Prefer single-letter parameter names when defining simple lambdas (i.e. anonymous functions) as function predicates. For example: `.sort(key=lambda r: len(r))` in Python and `.filter(e => e.isCorrect)` in TypeScript.
 - Never run linters or code formatters. I'll do that myself.
+- When writing code comments, never end the comment with a period (which is grammatically correct but practically useless). Periods that delimit multiple sentences within the same code comment are fine, of course.
+- Avoid em-dashes in code comments. Prefer parentheses, ASCII hyphen, or multiple sentences.
 
 In TypeScript and JavaScript source code:
 
