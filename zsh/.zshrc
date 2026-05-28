@@ -136,11 +136,15 @@ EOM
 
 ################################################################# Configure zsh
 
-# Make Ctrl+Left and Ctrl+Right jump between words. This used to work out of the
-# box but broke around January 2018 for some reason...
+# Make Ctrl+Left and Ctrl+Right jump between words (this used to work out of the
+# box but broke around January 2018 for some reason). Also handle Alt for
+# consistency with macOS GUI apps
 # https://unix.stackexchange.com/a/167045
-bindkey "^[[1;5C" forward-word
-bindkey "^[[1;5D" backward-word
+bindkey "^[[1;3C" forward-word    # Alt+Right
+bindkey "^[[1;3D" backward-word   # Alt+Left
+bindkey "^[[1;5C" forward-word    # Ctrl+Right (fallback)
+bindkey "^[[1;5D" backward-word   # Ctrl+Left (fallback)
+bindkey "^[^?" backward-kill-word # Alt+Backspace (Alacritty sends ESC+DEL)
 
 # Theme
 export ZSH_THEME=""

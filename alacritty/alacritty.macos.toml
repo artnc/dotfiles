@@ -9,3 +9,9 @@ family = "DejaVu Sans Mono"
 
 [general]
 import = ["alacritty.base.toml"]
+
+# Make Option behave as Alt so it emits Alt-prefixed escape sequences (e.g.
+# Alt+Left = `\e[1;3D`, Alt+Backspace = `\e\x7f`). Without this, Option is used
+# for typing special characters and word-level keybindings don't work
+[window]
+option_as_alt = "Both"

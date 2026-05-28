@@ -14,7 +14,6 @@
   "matchbrace": true,
   "mkparents": true,
   "pluginrepos": ["https://raw.githubusercontent.com/MuratovAS/micro-fzfinder/main/repo.json"],
-  "savecursor": true,
   "scrollbar": true,
   "scrollspeed": 4,
   "smartpaste": true,
