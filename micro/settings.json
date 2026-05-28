@@ -22,5 +22,6 @@
   "statusformatl": "$(filename) $(modified)$(overwrite)($(line),$(col)) $(status.paste)| ft:$(opt:filetype)",
   "statusformatr": "",
   "tabsize": 2,
-  "tabstospaces": true
+  "tabstospaces": true,
+  "wordwrap": true
 }
