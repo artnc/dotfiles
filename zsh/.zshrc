@@ -291,7 +291,8 @@ else
   else
     _pacman_helper='pacman'
   fi
-  alias pi="${_pacman_helper} -S"
+  # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
+  alias pi="pu && ${_pacman_helper} -S"
   pu() (
     set -e
     _pacman_remove_orphans
