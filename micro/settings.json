@@ -6,6 +6,7 @@
   "colorscheme": "twilight",
   "copilot": false,
   "cursorline": true,
+  "diffgutter": true,
   "hltaberrors": true,
   "hltrailingws": true,
   "ignorecase": false,
