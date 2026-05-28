@@ -1,12 +1,17 @@
 auto-update = off
 background = 000000
-bell-features = system
+bell-audio-volume = 1
+bell-features = audio
 bold-color = bright
 confirm-close-surface = false
 cursor-style = bar
 cursor-style-blink = true
 font-family = "DejaVu Sans Mono"
 foreground = ffffff
+# By default Ghostty intercepts Shift+click for its own selection extension
+# even when a TUI app has captured the mouse. Forward it instead so micro
+# (and other apps) can implement GUI-style shift-click selection extension
+mouse-shift-capture = true
 palette = 0=000000
 palette = 1=cd0000
 palette = 2=00cd00

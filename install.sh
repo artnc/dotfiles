@@ -143,6 +143,7 @@ ensure_symlink micro/bindings.json ~/.config/micro/bindings.json
 ensure_symlink micro/colorschemes ~/.config/micro/colorschemes
 ensure_symlink micro/plug/copilot ~/.config/micro/plug/copilot
 ensure_symlink micro/plug/rewrap ~/.config/micro/plug/rewrap
+ensure_symlink micro/plug/shiftclick ~/.config/micro/plug/shiftclick
 ensure_symlink micro/plug/smartquit ~/.config/micro/plug/smartquit
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink nano/.nanorc ~/.nanorc
