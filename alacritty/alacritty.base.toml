@@ -26,8 +26,9 @@ yellow = "0xcdcd00"
 background = "0x000000"
 foreground = "0xffffff"
 
-[cursor]
-style = "Beam"
+[cursor.style]
+blinking = "Always"
+shape = "Beam"
 
 [font.offset]
 x = 0
