@@ -10,8 +10,13 @@ In all programming languages:
 - Prefer to log before performing actions ("Doing thing...") rather than afterward ("Did thing").
 - Prefer single-letter parameter names when defining simple lambdas (i.e. anonymous functions) as function predicates. For example: `.sort(key=lambda r: len(r))` in Python and `.filter(e => e.isCorrect)` in TypeScript.
 - Never run linters or code formatters. I'll do that myself.
-- When writing code comments, never end the comment with a period (which is grammatically correct but practically useless). Periods that delimit multiple sentences within the same code comment are fine, of course.
-- Avoid em-dashes in code comments. Prefer parentheses, ASCII hyphen, or multiple sentences.
+- When writing code comments:
+  - Comments should explain both WHAT non-trivial code does and WHY, since identifier names alone aren't sufficient documentation. Use them liberally, but keep each one terse: usually a single line.
+  - Don't rely on so-called "self-documenting" code. This pairs with the guideline above to avoid single-use constructs: rather than extracting a one-off helper to "name" a block, leave it inline with an explanatory comment for simpler control flow and better readability.
+  - Place comments on the line above the code they describe. Trailing comments are acceptable only when the comment is very short and must stay visually attached to its line, e.g. annotating a single entry within a multi-line dictionary literal.
+  - When a code comment is associated with and located above a specific variable/function/etc, prefer doc comment syntax that IDEs will pick up (e.g. `/** */` for TSDoc/KDoc) instead of regular comments (e.g. `//` or `#`).
+  - Never end a comment with a terminal period. This applies to all comments, including docstrings and JSDoc. Internal periods that delimit multiple sentences within the same comment are fine.
+  - Avoid em-dashes in comments. Prefer parentheses, an ASCII hyphen, or splitting into multiple sentences.
 
 In TypeScript and JavaScript source code:
 
