@@ -288,8 +288,10 @@ else
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
     _pacman_orphans="$(pacman -Qtdq || true)"
     [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
+    # Hide the "removing X from target list" warning message that pacman spams
+    # for each still-needed package
     # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
-    pacman -Qqd | sudo pacman -Rsu -
+    pacman -Qqd | sudo pacman -Rsu - 2> >(grep -v ' from target list$' >&2)
   )
   if _command_exists yay; then
     _pacman_helper='yay'
