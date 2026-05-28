@@ -58,6 +58,23 @@ hours_until() {
   echo "${diff}"
 }
 
-output="CC ${session_pct}% $(hours_until "${session_reset}")h ${weekly_pct}% $(hours_until "${weekly_reset}")h"
+# Color a percentage based on proximity to 100%
+color_pct() {
+  local pct="$1"
+  local color
+  if ((pct >= 90)); then
+    color='#ff4040'
+  elif ((pct >= 75)); then
+    color='#ff8c00'
+  elif ((pct >= 50)); then
+    color='#ffd700'
+  else
+    echo "${pct}%"
+    return
+  fi
+  echo "<span foreground=\"${color}\">${pct}%</span>"
+}
+
+output="CC $(color_pct "${session_pct}") $(hours_until "${session_reset}")h $(color_pct "${weekly_pct}") $(hours_until "${weekly_reset}")h"
 echo "${output}"
 echo "${output}"
