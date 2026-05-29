@@ -1,6 +1,0 @@
-{
-  "Description": "Make Ctrl-W close the current tab, or reset to a blank buffer when only one tab is open (avoids quitting micro)",
-  "Name": "smartquit",
-  "Tags": ["quit", "tab"],
-  "Version": "0.1.0"
-}

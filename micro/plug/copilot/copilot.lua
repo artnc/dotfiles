@@ -1,3 +1,4 @@
+-- GitHub Copilot integration for micro editor
 VERSION = "0.1.0"
 
 local micro = import("micro")

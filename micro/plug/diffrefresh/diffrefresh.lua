@@ -1,5 +1,4 @@
-VERSION = "0.1.0"
-
+-- Keep micro's git diffgutter fresh after HEAD moves under an already-open buffer
 local os = import("os")
 local filepath = import("path/filepath")
 local shell = import("micro/shell")

@@ -1,5 +1,4 @@
-VERSION = "0.1.0"
-
+-- Reflow the comment/paragraph at the cursor at the colorcolumn width, matching VS Code's Rewrap extension behavior
 local micro = import("micro")
 local config = import("micro/config")
 local buffer = import("micro/buffer")

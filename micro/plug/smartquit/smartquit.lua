@@ -1,5 +1,4 @@
-VERSION = "0.1.0"
-
+-- Make Ctrl-W close the current tab, or reset to a blank buffer when only one tab is open (avoids quitting micro)
 local micro = import("micro")
 local config = import("micro/config")
 local buffer = import("micro/buffer")
