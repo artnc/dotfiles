@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shows Claude.ai usage: "CC <session%> <session_reset>h <weekly%> <weekly_reset>h".
+# Shows Claude.ai usage: "CC <session%> <session_reset> <weekly%> <weekly_reset>".
 # Reads ORG_ID and SESSION_KEY from ~/.config/claude-usage/env.
 # Get SESSION_KEY from the `sessionKey` cookie at claude.ai (devtools > Application > Cookies).
 
@@ -40,7 +40,8 @@ parsed="$(echo "${response}" | jq -r \
 IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
 
 now_ts="$(date +%s)"
-hours_until() {
+# Returns "Xh" or "Xm" depending on how far away the reset is
+time_until() {
   local iso="$1"
   if [[ -z ${iso} ]]; then
     echo '?'
@@ -51,11 +52,15 @@ hours_until() {
     echo '?'
     return
   }
-  local diff=$(((reset_ts - now_ts) / 3600))
+  local diff=$((reset_ts - now_ts))
   if ((diff < 0)); then
     diff=0
   fi
-  echo "${diff}"
+  if ((diff < 60000)); then
+    echo "$((diff / 60))m"
+  else
+    echo "$((diff / 3600))h"
+  fi
 }
 
 # Color a percentage based on proximity to 100%
@@ -76,6 +81,6 @@ color_pct() {
   echo "<span foreground=\"${color}\">${pct}%</span>"
 }
 
-output="CC $(color_pct "${session_pct}") $(hours_until "${session_reset}")h $(color_pct "${weekly_pct}") $(hours_until "${weekly_reset}")h"
+output="CC $(color_pct "${session_pct}") $(time_until "${session_reset}") $(color_pct "${weekly_pct}") $(time_until "${weekly_reset}")"
 echo "${output}"
 echo "${output}"
