@@ -88,6 +88,28 @@ audit_nonsymlinks() {
 audit_vscode_extensions() {
   audit_nonsymlinks "${1}" "${2}" <(jq -r '.[].identifier.id' "${2}" | sort)
 }
+# VSCode/Cursor don't auto-install extensions
+install_vscode_extensions() {
+  local -r cli="${1}"
+  local -r manifest="${2}"
+  if ! command -v "${cli}" > /dev/null; then
+    return
+  fi
+  local -r installed="$("${cli}" --list-extensions)"
+  # Extensions to keep in the manifest (so the audit tracks them) but never
+  # auto-install
+  local -r ignored=" github.copilot github.copilot-chat stkb.rewrap "
+  while read -r ext_id || [[ -n ${ext_id} ]]; do
+    if [[ ${ignored} == *" ${ext_id} "* ]]; then
+      logI "Ignoring ${cli} ${ext_id} extension"
+    elif grep -qixF "${ext_id}" <<< "${installed}"; then
+      logI "Found existing ${cli} ${ext_id} extension"
+    else
+      logI "Installing ${cli} ${ext_id} extension..."
+      "${cli}" --install-extension "${ext_id}" || logE "Failed to install ${cli} ${ext_id} extension"
+    fi
+  done < "${manifest}"
+}
 
 # Process all dotfiles. Symlinks for programs that I'm not currently using but
 # might try again in the future are commented out for posterity
@@ -146,3 +168,23 @@ ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink zsh/.zshrc ~/.zshrc
+
+# micro doesn't auto-install the non-vendored plugins specified in its config
+if command -v micro > /dev/null; then
+  while read -r repo_url; do
+    # repo.json is an array for hosted plugins but an object for vendored ones
+    plugin_name="$(curl -fsSL "${repo_url}" | jq -r 'if type == "array" then .[].Name else .Name end')"
+    if [[ -z ${plugin_name} ]]; then
+      logE "Couldn't resolve micro plugin name from ${repo_url}"
+      continue
+    elif [[ -d ~/.config/micro/plug/${plugin_name} ]]; then
+      logI "Found existing micro ${plugin_name} plugin"
+    else
+      logI "Installing micro ${plugin_name} plugin..."
+      micro -plugin install "${plugin_name}"
+    fi
+  done < <(jq -r '.pluginrepos[]?' micro/settings.json)
+fi
+
+install_vscode_extensions code code/extensions.vscode.txt
+install_vscode_extensions cursor code/extensions.cursor.txt
