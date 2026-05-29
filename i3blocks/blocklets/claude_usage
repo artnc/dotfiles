@@ -68,9 +68,10 @@ color_pct() {
     color='#ff8c00'
   elif ((pct >= 50)); then
     color='#ffd700'
+  elif ((pct >= 25)); then
+    color='#adff2f'
   else
-    echo "${pct}%"
-    return
+    color='#90ee90'
   fi
   echo "<span foreground=\"${color}\">${pct}%</span>"
 }
