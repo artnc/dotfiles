@@ -35,7 +35,7 @@
       }
     ]
   },
-  "model": "opus[1m]",
+  "model": "opusplan",
   "permissions": {
     "allow": [
       "WebFetch(domain:pypi.org)",
