@@ -274,7 +274,7 @@ setopt correct              # Spelling correction
 setopt dvorak               # Use Dvorak for spelling correction
 setopt hist_ignore_all_dups # Remove old duplicate commands
 setopt hist_reduce_blanks   # Strip unnecessary whitespace from history
-setopt inc_append_history   # Immediately append commands to history
+setopt share_history        # Sync immediately across concurrent shells
 setopt no_beep              # Don't ring the terminal bell on ZLE errors
 setopt no_check_jobs        # Since no_hup is enabled, don't ask when exiting
 setopt no_hist_beep         # Don't ring the bell on missing history entries
