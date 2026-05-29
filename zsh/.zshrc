@@ -114,13 +114,48 @@ mp4 () {
 
 # Send files/folders to another tailnet host's /tmp/inbox/
 send() {
-  if (( $# < 2 )); then
-    echo 'Usage: send <host> <path> [path...]' >&2
+  setopt local_options
+  set -eu
+
+  # Get target host
+  if (( $# < 1 )); then
+    echo 'Usage: send <host> [path...]' >&2
     return 1
   fi
   local -r host="${1}"
   shift
-  rsync -ah --mkpath --info=progress2 "$@" "${host}:/tmp/inbox/"
+
+  # Determine list of items to send
+  local -r targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null || true)
+  local -a items
+  local tmp=''
+  trap '[[ -n "${tmp}" ]] && rm -f "${tmp}"' EXIT
+  if (( $# > 0 )); then
+    items=("$@")
+  elif grep -q '^text/uri-list$' <<< "${targets}"; then
+    while IFS= read -r uri; do
+      [[ "${uri}" == file://* ]] || continue
+      # Strip file:// prefix, URL-decode percent-encoded chars
+      items+=("$(printf '%b' "${${uri#file://}//%/\\x}")")
+    done < <(xclip -selection clipboard -t text/uri-list -o | tr -d '\r')
+  else
+    tmp="${TMPDIR:-/tmp}/clipboard"
+    local target=''
+    target=$(grep -m1 '^image/png$' <<< "${targets}") \
+      || target=$(grep -v '^text/' <<< "${targets}" | grep -m1 '/') \
+      || true
+    if [[ -n "${target}" ]]; then
+      xclip -selection clipboard -t "${target}" -o > "${tmp}"
+    else
+      xclip -selection clipboard -o > "${tmp}"
+    fi
+    items=("${tmp}")
+  fi
+
+  # Send items
+  local -r t_start=$(date +%s%3N)
+  rsync -ah --mkpath "${items[@]}" "${host}:/tmp/inbox/"
+  printf 'Sent %d file(s) in %d ms\n' ${#items[@]} $(( $(date +%s%3N) - t_start ))
 }
 
 # Open the current directory's Sublime Text project, creating it if needed
