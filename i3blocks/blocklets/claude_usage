@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shows Claude.ai usage: "CC <session%> <session_reset> <weekly%> <weekly_reset>".
+# Shows Claude.ai usage: "CC <session%> <session_reset>h <weekly%> <weekly_reset>h".
 # Reads ORG_ID and SESSION_KEY from ~/.config/claude-usage/env.
 # Get SESSION_KEY from the `sessionKey` cookie at claude.ai (devtools > Application > Cookies).
 
@@ -40,7 +40,7 @@ parsed="$(echo "${response}" | jq -r \
 IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
 
 now_ts="$(date +%s)"
-# Returns "Xh" or "Xm" depending on how far away the reset is
+# Returns "X.Yh" (one decimal) if under 10h, else "Xh"
 time_until() {
   local iso="$1"
   if [[ -z ${iso} ]]; then
@@ -56,10 +56,11 @@ time_until() {
   if ((diff < 0)); then
     diff=0
   fi
-  if ((diff < 60000)); then
-    echo "$((diff / 60))m"
+  local hrs=$((diff / 3600))
+  if ((hrs < 10)); then
+    echo "${hrs}.$(((diff % 3600) / 360))h"
   else
-    echo "$((diff / 3600))h"
+    echo "${hrs}h"
   fi
 }
 
