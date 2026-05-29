@@ -8,7 +8,11 @@ if [[ "$(uname)" == Darwin ]]; then
 else
   notify-send 'Claude Code' 'Claude finished'
 fi
-printf '\a' > /dev/tty 2> /dev/null || true
+if [[ -n ${TMUX} ]]; then
+  printf '\a' > "$(tmux display-message -p '#{pane_tty}')" 2> /dev/null || true
+else
+  printf '\a' > /dev/tty 2> /dev/null || true
+fi
 
 # Transfer Claude permission declarations from local repo to global settings
 global_settings="${HOME}/.claude/settings.json"
