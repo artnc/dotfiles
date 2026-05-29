@@ -126,30 +126,48 @@ send() {
   shift
 
   # Determine list of items to send
-  local -r targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null || true)
   local -a items
   local tmp=''
   trap '[[ -n "${tmp}" ]] && rm -f "${tmp}"' EXIT
   if (( $# > 0 )); then
     items=("$@")
-  elif grep -q '^text/uri-list$' <<< "${targets}"; then
-    while IFS= read -r uri; do
-      [[ "${uri}" == file://* ]] || continue
-      # Strip file:// prefix, URL-decode percent-encoded chars
-      items+=("$(printf '%b' "${${uri#file://}//%/\\x}")")
-    done < <(xclip -selection clipboard -t text/uri-list -o | tr -d '\r')
-  else
-    tmp="${TMPDIR:-/tmp}/clipboard"
-    local target=''
-    target=$(grep -m1 '^image/png$' <<< "${targets}") \
-      || target=$(grep -v '^text/' <<< "${targets}" | grep -m1 '/') \
-      || true
-    if [[ -n "${target}" ]]; then
-      xclip -selection clipboard -t "${target}" -o > "${tmp}"
+  elif [[ $IS_MAC == true ]]; then
+    local mac_files=''
+    mac_files=$(osascript -e 'POSIX path of (the clipboard as «class furl»)' 2>/dev/null || true)
+    if [[ -n "${mac_files}" ]]; then
+      while IFS= read -r path; do
+        [[ -n "${path}" ]] && items+=("${path}")
+      done <<< "${mac_files}"
     else
-      xclip -selection clipboard -o > "${tmp}"
+      tmp="${TMPDIR:-/tmp}/clipboard"
+      if command -v pngpaste &>/dev/null && pngpaste "${tmp}" 2>/dev/null; then
+        true
+      else
+        pbpaste > "${tmp}"
+      fi
+      items=("${tmp}")
     fi
-    items=("${tmp}")
+  else
+    local -r targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null || true)
+    if grep -q '^text/uri-list$' <<< "${targets}"; then
+      while IFS= read -r uri; do
+        [[ "${uri}" == file://* ]] || continue
+        # Strip file:// prefix, URL-decode percent-encoded chars
+        items+=("$(printf '%b' "${${uri#file://}//%/\\x}")")
+      done < <(xclip -selection clipboard -t text/uri-list -o | tr -d '\r')
+    else
+      tmp="${TMPDIR:-/tmp}/clipboard"
+      local target=''
+      target=$(grep -m1 '^image/png$' <<< "${targets}") \
+        || target=$(grep -v '^text/' <<< "${targets}" | grep -m1 '/') \
+        || true
+      if [[ -n "${target}" ]]; then
+        xclip -selection clipboard -t "${target}" -o > "${tmp}"
+      else
+        xclip -selection clipboard -o > "${tmp}"
+      fi
+      items=("${tmp}")
+    fi
   fi
 
   # Send items
