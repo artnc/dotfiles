@@ -112,6 +112,17 @@ mp4 () {
   echo 'Done!'
 }
 
+# Send files/folders to another tailnet host's /tmp/inbox/
+send() {
+  if (( $# < 2 )); then
+    echo 'Usage: send <host> <path> [path...]' >&2
+    return 1
+  fi
+  local -r host="${1}"
+  shift
+  rsync -ah --mkpath --info=progress2 "$@" "${host}:/tmp/inbox/"
+}
+
 # Open the current directory's Sublime Text project, creating it if needed
 sp() {
   project_file="${HOME}/.virtualenvs/$(basename "${PWD}").sublime-project"
