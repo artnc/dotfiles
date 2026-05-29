@@ -495,7 +495,7 @@ if _command_exists micro; then
   alias e='micro'
 fi
 
-# Sublime Text / VS Code / Zed
+# Sublime Text / VS Code
 if [[ -n "${CODESPACES}" ]]; then
   alias s='code'
 elif [[ -n "${SSH_CONNECTION}" ]]; then
@@ -505,15 +505,9 @@ elif [[ -n "${SSH_CONNECTION}" ]]; then
     alias s='nano'
   fi
 elif _command_exists code; then
-  # Preferring VSCode over Cursor for now because Cursor lacks Unity extension
-  # and I'm using Claude Code instead for AI anyway
   alias s='code'
-elif _command_exists cursor; then
-  alias s='cursor'
 elif _command_exists subl; then
   alias s='subl'
-elif _command_exists zed; then
-  alias s='zed'
 fi
 alias -s c='s'
 alias -s conf='s'
@@ -657,14 +651,6 @@ if _command_exists ruby; then
 fi
 if _command_exists rbenv; then
   eval "$(command rbenv init - --no-rehash zsh)"
-fi
-
-# virtualenvwrapper
-if [[ -d "${HOME}/.virtualenvs" ]]; then
-  export WORKON_HOME="${HOME}/.virtualenvs"
-  export PROJECT_HOME="${HOME}/git"
-  _source_if_exists /usr/bin/virtualenvwrapper_lazy.sh
-  alias wo='workon'
 fi
 
 # VSCode

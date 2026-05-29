@@ -82,42 +82,11 @@ audit_nonsymlinks() {
   fi
 }
 
-# Audit VSCode extensions, whose manifest isn't portable because it contains
-# absolute paths. (We can't just use VSCode Settings Sync either because that
-# works with only VSCode, not Cursor)
-audit_vscode_extensions() {
-  audit_nonsymlinks "${1}" "${2}" <(jq -r '.[].identifier.id' "${2}" | sort)
-}
-# VSCode/Cursor don't auto-install extensions
-install_vscode_extensions() {
-  local -r cli="${1}"
-  local -r manifest="${2}"
-  if ! command -v "${cli}" > /dev/null; then
-    return
-  fi
-  local -r installed="$("${cli}" --list-extensions)"
-  # Extensions to keep in the manifest (so the audit tracks them) but never
-  # auto-install
-  local -r ignored=" github.copilot github.copilot-chat stkb.rewrap "
-  while read -r ext_id || [[ -n ${ext_id} ]]; do
-    if [[ ${ignored} == *" ${ext_id} "* ]]; then
-      logI "Ignoring ${cli} ${ext_id} extension"
-    elif grep -qixF "${ext_id}" <<< "${installed}"; then
-      logI "Found existing ${cli} ${ext_id} extension"
-    else
-      logI "Installing ${cli} ${ext_id} extension..."
-      "${cli}" --install-extension "${ext_id}" || logE "Failed to install ${cli} ${ext_id} extension"
-    fi
-  done < "${manifest}"
-}
-
 # Process all dotfiles. Symlinks for programs that I'm not currently using but
 # might try again in the future are commented out for posterity
 if [[ ${os_name} == Darwin ]]; then
   vscode_parent_dir="${HOME}/Library/Application Support"
   ensure_symlink aerospace ~/.config/aerospace
-  audit_vscode_extensions code/extensions.cursor.txt ~/.cursor/extensions/extensions.json
-  audit_vscode_extensions code/extensions.vscode.txt ~/.vscode/extensions/extensions.json
   ensure_symlink ghostty/config-macos ~/.config/ghostty/config
   ensure_symlink hammerspoon ~/.hammerspoon
   # ensure_symlink sublime ~/Library/Application\ Support/Sublime\ Text/Packages/User
@@ -126,7 +95,6 @@ if [[ ${os_name} == Darwin ]]; then
   audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
 else
   vscode_parent_dir="${HOME}/.config"
-  # ensure_symlink easystroke ~/.easystroke
   # ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink ghostty/config-linux ~/.config/ghostty/config
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
@@ -134,12 +102,8 @@ else
   ensure_symlink i3 ~/.config/i3
   ensure_symlink i3blocks ~/.config/i3blocks
   ensure_symlink iftop/.iftoprc ~/.iftoprc
-  # ensure_symlink pylint/.pylintrc ~/.pylintrc
   # ensure_symlink sublime ~/.config/sublime-text/Packages/User
   ensure_symlink thunar/thunar.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
-  # ensure_symlink urxvt/.Xresources ~/.Xresources
-  # ensure_symlink virtualenvwrapper/postactivate ~/.virtualenvs/postactivate
-  # ensure_symlink virtualenvwrapper/postmkvirtualenv ~/.virtualenvs/postmkvirtualenv
   ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
@@ -147,13 +111,13 @@ else
     audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)
 fi
-# ensure_symlink ag/.agignore ~/.agignore
+audit_nonsymlinks code/extensions.vscode.txt \
+  ~/.vscode/extensions/extensions.json \
+  <(jq -r '.[].identifier.id' ~/.vscode/extensions/extensions.json | sort)
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json
 ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings.json"
-ensure_symlink code/keybindings.json "${vscode_parent_dir}/Cursor/User/keybindings.json"
 ensure_symlink code/settings.json "${vscode_parent_dir}/Code/User/settings.json"
-ensure_symlink code/settings.json "${vscode_parent_dir}/Cursor/User/settings.json"
 ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
@@ -170,7 +134,23 @@ ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink zsh/.zshrc ~/.zshrc
 
-# micro doesn't auto-install the non-vendored plugins specified in its config
+# micro and vscode don't auto-install plugins/extensions
+if command -v code > /dev/null; then
+  installed="$(code --list-extensions)"
+  # Extensions to keep in the manifest (so the audit tracks them) but never
+  # auto-install
+  ignored=" github.copilot github.copilot-chat stkb.rewrap "
+  while read -r ext_id || [[ -n ${ext_id} ]]; do
+    if [[ ${ignored} == *" ${ext_id} "* ]]; then
+      logI "Ignoring code ${ext_id} extension"
+    elif grep -qixF "${ext_id}" <<< "${installed}"; then
+      logI "Found existing code ${ext_id} extension"
+    else
+      logI "Installing code ${ext_id} extension..."
+      code --install-extension "${ext_id}" || logE "Failed to install code ${ext_id} extension"
+    fi
+  done < code/extensions.vscode.txt
+fi
 if command -v micro > /dev/null; then
   while read -r repo_url; do
     # repo.json is an array for hosted plugins but an object for vendored ones
@@ -186,6 +166,3 @@ if command -v micro > /dev/null; then
     fi
   done < <(jq -r '.pluginrepos[]?' micro/settings.json)
 fi
-
-install_vscode_extensions code code/extensions.vscode.txt
-install_vscode_extensions cursor code/extensions.cursor.txt
