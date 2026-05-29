@@ -26,18 +26,20 @@ beep() {
 
 # Mount/unmount LUKS-encrypted HDD
 hdd() {
+  setopt local_options
+  set -eu
   local -r mount_name='seagate'
   local -r mount_point="/mnt/${mount_name}"
   local -r mapper_path="/dev/mapper/${mount_name}"
   if mount | grep -qF "${mount_point}"; then
     # Unmount
     sudo umount "${mapper_path}"
-    sleep
+    sleep 1
     sudo cryptsetup luksClose "${mount_name}"
   else
     # Mount
     sudo cryptsetup luksOpen /dev/sda1 "${mount_name}"
-    sleep
+    sleep 1
     sudo mkdir -p "${mount_point}"
     sudo mount "${mapper_path}" "${mount_point}"
   fi
@@ -81,22 +83,21 @@ gcna() {
 #   3. Run `gpr` ("git push to review") to fork a new branch, push it to
 #      GitHub, and reset the original branch to its previous commit
 gpr() {
-  (
-    set -eu
-    git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
-    local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
-      | head -1 \
-      | xargs -0 echo -n \
-      | tr '[:space:]' '-' \
-      | tr -cd '[:alnum:]-' \
-      | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
-      | tr '[:upper:]' '[:lower:]' \
-    )
-    git checkout -b "${NEW_BRANCH_NAME}"
-    git push --set-upstream origin "${NEW_BRANCH_NAME}"
-    git checkout -
-    git reset --hard HEAD~1
+  setopt local_options
+  set -eu
+  git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
+  local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+    | head -1 \
+    | xargs -0 echo -n \
+    | tr '[:space:]' '-' \
+    | tr -cd '[:alnum:]-' \
+    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
+    | tr '[:upper:]' '[:lower:]' \
   )
+  git checkout -b "${NEW_BRANCH_NAME}"
+  git push --set-upstream origin "${NEW_BRANCH_NAME}"
+  git checkout -
+  git reset --hard HEAD~1
 }
 
 # Convert all .mov files in /tmp to .mp4
@@ -289,22 +290,24 @@ alias adbe='adb -e install -d -r'
 
 # Deploy current Android project to phone over Tailscale wireless debugging
 phone() {
-  if [[ -z "${1}" ]]; then
+  setopt local_options
+  set -eu
+  if (( $# < 1 )); then
     echo 'Usage: phone <wireless-debugging-port>' >&2
     return 1
   fi
   local addr="$(tailscale ip -4 pixel-10-pro):${1}"
   echo "Connecting to ${addr}..."
-  adb connect "${addr}" >/dev/null || return 1
+  adb connect "${addr}" >/dev/null
   echo 'Building APK...'
-  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease || return 1
+  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease
   local apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
   if [[ -z "${apk}" ]]; then
     echo 'No release APK found' >&2
     return 1
   fi
   echo "Installing ${apk}..."
-  adb -s "${addr}" install -r --user 0 "${apk}" || return 1
+  adb -s "${addr}" install -r --user 0 "${apk}"
   local pkg="$(sed -nE 's/.*applicationId = "([^"]+)".*/\1/p' app/build.gradle.kts | head -1)"
   local activity="$(awk '
     /<activity/ && !/<\/activity/ { in_activity=1; name="" }
@@ -605,6 +608,7 @@ fi
 
 # SSH / mosh
 ssh() {
+  setopt local_options
   set -eu
 
   # Syncthing sometimes messes with perms. https://superuser.com/a/215506
