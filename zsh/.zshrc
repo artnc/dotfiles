@@ -26,8 +26,6 @@ beep() {
 
 # Mount/unmount LUKS-encrypted HDD
 hdd() {
-  setopt local_options
-  set -eu
   local -r mount_name='seagate'
   local -r mount_point="/mnt/${mount_name}"
   local -r mapper_path="/dev/mapper/${mount_name}"
@@ -83,21 +81,22 @@ gcna() {
 #   3. Run `gpr` ("git push to review") to fork a new branch, push it to
 #      GitHub, and reset the original branch to its previous commit
 gpr() {
-  setopt local_options
-  set -eu
-  git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
-  local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
-    | head -1 \
-    | xargs -0 echo -n \
-    | tr '[:space:]' '-' \
-    | tr -cd '[:alnum:]-' \
-    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
-    | tr '[:upper:]' '[:lower:]' \
+  (
+    set -eu
+    git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
+    local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+      | head -1 \
+      | xargs -0 echo -n \
+      | tr '[:space:]' '-' \
+      | tr -cd '[:alnum:]-' \
+      | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
+      | tr '[:upper:]' '[:lower:]' \
+    )
+    git checkout -b "${NEW_BRANCH_NAME}"
+    git push --set-upstream origin "${NEW_BRANCH_NAME}"
+    git checkout -
+    git reset --hard HEAD~1
   )
-  git checkout -b "${NEW_BRANCH_NAME}"
-  git push --set-upstream origin "${NEW_BRANCH_NAME}"
-  git checkout -
-  git reset --hard HEAD~1
 }
 
 # Convert all .mov files in /tmp to .mp4
@@ -179,6 +178,44 @@ sp() {
 EOM
   fi
   subl "${project_file}"
+}
+
+# SSH / mosh
+ssh() {
+  set -eu
+
+  # Syncthing sometimes messes with perms. https://superuser.com/a/215506
+  if [[ -d "${HOME}/.ssh" ]]; then
+    chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config
+  fi
+
+  # Translate -p flag, which mosh treats differently from ssh
+  local ssh_port=() mosh_args=()
+  while (( $# > 0 )); do
+    case "${1}" in
+      -p)
+        ssh_port=(-p "${2}")
+        shift 2
+        ;;
+      *)
+        mosh_args+=("${1}")
+        shift
+        ;;
+    esac
+  done
+
+  # Use mosh only if present on both local and remote. ControlMaster reuses the
+  # probe's auth session and typed password for the real connection
+  local socket="${HOME}/.ssh/mosh-probe-$$"
+  if _command_exists mosh && command ssh \
+      -o ControlMaster=auto \
+      -o ControlPath="${socket}" \
+      -o ControlPersist=15 \
+      "${ssh_port[@]}" "${mosh_args[@]}" 'command -v mosh-server' > /dev/null 2>&1; then
+    mosh --predict=experimental --ssh="ssh ${ssh_port[*]} -o ControlPath=${socket}" "${mosh_args[@]}"
+  else
+    command ssh -o ControlPath="${socket}" "${ssh_port[@]}" "${mosh_args[@]}"
+  fi
 }
 
 ################################################################# Configure zsh
@@ -290,24 +327,22 @@ alias adbe='adb -e install -d -r'
 
 # Deploy current Android project to phone over Tailscale wireless debugging
 phone() {
-  setopt local_options
-  set -eu
-  if (( $# < 1 )); then
+  if [[ -z "${1}" ]]; then
     echo 'Usage: phone <wireless-debugging-port>' >&2
     return 1
   fi
   local addr="$(tailscale ip -4 pixel-10-pro):${1}"
   echo "Connecting to ${addr}..."
-  adb connect "${addr}" >/dev/null
+  adb connect "${addr}" >/dev/null || return 1
   echo 'Building APK...'
-  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease
+  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease || return 1
   local apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
   if [[ -z "${apk}" ]]; then
     echo 'No release APK found' >&2
     return 1
   fi
   echo "Installing ${apk}..."
-  adb -s "${addr}" install -r --user 0 "${apk}"
+  adb -s "${addr}" install -r --user 0 "${apk}" || return 1
   local pkg="$(sed -nE 's/.*applicationId = "([^"]+)".*/\1/p' app/build.gradle.kts | head -1)"
   local activity="$(awk '
     /<activity/ && !/<\/activity/ { in_activity=1; name="" }
@@ -605,45 +640,6 @@ fi
 if _command_exists rbenv; then
   eval "$(command rbenv init - --no-rehash zsh)"
 fi
-
-# SSH / mosh
-ssh() {
-  setopt local_options
-  set -eu
-
-  # Syncthing sometimes messes with perms. https://superuser.com/a/215506
-  if [[ -d "${HOME}/.ssh" ]]; then
-    chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config
-  fi
-
-  # Translate -p flag, which mosh treats differently from ssh
-  local ssh_port=() mosh_args=()
-  while (( $# > 0 )); do
-    case "${1}" in
-      -p)
-        ssh_port=(-p "${2}")
-        shift 2
-        ;;
-      *)
-        mosh_args+=("${1}")
-        shift
-        ;;
-    esac
-  done
-
-  # Use mosh only if present on both local and remote. ControlMaster reuses the
-  # probe's auth session and typed password for the real connection
-  local socket="${HOME}/.ssh/mosh-probe-$$"
-  if _command_exists mosh && command ssh \
-      -o ControlMaster=auto \
-      -o ControlPath="${socket}" \
-      -o ControlPersist=15 \
-      "${ssh_port[@]}" "${mosh_args[@]}" 'command -v mosh-server' > /dev/null 2>&1; then
-    mosh --predict=experimental --ssh="ssh ${ssh_port[*]} -o ControlPath=${socket}" "${mosh_args[@]}"
-  else
-    command ssh -o ControlPath="${socket}" "${ssh_port[@]}" "${mosh_args[@]}"
-  fi
-}
 
 # virtualenvwrapper
 if [[ -d "${HOME}/.virtualenvs" ]]; then
