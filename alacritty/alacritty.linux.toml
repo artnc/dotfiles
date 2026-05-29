@@ -1,8 +1,0 @@
-[bell]
-command = { program = "paplay", args = ["/usr/share/sounds/freedesktop/stereo/complete.oga"] }
-
-[font]
-size = 7
-
-[general]
-import = ["alacritty.base.toml"]

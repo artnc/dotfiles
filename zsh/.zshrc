@@ -190,7 +190,7 @@ bindkey "^[[1;3C" forward-word    # Alt+Right
 bindkey "^[[1;3D" backward-word   # Alt+Left
 bindkey "^[[1;5C" forward-word    # Ctrl+Right (fallback)
 bindkey "^[[1;5D" backward-word   # Ctrl+Left (fallback)
-bindkey "^[^?" backward-kill-word # Alt+Backspace (Alacritty sends ESC+DEL)
+bindkey "^[^?" backward-kill-word # Alt+Backspace (Ghostty sends ESC+DEL)
 
 # Theme
 export ZSH_THEME=""
