@@ -504,6 +504,8 @@ elif [[ -n "${SSH_CONNECTION}" ]]; then
   elif _command_exists nano; then
     alias s='nano'
   fi
+elif _command_exists micro; then
+  alias s='micro'
 elif _command_exists code; then
   alias s='code'
 elif _command_exists subl; then
