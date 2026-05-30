@@ -4,3 +4,16 @@ repos:
     hooks:
       - id: duolingo
         exclude: i3blocks/config
+  - repo: local
+    hooks:
+      - id: bash-syntax
+        name: Bash syntax check
+        entry: bash -c 'for f in "$@"; do bash -n "$f" || exit 1; done' --
+        language: system
+        types: [shell]
+        exclude_types: [zsh]
+      - id: zsh-syntax
+        name: Zsh syntax check
+        entry: bash -c 'for f in "$@"; do zsh -n "$f" || exit 1; done' --
+        language: system
+        types: [zsh]
