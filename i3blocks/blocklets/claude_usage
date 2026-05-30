@@ -31,13 +31,18 @@ response="$(curl -fsS --max-time 10 --compressed \
 }
 
 parsed="$(echo "${response}" | jq -r \
-  '[(.five_hour.utilization // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || {
+  '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || {
   echo "${fallback}"
   echo "${fallback}"
   exit 0
 }
 
 IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
+
+# Defensive: if the API shape changes and a percentage field arrives non-numeric
+# (e.g. a date string leaking through), render it as 0 rather than garbage
+[[ ${session_pct} =~ ^[0-9]+$ ]] || session_pct=0
+[[ ${weekly_pct} =~ ^[0-9]+$ ]] || weekly_pct=0
 
 now_ts="$(date +%s)"
 # Returns "X.Yh" (one decimal) if under 10h, else "Xh"
