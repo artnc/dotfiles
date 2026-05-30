@@ -9,11 +9,13 @@
   "Alt-8": "command:tabswitch 8",
   "Alt-9": "command:tabswitch 9",
   "Alt-Down": "MoveLinesDown",
+  "Alt-G": "FindPrevious",
   "Alt-Left": "WordLeft",
   "Alt-Right": "WordRight",
   "Alt-Shift-Left": "SelectWordLeft",
   "Alt-Shift-Right": "SelectWordRight",
   "Alt-Up": "MoveLinesUp",
+  "Alt-g": "FindNext",
   "Alt-q": "command:rewrapcomment",
   "Ctrl-Shift-d": "DuplicateLine",
   "Ctrl-Shift-Down": "SpawnMultiCursorDown",
@@ -29,5 +31,7 @@
   "Ctrl-o": "command-edit:tab ",
   "Ctrl-p": "command:fzfinder",
   "Ctrl-r": "command:reload",
-  "Ctrl-w": "command:smartquit"
+  "Ctrl-w": "command:smartquit",
+  "F3": "FindNext",
+  "\u001b[13;2~": "FindPrevious"
 }
