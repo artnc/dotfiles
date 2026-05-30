@@ -128,14 +128,15 @@ def rescale_x(n, new_x, new_w):
         run_x += child_w + 1
 
 
-# Strip the checksum off the input layout, parse the rest, and split the window
-# in half: micro on the left (left_w cols), original tree on the right (w -
-# left_w - 1 cols, leaving 1 col for the divider between halves)
+# Strip the checksum off the input layout, parse the rest, and split the window:
+# micro on the left (left_w cols, capped at 85 so it doesn't dominate wide
+# windows), original tree on the right (w - left_w - 1 cols, leaving 1 col for
+# the divider between halves)
 orig = sys.argv[1].split(",", 1)[1]
 micro_idx = int(sys.argv[2])
 root, _ = parse(orig)
 w, h = root["w"], root["h"]
-left_w = w // 2
+left_w = min(85, w // 2)
 rescale_x(root, left_w + 1, w - left_w - 1)
 new_root = {
     "h": h,
