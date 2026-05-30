@@ -122,11 +122,7 @@ ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
 ensure_symlink git/.gitignore ~/.gitignore
 ensure_symlink micro/bindings.json ~/.config/micro/bindings.json
 ensure_symlink micro/colorschemes ~/.config/micro/colorschemes
-ensure_symlink micro/plug/autodismiss ~/.config/micro/plug/autodismiss
-ensure_symlink micro/plug/copilot ~/.config/micro/plug/copilot
-ensure_symlink micro/plug/diffrefresh ~/.config/micro/plug/diffrefresh
-ensure_symlink micro/plug/rewrap ~/.config/micro/plug/rewrap
-ensure_symlink micro/plug/tabs ~/.config/micro/plug/tabs
+ensure_symlink micro/plug ~/.config/micro/plug
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
