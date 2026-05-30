@@ -4,9 +4,9 @@ set -eu
 
 # Show notification and play sound
 if [[ "$(uname)" == Darwin ]]; then
-  osascript -e 'display notification "Claude finished" with title "Claude Code"'
+  osascript -e 'display notification "Claude finished"'
 else
-  notify-send 'Claude Code' 'Claude finished'
+  notify-send 'Claude finished'
 fi
 if [[ -n ${TMUX} ]]; then
   printf '\a' > "$(tmux display-message -p '#{pane_tty}')" 2> /dev/null || true
