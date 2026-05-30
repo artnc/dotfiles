@@ -29,7 +29,7 @@
   "Ctrl-h": "command-edit:replace ",
   "Ctrl-n": "AddTab",
   "Ctrl-o": "command-edit:tab ",
-  "Ctrl-p": "command:fzfinder",
+  "Ctrl-p": "command:fuzzyopen",
   "Ctrl-r": "command:reload",
   "Ctrl-w": "command:smartquit",
   "F3": "FindNext",
