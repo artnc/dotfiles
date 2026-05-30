@@ -1,4 +1,4 @@
--- Reflow the comment/paragraph at the cursor at the colorcolumn width, matching VS Code's Rewrap extension behavior
+-- Reflow the comment/paragraph at the cursor at the colorcolumn width, matching VSCode's Rewrap extension behavior
 local micro = import("micro")
 local config = import("micro/config")
 local buffer = import("micro/buffer")
@@ -27,7 +27,7 @@ local function getline(buf, r)
   return util.String(buf:LineBytes(r))
 end
 
--- A prefix-only line ends the block (matches VS Code Rewrap's paragraph rule)
+-- A prefix-only line ends the block (matches VSCode Rewrap's paragraph rule)
 local function find_boundary(buf, row, step, prefix)
   while true do
     local line = getline(buf, row + step)

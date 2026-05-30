@@ -176,28 +176,6 @@ send() {
   printf 'Sent %d file(s) in %d ms\n' ${#items[@]} $(( $(date +%s%3N) - t_start ))
 }
 
-# Open the current directory's Sublime Text project, creating it if needed
-sp() {
-  project_file="${HOME}/.virtualenvs/$(basename "${PWD}").sublime-project"
-  mkdir -p "$(dirname "${project_file}")"
-  if [[ ! -f "${project_file}" ]]; then
-    cat > "${project_file}" << EOM
-{
-  "folders": [
-    {
-      "folder_exclude_patterns": [
-        "__pycache__",
-        "node_modules"
-      ],
-      "path": "${PWD}"
-    }
-  ]
-}
-EOM
-  fi
-  subl "${project_file}"
-}
-
 # SSH / mosh
 ssh() {
   set -eu
@@ -491,25 +469,18 @@ alias gx='git reset'
 alias gxh='git reset --hard'
 
 # micro
-if _command_exists micro; then
-  alias e='micro'
-fi
-
-# Sublime Text / VS Code
 if [[ -n "${CODESPACES}" ]]; then
-  alias s='code'
+  alias e='code'
 elif [[ -n "${SSH_CONNECTION}" ]]; then
   if _command_exists micro; then
-    alias s='micro'
+    alias e='micro'
   elif _command_exists nano; then
-    alias s='nano'
+    alias e='nano'
   fi
 elif _command_exists micro; then
-  alias s='micro'
+  alias e='micro'
 elif _command_exists code; then
-  alias s='code'
-elif _command_exists subl; then
-  alias s='subl'
+  alias e='code'
 fi
 alias -s c='s'
 alias -s conf='s'

@@ -1,4 +1,4 @@
--- VSCode/Sublime-style tab management:
+-- VSCode-style tab management:
 --   * opening a file reuses the current buffer when it's blank, else a new tab
 --   * Ctrl-W (smartquit) closes the tab, quitting micro on the last blank tab
 local micro = import("micro")

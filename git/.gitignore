@@ -2,15 +2,14 @@
 .DS_Store
 
 # I almost always run Node.js stuff inside Docker, I still install NPM packages
-# locally so that Sublime Text's LSP-typescript plugin can find definitions,
-# I'm currently of the opinion that gitignores for files used by unenforced
-# developer tools (e.g. Sublime Text (which is usually optional in all repos)
-# as opposed to Android Studio (which is usually required in Android repos))
-# should be declared by the developer rather than by the repo, and I don't want
-# the maintenance hassle of declaring node_modules in all my Node
-# repos' .git/info/exclude files. Due to all those facts, I declare
-# node_modules here in this global .gitignore file that I set as the value of
-# Git's core.excludesfile config option.
+# locally so that my editor's LSP can find definitions, I'm currently of the
+# opinion that gitignores for files used by unenforced developer tools (e.g. a
+# text editor (which is usually optional in all repos) as opposed to Android
+# Studio (which is usually required in Android repos)) should be declared by the
+# developer rather than by the repo, and I don't want the maintenance hassle of
+# declaring node_modules in all my Node repos' .git/info/exclude files. Due to
+# all those facts, I declare node_modules here in this global .gitignore file
+# that I set as the value of Git's core.excludesfile config option.
 #
 # An alternative strategy that I previously experimented with was installing all
 # repos' required definitions into a single ~/node_modules directory and
