@@ -11,6 +11,9 @@
     "swift-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
   },
+  "env": {
+    "CLAUDE_CODE_SCROLL_SPEED": "8"
+  },
   "hooks": {
     "Notification": [
       {
@@ -56,5 +59,6 @@
     "command": "jq -r '.workspace.current_dir'",
     "type": "command"
   },
-  "theme": "dark"
+  "theme": "dark",
+  "tui": "fullscreen"
 }
