@@ -170,9 +170,29 @@ send() {
     fi
   fi
 
+  # Preserve each item's path below the lowest common ancestor of all items
+  # so a lone file keeps just its basename while siblings keep their shared tree
+  # Use absolute normalized paths without resolving symlinks (:a, not :A)
+  local -a abs=("${items[@]:a}")
+  # root = longest directory prefix shared by every item's parent dir
+  local root="${abs[1]:h}"
+  local p
+  for p in "${abs[@]}"; do
+    # Shrink root until it is an ancestor of (or equal to) this item's parent
+    while [[ "${root}" != "/" && "${p:h}" != "${root}" && "${p:h}" != "${root}/"* ]]; do
+      root="${root:h}"
+    done
+  done
+  # Mark the root boundary with /./ so rsync -R recreates only the part below it
+  local -r base="${root%/}"
+  local -a sources=()
+  for p in "${abs[@]}"; do
+    sources+=("${base}/./${p#${base}/}")
+  done
+
   # Send items
   local -r t_start=$(date +%s%3N)
-  rsync -ah --mkpath "${items[@]}" "${host}:/tmp/inbox/"
+  rsync -ahR --mkpath "${sources[@]}" "${host}:/tmp/inbox/"
   printf 'Sent %d file(s) in %d ms\n' ${#items[@]} $(( $(date +%s%3N) - t_start ))
 }
 
