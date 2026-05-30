@@ -9,17 +9,20 @@ set -e
 state_var='@micro_wrap_state'
 saved=$(tmux show -wqv "${state_var}")
 
-# Restore path: state present => micro is already open, so kill it and replay
-# the saved layout. kill-pane may fail if the user closed micro manually; in
-# that case skip the layout restore (it would target a vanished pane)
+# Restore path: state present and saved pane still exists => micro is open, so
+# kill it and replay the saved layout. If the saved pane is gone (user quit
+# micro manually), the state is stale: clear it and fall through to activation
+# so a single keypress reopens micro instead of just clearing state
 if [[ -n ${saved} ]]; then
   saved_layout="${saved%%|*}"
   micro_pane_id="${saved##*|}"
-  if tmux kill-pane -t "${micro_pane_id}" 2> /dev/null; then
+  if tmux list-panes -F '#{pane_id}' | grep -qx "${micro_pane_id}"; then
+    tmux kill-pane -t "${micro_pane_id}"
     tmux select-layout "${saved_layout}" 2> /dev/null || true
+    tmux set -wu "${state_var}"
+    exit 0
   fi
   tmux set -wu "${state_var}"
-  exit 0
 fi
 
 # Activation path: split off a new pane running micro, then shove it to the
