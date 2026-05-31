@@ -101,6 +101,7 @@ gpr() {
 
 # Convert all .mov files in /tmp to .mp4
 mp4 () {
+  local mov_file
   while read -r mov_file; do
     local base_name="${mov_file%.mov}"
     local mp4_file="${base_name}.mp4"
@@ -135,6 +136,7 @@ send() {
     local mac_files=''
     mac_files=$(osascript -e 'POSIX path of (the clipboard as «class furl»)' 2>/dev/null || true)
     if [[ -n "${mac_files}" ]]; then
+      local path
       while IFS= read -r path; do
         [[ -n "${path}" ]] && items+=("${path}")
       done <<< "${mac_files}"
@@ -150,6 +152,7 @@ send() {
   else
     local -r targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null || true)
     if grep -q '^text/uri-list$' <<< "${targets}"; then
+      local uri
       while IFS= read -r uri; do
         [[ "${uri}" == file://* ]] || continue
         # Strip file:// prefix, URL-decode percent-encoded chars
@@ -173,7 +176,7 @@ send() {
   # Preserve each item's path below the lowest common ancestor of all items
   # so a lone file keeps just its basename while siblings keep their shared tree
   # Use absolute normalized paths without resolving symlinks (:a, not :A)
-  local -a abs=("${items[@]:a}")
+  local -ar abs=("${items[@]:a}")
   # root = longest directory prefix shared by every item's parent dir
   local root="${abs[1]:h}"
   local p
@@ -222,7 +225,7 @@ ssh() {
 
   # Use mosh only if present on both local and remote. ControlMaster reuses the
   # probe's auth session and typed password for the real connection
-  local socket="${HOME}/.ssh/mosh-probe-$$"
+  local -r socket="${HOME}/.ssh/mosh-probe-$$"
   if _command_exists mosh && command ssh \
       -o ControlMaster=auto \
       -o ControlPath="${socket}" \
@@ -285,14 +288,14 @@ autoload -U colors && colors
 
 function gitprompt {
   if git rev-parse HEAD > /dev/null 2>&1; then
-    branch="$(git rev-parse --abbrev-ref HEAD)"
+    local branch="$(git rev-parse --abbrev-ref HEAD)"
     if [ "${branch}" = "(detached from FETCH_HEAD)" ]; then
-      message="$(git --no-pager log -1 --pretty=%s)"
+      local -r message="$(git --no-pager log -1 --pretty=%s)"
       branch="(${message:0:24})"
     fi
-    num_stashes="$(git stash list | wc -l | awk '{print $1}')"
-    stashmarker="$([[ "$num_stashes" != '0' ]] && printf '*%.0s' {1..$num_stashes})"
-    cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
+    local -r num_stashes="$(git stash list | wc -l | awk '{print $1}')"
+    local -r stashmarker="$([[ "$num_stashes" != '0' ]] && printf '*%.0s' {1..$num_stashes})"
+    local -r cleanliness="$([[ $(git status --porcelain 2> /dev/null | tail -n1) != '' ]] && echo 'red' || echo 'blue')"
     echo "%B%{$fg[$cleanliness]%} $branch$stashmarker%{$reset_color%}%b"
   fi
 }
@@ -347,20 +350,20 @@ phone() {
     echo 'Usage: phone <wireless-debugging-port>' >&2
     return 1
   fi
-  local addr="$(tailscale ip -4 pixel-10-pro):${1}"
+  local -r addr="$(tailscale ip -4 pixel-10-pro):${1}"
   echo "Connecting to ${addr}..."
   adb connect "${addr}" >/dev/null || return 1
   echo 'Building APK...'
   JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease || return 1
-  local apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
+  local -r apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
   if [[ -z "${apk}" ]]; then
     echo 'No release APK found' >&2
     return 1
   fi
   echo "Installing ${apk}..."
   adb -s "${addr}" install -r --user 0 "${apk}" || return 1
-  local pkg="$(sed -nE 's/.*applicationId = "([^"]+)".*/\1/p' app/build.gradle.kts | head -1)"
-  local activity="$(awk '
+  local -r pkg="$(sed -nE 's/.*applicationId = "([^"]+)".*/\1/p' app/build.gradle.kts | head -1)"
+  local -r activity="$(awk '
     /<activity/ && !/<\/activity/ { in_activity=1; name="" }
     in_activity && !name && match($0, /android:name="[^"]+"/) {
       name = substr($0, RSTART+14, RLENGTH-15)
@@ -386,7 +389,7 @@ else
   _pacman_remove_orphans() (
     set -e
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
-    _pacman_orphans="$(pacman -Qtdq || true)"
+    local -r _pacman_orphans="$(pacman -Qtdq || true)"
     [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
     # Hide the "removing X from target list" warning message that pacman spams
     # for each still-needed package

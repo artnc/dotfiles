@@ -43,6 +43,7 @@ In Bash source code:
 - Always use `[[` instead of `[`.
 - Always include curly braces when interpolating variables, e.g. `${foo}` instead of `$foo`.
 - Always include this shebang line: `#!/usr/bin/env bash`
+- Declare function variables `local` or `local -r`. Prefer combining declaration and assignment where equivalent.
 
 In C# source code:
 
