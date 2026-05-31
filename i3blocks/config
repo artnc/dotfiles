@@ -60,7 +60,7 @@ min_width=CPU:99.00%
 
 [claude_usage]
 command=~/.config/i3blocks/blocklets/claude_usage
-interval=300
+interval=60
 markup=pango
 
 [utc]
