@@ -637,6 +637,8 @@ if _command_exists rclone; then
   export RCLONE_FAST_LIST=true
   # https://rclone.org/docs/#p-progress
   export RCLONE_PROGRESS=true
+  # https://rclone.org/docs/#track-renames
+  export RCLONE_TRACK_RENAMES=true
   # https://rclone.org/b2/#transfers
   export RCLONE_TRANSFERS=32
 fi
