@@ -1,4 +1,7 @@
 {
+  "\u001b[13;2~": "FindPrevious",
+  "\u001b[1;3A": "MoveLinesUp",
+  "\u001b[1;3B": "MoveLinesDown",
   "Alt-1": "command:tabswitch 1",
   "Alt-2": "command:tabswitch 2",
   "Alt-3": "command:tabswitch 3",
@@ -17,12 +20,12 @@
   "Alt-Up": "MoveLinesUp",
   "Alt-g": "FindNext",
   "Alt-q": "command:rewrapcomment",
-  "Ctrl-Shift-d": "DuplicateLine",
   "Ctrl-Shift-Down": "SpawnMultiCursorDown",
-  "Ctrl-Shift-k": "CutLine",
-  "Ctrl-Shift-p": "CommandMode",
   "Ctrl-Shift-Tab": "PreviousTab",
   "Ctrl-Shift-Up": "SpawnMultiCursorUp",
+  "Ctrl-Shift-d": "DuplicateLine",
+  "Ctrl-Shift-k": "CutLine",
+  "Ctrl-Shift-p": "CommandMode",
   "Ctrl-Tab": "NextTab",
   "Ctrl-d": "SpawnMultiCursor",
   "Ctrl-g": "JumpLine",
@@ -32,6 +35,5 @@
   "Ctrl-p": "command:fuzzyopen",
   "Ctrl-r": "command:reload",
   "Ctrl-w": "command:smartquit",
-  "F3": "FindNext",
-  "\u001b[13;2~": "FindPrevious"
+  "F3": "FindNext"
 }
