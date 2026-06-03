@@ -9,23 +9,23 @@ start=$(date +%s.%N)
 ##################################################################### Functions
 
 # Mainly intended for use inside this .zshrc
-_command_exists() {
+function _command_exists {
   command -v "$1" > /dev/null
 }
-_source_if_exists() {
+function _source_if_exists {
   [[ -f "$1" ]] && . "$1"
 }
 
 # Run the given command and then play a sound to signal completion
 # TODO: Implement for Linux too?
-beep() {
+function beep {
   afplay '/System/Library/Sounds/Tink.aiff'
   caffeinate "$@" || true
   afplay '/System/Library/Sounds/Glass.aiff'
 }
 
 # Mount/unmount LUKS-encrypted HDD
-hdd() {
+function hdd {
   local -r mount_name='seagate'
   local -r mount_point="/mnt/${mount_name}"
   local -r mapper_path="/dev/mapper/${mount_name}"
@@ -44,7 +44,7 @@ hdd() {
 }
 
 # "p" as in "print". Delegates to `ls` for folders and `less` for files
-p() {
+function p {
   local path="${1:-.}"
   if [[ -L "$path" ]]; then
     path="$(/usr/bin/readlink -f "$path")"
@@ -59,7 +59,7 @@ p() {
 }
 
 # Stage all files and commit with message
-gc() {
+function gc {
   if (( ${#1} > 69 )); then # GitHub wraps first line after 69 chars
     echo "Commit message was ${#1} characters long."
     return
@@ -71,7 +71,7 @@ gc() {
     git commit -m "$@"
   fi
 }
-gcna() {
+function gcna {
   NO_ADD=1 gc "$@"
 }
 
@@ -80,7 +80,7 @@ gcna() {
 #   2. Commit change directly onto branch
 #   3. Run `gpr` ("git push to review") to fork a new branch, push it to
 #      GitHub, and reset the original branch to its previous commit
-gpr() {
+function gpr {
   (
     set -eu
     git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
@@ -100,7 +100,7 @@ gpr() {
 }
 
 # Convert all .mov files in /tmp to .mp4
-mp4 () {
+function mp4 {
   local mov_file
   while read -r mov_file; do
     local base_name="${mov_file%.mov}"
@@ -114,7 +114,7 @@ mp4 () {
 }
 
 # Send files/folders to another tailnet host's /tmp/inbox/
-send() {
+function send {
   setopt local_options
   set -eu
 
@@ -200,7 +200,7 @@ send() {
 }
 
 # SSH / mosh
-ssh() {
+function ssh {
   set -eu
 
   # Syncthing sometimes messes with perms. https://superuser.com/a/215506
@@ -345,7 +345,7 @@ alias adbd='adb -d install -d -r'
 alias adbe='adb -e install -d -r'
 
 # Deploy current Android project to phone over Tailscale wireless debugging
-phone() {
+function phone {
   if [[ -z "${1}" ]]; then
     echo 'Usage: phone <wireless-debugging-port>' >&2
     return 1
@@ -386,7 +386,8 @@ if _command_exists brew; then
   alias pu='brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
 else
-  _pacman_remove_orphans() (
+  function _pacman_remove_orphans {
+  (
     set -e
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
     local -r _pacman_orphans="$(pacman -Qtdq || true)"
@@ -396,6 +397,7 @@ else
     # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
     pacman -Qqd | sudo pacman -Rsu - 2> >(grep -v ' from target list$' >&2)
   )
+  }
   if _command_exists yay; then
     _pacman_helper='yay'
   elif _command_exists pacaur; then
@@ -405,7 +407,8 @@ else
   fi
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
   alias pi="pu && ${_pacman_helper} -S"
-  pu() (
+  function pu {
+  (
     set -e
     _pacman_remove_orphans
     # https://unix.stackexchange.com/a/574496
@@ -423,11 +426,14 @@ else
       synclient TapButton3=2
     fi
   )
-  px() (
+  }
+  function px {
+  (
     set -e
     "${_pacman_helper}" -Rncs "${1}"
     _pacman_remove_orphans
   )
+  }
 fi
 
 # Claude
@@ -579,7 +585,7 @@ if _command_exists fzf; then
   fi
 
   # Make `gk **<TAB>` show a menu of most recent branches
-  _fzf_complete_gk() {
+  function _fzf_complete_gk {
     _fzf_complete --preview='git log --oneline -50 {}' -- "$@" < <(
       git reflog --format='%gs' |
       sed -n 's/checkout: moving from .* to \(.*\)/\1/p' |
