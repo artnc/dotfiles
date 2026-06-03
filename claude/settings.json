@@ -45,10 +45,7 @@
       "WebFetch(domain:registry.npmjs.org)",
       "WebFetch(domain:sts.us-east-1.amazonaws.com)"
     ],
-    "defaultMode": "acceptEdits",
-    "deny": [
-      "Bash(git commit:*)"
-    ]
+    "defaultMode": "acceptEdits"
   },
   "sandbox": {
     "autoAllowBashIfSandboxed": true,
