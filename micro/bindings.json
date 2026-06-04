@@ -30,7 +30,7 @@
   "Ctrl-d": "SpawnMultiCursor",
   "Ctrl-g": "JumpLine",
   "Ctrl-h": "command-edit:replace ",
-  "Ctrl-n": "AddTab",
+  "Ctrl-n": "command:newscratch",
   "Ctrl-o": "command-edit:tab ",
   "Ctrl-p": "command:fuzzyopen",
   "Ctrl-r": "command:reload",
