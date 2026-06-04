@@ -129,6 +129,21 @@ ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink zsh/.zshrc ~/.zshrc
 
+# Install RTK
+if command -v rtk > /dev/null; then
+  logI "Found existing rtk"
+else
+  logI "Installing rtk..."
+  if [[ -z ${DRY_RUN:-} ]]; then
+    if [[ ${os_name} == Darwin ]] && command -v brew > /dev/null; then
+      brew install rtk || logE "Failed to install rtk"
+    else
+      # Install to ~/.local/bin
+      curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh || logE "Failed to install rtk"
+    fi
+  fi
+fi
+
 # micro and vscode don't auto-install plugins/extensions
 if command -v code > /dev/null; then
   installed="$(code --list-extensions)"
