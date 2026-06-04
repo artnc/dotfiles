@@ -157,7 +157,9 @@ if command -v code > /dev/null; then
       logI "Found existing code ${ext_id} extension"
     else
       logI "Installing code ${ext_id} extension..."
-      code --install-extension "${ext_id}" || logE "Failed to install code ${ext_id} extension"
+      if [[ -z ${DRY_RUN:-} ]]; then
+        code --install-extension "${ext_id}" || logE "Failed to install code ${ext_id} extension"
+      fi
     fi
   done < code/extensions.vscode.txt
 fi
@@ -172,7 +174,9 @@ if command -v micro > /dev/null; then
       logI "Found existing micro ${plugin_name} plugin"
     else
       logI "Installing micro ${plugin_name} plugin..."
-      micro -plugin install "${plugin_name}"
+      if [[ -z ${DRY_RUN:-} ]]; then
+        micro -plugin install "${plugin_name}"
+      fi
     fi
   done < <(jq -r '.pluginrepos[]?' micro/settings.json)
 fi
