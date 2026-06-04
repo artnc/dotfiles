@@ -7,6 +7,7 @@
   "effortLevel": "xhigh",
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
+    "caveman@caveman": true,
     "frontend-design@claude-plugins-official": true,
     "github@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
@@ -16,6 +17,14 @@
   },
   "env": {
     "CLAUDE_CODE_SCROLL_SPEED": "8"
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "repo": "juliusbrussee/caveman",
+        "source": "github"
+      }
+    }
   },
   "hooks": {
     "Notification": [
@@ -27,6 +36,17 @@
           }
         ],
         "matcher": "elicitation_dialog|permission_prompt"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "rtk hook claude",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
       }
     ],
     "Stop": [
