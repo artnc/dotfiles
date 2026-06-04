@@ -571,10 +571,6 @@ fi
 # Docker
 export DOCKER_BUILDKIT=1
 
-# Duolingo
-_source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
-_source_if_exists "${HOME}/.duolingo/init.sh"
-
 # fzf
 if _command_exists fzf; then
   source <(fzf --zsh)
@@ -673,6 +669,10 @@ if [[ $IS_MAC = true ]]; then
 else
   _source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+
+# Duolingo (must be declared last)
+_source_if_exists "${HOME}/Documents/Work/Duolingo/duolingo.sh"
+_source_if_exists "${HOME}/.duolingo/init.sh"
 
 ###############################################################################
 
