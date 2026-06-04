@@ -4,7 +4,7 @@ set -eu
 
 # Show notification and play sound
 if [[ "$(uname)" == Darwin ]]; then
-  osascript -e 'display notification "Claude finished"'
+  osascript -e 'display notification "" with title "Claude" subtitle "Finished"'
 else
   notify-send 'Claude finished'
 fi
