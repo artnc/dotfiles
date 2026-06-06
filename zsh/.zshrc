@@ -577,8 +577,14 @@ fi
 # tee
 alias tt='tee "$(tty)"'
 
+# tmux
+alias ta='tmux new -A'
+
 # ts
 alias ts="ts -i %.s | awk '{sub(/^[0-9]+\.[0-9]+/, sprintf(\"%4d\", \$1 * 1000)); print}'"
+
+# Zsh
+alias z='. ~/.zshrc'
 
 ############################################ Environment variables and sourcing
 
