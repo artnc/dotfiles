@@ -344,15 +344,42 @@ fi
 alias adbd='adb -d install -d -r'
 alias adbe='adb -e install -d -r'
 
+# Reconnect to a wireless debugging device
+function _phone_connect {
+  # Disconnect first since `adb connect` returns success even for a stale or
+  # offline session
+  adb disconnect "${1}" >/dev/null 2>&1
+  local i
+  for i in {1..20}; do
+    adb connect "${1}" >/dev/null 2>&1
+    adb devices | grep -q "^${1}[[:space:]]\+device$" && return 0
+    sleep 0.5
+  done
+  return 1
+}
+
 # Deploy current Android project to phone over Tailscale wireless debugging
 function phone {
   if [[ -z "${1}" ]]; then
     echo 'Usage: phone <wireless-debugging-port>' >&2
     return 1
   fi
-  local -r addr="$(tailscale ip -4 pixel-10-pro):${1}"
+  local -r ip="$(tailscale ip -4 pixel-10-pro)"
+  local -r addr="${ip}:${1}"
   echo "Connecting to ${addr}..."
-  adb connect "${addr}" >/dev/null || return 1
+  if ! _phone_connect "${addr}"; then
+    # A failed connect almost always means that this machine is no longer paired
+    # with the phone, so prompt for a one-time pairing and then retry
+    echo "Could not connect to ${addr} (the connect port may have rotated). If this machine is not paired, open \"Pair device with pairing code\" on the phone and enter:" >&2
+    local pair_port pair_code
+    read "pair_port?Pairing port: "
+    read "pair_code?Pairing code: "
+    adb pair "${ip}:${pair_port}" "${pair_code}" || return 1
+    if ! _phone_connect "${addr}"; then
+      echo "Device ${addr} never came online; check the connect port on the phone's Wireless debugging screen" >&2
+      return 1
+    fi
+  fi
   echo 'Building APK...'
   JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease || return 1
   local -r apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
