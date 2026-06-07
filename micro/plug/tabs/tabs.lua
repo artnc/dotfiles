@@ -55,11 +55,27 @@ local function fuzzyOpen(bp)
   end
 end
 
+-- Close the tab, or on the last tab reset it to a blank buffer (VSCode keeps one
+-- editor open instead of quitting). Used as the continuation after a scratch
+-- buffer is saved or discarded, when there's no more unsaved work to guard
+local function closeTab(bp)
+  if #micro.Tabs().List > 1 then
+    bp:ForceQuit()
+  else
+    bp:OpenBuffer(buffer.NewBuffer("", ""))
+  end
+end
+
 -- Ctrl-W: a blank buffer falls through to Quit, so closing it also closes the
 -- tab and quits micro on the last tab. A nonempty buffer closes its tab when
 -- others are open, or (on the last tab) resets to a blank buffer instead of
 -- quitting, like closing the only editor in VSCode. Never drop unsaved work
 local function smartquit(bp)
+  -- Scratch tabs prompt to save or discard first; the scratch plugin closes the
+  -- tab via the closeTab continuation once the user answers (esc leaves it open)
+  if scratch and scratch.promptClose and scratch.promptClose(bp, function() closeTab(bp) end) then
+    return
+  end
   if isBlank(bp.Buf) or #micro.Tabs().List > 1 then
     bp:Quit()
     return

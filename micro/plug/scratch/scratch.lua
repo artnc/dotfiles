@@ -35,9 +35,23 @@ local function isBlank(buf)
   return buf.Path == "" and not buf:Modified() and buf:LinesNum() == 1 and buf:Line(0) == ""
 end
 
--- Scratch tabs show "Untitled-N" instead of the full path
+-- True when a buffer holds no real content: empty, or a lone trailing newline
+-- (which micro represents as two empty lines)
+local function isEmpty(buf)
+  local n = buf:LinesNum()
+  return buf:Line(0) == "" and (n == 1 or (n == 2 and buf:Line(1) == ""))
+end
+
+-- Scratch tabs show "Untitled-N" and always carry the unsaved "+" of a VSCode
+-- untitled tab. micro appends its own "+" only while Buf:Modified(), which the
+-- debounced AutoSave clears, so we add the "+" exactly when micro doesn't: a
+-- single steady indicator instead of one that flickers off after each save
 local function setDisplayName(buf)
-  buf:SetName(filepath.Base(buf.Path))
+  local name = filepath.Base(buf.Path)
+  if not buf:Modified() then
+    name = name .. " +"
+  end
+  buf:SetName(name)
 end
 
 -- Open a scratch file VSCode-style: reuse the current blank tab, else a new tab
@@ -72,29 +86,45 @@ local function eachScratchBuf(fn)
   end
 end
 
--- Flush edited scratch buffers; an emptied scratch is discarded (file removed)
--- so blank scratch buffers never persist, matching VSCode untitled tabs
-local function saveScratch()
-  eachScratchBuf(function(buf)
-    if buf:LinesNum() == 1 and buf:Line(0) == "" then
-      os.Remove(buf.AbsPath)
-    else
-      buf:AutoSave()
+-- Recursively delete empty dirs anywhere under SCRATCH_ROOT (post-order), so a
+-- cwd's whole mirror chain vanishes once its last scratch file is gone. Other
+-- cwds' (and other running instances') non-empty dirs are skipped: os.Remove
+-- only succeeds on an empty dir. The root itself is always kept
+local function pruneEmptyDirs(dir)
+  dir = dir or SCRATCH_ROOT
+  local entries = os.ReadDir(dir)
+  if entries ~= nil then
+    for i = 1, #entries do
+      local entry = entries[i]
+      if entry:IsDir() then
+        pruneEmptyDirs(filepath.Join(dir, entry:Name()))
+      end
     end
-  end)
+  end
+  if dir ~= SCRATCH_ROOT then
+    os.Remove(dir)
+  end
 end
 
--- Remove this directory's now-empty scratch dir and any parent dirs it leaves
--- empty, up to (never including) the root. os.Remove only succeeds on an empty
--- dir, so a non-nil error (dir missing or still holding another cwd's files)
--- stops the climb
-local function pruneEmptyDirs()
-  local dir = SCRATCH_DIR
-  while dir ~= SCRATCH_ROOT do
-    if os.Remove(dir) ~= nil then
-      return
+-- Flush edited scratch buffers; an emptied scratch is discarded (file removed)
+-- so blank scratch buffers never persist, matching VSCode untitled tabs. Pruning
+-- after removals reclaims dirs left empty by this (or another instance's) delete
+local function saveScratch()
+  local removed = false
+  eachScratchBuf(function(buf)
+    if isEmpty(buf) then
+      os.Remove(buf.AbsPath)
+      removed = true
+    else
+      buf:AutoSave()
+      -- AutoSave cleared Modified(), so re-add our own "+" to keep it showing
+      setDisplayName(buf)
     end
-    dir = filepath.Dir(dir)
+  end)
+  -- A dir can only be emptied by a removal, so skip the tree walk otherwise; this
+  -- keeps the 2s debounced auto-save from re-scanning the tree on every keystroke
+  if removed then
+    pruneEmptyDirs()
   end
 end
 
@@ -172,6 +202,8 @@ function onAnyEvent()
   if bp == nil or bp.Buf == nil or not isScratch(bp.Buf) or not bp.Buf:Modified() then
     return
   end
+  -- Now modified, so micro shows its own "+"; drop ours so it isn't doubled
+  setDisplayName(bp.Buf)
   saveGen = saveGen + 1
   local myGen = saveGen
   micro.After(SAVE_NS, function()
@@ -181,11 +213,10 @@ function onAnyEvent()
   end)
 end
 
--- Flush before a single tab close (preQuit) or a full quit (preQuitAll), then
--- reclaim the scratch dir if this left it empty
+-- Flush before a single tab close (preQuit) or a full quit (preQuitAll);
+-- saveScratch prunes any dir its removals leave empty
 function preQuit(bp)
   saveScratch()
-  pruneEmptyDirs()
   return true
 end
 
@@ -203,6 +234,43 @@ local function promoteScratch(pane, andThen)
       andThen()
     end
   end)
+end
+
+-- Discard a scratch pane: drop the hidden file, reclaim any dir it empties, then
+-- run onClose to perform the actual close
+local function discardScratch(bp, onClose)
+  os.Remove(bp.Buf.AbsPath)
+  pruneEmptyDirs()
+  if onClose ~= nil then
+    onClose()
+  end
+end
+
+-- Prompt to save a scratch buffer before its tab closes, VSCode untitled style.
+-- Returns false when bp isn't a scratch pane, so the caller closes it normally.
+-- For a scratch pane it shows an async Y/N prompt and returns true: "no" discards
+-- the hidden file, "yes" saves to a real path (promoting it out of scratch so the
+-- hidden file is no longer used), "esc" leaves the tab open. onClose runs after a
+-- save or discard, to perform the actual close
+function promptClose(bp, onClose)
+  if not isScratch(bp.Buf) then
+    return false
+  end
+  -- An empty scratch (no real content) needs no save prompt; just discard it
+  if isEmpty(bp.Buf) then
+    discardScratch(bp, onClose)
+    return true
+  end
+  micro.InfoBar():YNPrompt('Save "' .. filepath.Base(bp.Buf.Path) .. '" before closing? (y,n,esc)', function(yes, canceled)
+    if canceled then
+      return
+    elseif yes then
+      promoteScratch(bp, onClose)
+    else
+      discardScratch(bp, onClose)
+    end
+  end)
+  return true
 end
 
 -- A manual save (Ctrl-S) of a scratch buffer must not write the hidden scratch
@@ -251,5 +319,20 @@ end
 
 function init()
   config.MakeCommand("newscratch", newscratch, config.NoComplete)
-  restoreScratch()
+  -- Restore only on the real launch, not on a config reload (which re-runs init
+  -- and would reopen closed-but-persisted scratch files). `restored` is an
+  -- implicit module global, not a local: a reload re-executes this whole chunk
+  -- (resetting locals) but reuses the module table, so the global survives. No
+  -- top-level `restored = false` exists, so re-execution never clears it
+  if not restored then
+    restored = true
+    -- Restore only on a bare launch, where the startup buffer is blank. When
+    -- micro is opened to edit a specific file (e.g. git's COMMIT_EDITMSG, or
+    -- `micro foo`), that file is already loaded here, so don't also reopen this
+    -- cwd's scratch tabs alongside it
+    local bp = micro.CurPane()
+    if bp ~= nil and bp.Buf ~= nil and isBlank(bp.Buf) then
+      restoreScratch()
+    end
+  end
 end
