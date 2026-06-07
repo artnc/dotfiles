@@ -8,7 +8,7 @@ if [[ "$(uname)" == Darwin ]]; then
 else
   notify-send 'Claude finished'
 fi
-if [[ -n ${TMUX} ]]; then
+if [[ -n ${TMUX:-} ]]; then
   printf '\a' > "$(tmux display-message -p '#{pane_tty}')" 2> /dev/null || true
 else
   printf '\a' > /dev/tty 2> /dev/null || true
