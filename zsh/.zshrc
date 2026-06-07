@@ -333,7 +333,7 @@ export REPORTTIME=10
 setopt auto_cd              # Don't need to type cd to cd
 setopt correct              # Spelling correction
 setopt dvorak               # Use Dvorak for spelling correction
-setopt hist_ignore_all_dups # Remove old duplicate commands
+setopt hist_find_no_dups    # Skip duplicates when searching history
 setopt hist_reduce_blanks   # Strip unnecessary whitespace from history
 setopt share_history        # Sync immediately across concurrent shells
 setopt no_beep              # Don't ring the terminal bell on ZLE errors
