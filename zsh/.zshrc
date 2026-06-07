@@ -634,11 +634,7 @@ if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
 fi
 
 # Homebrew
-PATH="/opt/homebrew/sbin:${PATH}" # iftop uses sbin for some reason
-PATH="/opt/homebrew/bin:${PATH}" # literally everything else
-
-export PATH="${HOMEBREW_PREFIX}/opt/openssl/bin:$PATH"
-
+eval $(/opt/homebrew/bin/brew shellenv)
 
 # Java
 if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
