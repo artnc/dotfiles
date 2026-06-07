@@ -1,22 +1,18 @@
 {
-  "*.py": {
-    "tabsize": 4
-  },
   "colorcolumn": 80,
   "colorscheme": "twilight",
   "copilot": false,
-  "cursorline": true,
   "diffgutter": true,
+  "glob:*.py": {
+    "tabsize": 4
+  },
   "hltaberrors": true,
   "hltrailingws": true,
   "ignorecase": false,
-  "keymenu": false,
-  "matchbrace": true,
   "mkparents": true,
   "reload": "auto",
   "scrollbar": true,
   "scrollspeed": 8,
-  "smartpaste": true,
   "softwrap": true,
   "statusformatl": "$(filename)",
   "statusformatr": "$(modified)$(overwrite)($(line),$(col)) $(status.paste)| ft:$(opt:filetype)",
