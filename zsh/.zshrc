@@ -297,6 +297,19 @@ function ssh {
   fi
 }
 
+# Detach every other attached tmux client, keeping only the one that called this
+function tx {
+  if [[ -z "${TMUX}" ]]; then
+    echo 'Not inside tmux' >&2
+    return 1
+  fi
+  local -r current="$(tmux display-message -p '#{client_tty}')"
+  local tty
+  while read -r tty; do
+    [[ "${tty}" == "${current}" ]] || tmux detach-client -t "${tty}"
+  done < <(tmux list-clients -F '#{client_tty}')
+}
+
 ################################################################# Configure zsh
 
 # Make Ctrl+Left and Ctrl+Right jump between words (this used to work out of the
