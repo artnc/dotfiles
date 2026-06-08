@@ -656,7 +656,7 @@ if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
 fi
 
 # less
-export LESS=-FRXq
+export LESS=-FRXQ
 
 # .NET
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
