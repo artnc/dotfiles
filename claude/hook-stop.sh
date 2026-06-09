@@ -3,10 +3,11 @@
 set -eu
 
 # Show notification and play sound
+dir_name="$(basename "${PWD}")"
 if [[ "$(uname)" == Darwin ]]; then
-  osascript -e 'display notification "" with title "Claude" subtitle "Finished"'
+  osascript -e "display notification \"${dir_name}\" with title \"Claude finished\""
 else
-  notify-send 'Claude finished'
+  notify-send "Claude finished" "${dir_name}"
 fi
 if [[ -n ${TMUX:-} ]]; then
   printf '\a' > "$(tmux display-message -p '#{pane_tty}')" 2> /dev/null || true
