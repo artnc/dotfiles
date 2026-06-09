@@ -44,9 +44,13 @@ local function tabCmd(bp, args)
   end
 end
 
--- Ctrl-P fuzzy finder: pick files with fzf, then open them VSCode-style
+-- Ctrl-P fuzzy finder: pick files with fzf, then open them VSCode-style. Feed
+-- fzf from `rg --files` so it honors .gitignore and skips .git: micro's
+-- non-interactive subshell never loads our FZF_DEFAULT_COMMAND from .zshrc, and
+-- bare fzf's builtin walker ignores .gitignore. sh -c is needed since
+-- RunInteractiveShell splits args with shellwords and can't handle a raw pipe
 local function fuzzyOpen(bp)
-  local output, err = shell.RunInteractiveShell("fzf -m --layout=reverse", false, true)
+  local output, err = shell.RunInteractiveShell("sh -c \"rg --files --hidden | fzf -m --layout=reverse\"", false, true)
   if err ~= nil or output == "" then
     return
   end
