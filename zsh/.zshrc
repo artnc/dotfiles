@@ -647,7 +647,9 @@ if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
 fi
 
 # Homebrew
-eval $(/opt/homebrew/bin/brew shellenv)
+if _command_exists brew; then
+  eval $(/opt/homebrew/bin/brew shellenv)
+fi
 
 # Java
 if [[ -d '/opt/homebrew/opt/openjdk@17' ]]; then
