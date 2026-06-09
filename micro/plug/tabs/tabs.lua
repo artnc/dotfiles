@@ -46,7 +46,7 @@ end
 
 -- Ctrl-P fuzzy finder: pick files with fzf, then open them VSCode-style
 local function fuzzyOpen(bp)
-  local output, err = shell.RunInteractiveShell("fzf -m", false, true)
+  local output, err = shell.RunInteractiveShell("fzf -m --layout=reverse", false, true)
   if err ~= nil or output == "" then
     return
   end
