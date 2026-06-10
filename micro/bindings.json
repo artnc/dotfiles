@@ -26,5 +26,6 @@
   "Ctrl-p": "command:fuzzyopen",
   "Ctrl-r": "command:reload",
   "Ctrl-w": "command:smartquit",
-  "F3": "FindNext"
+  "F3": "FindNext",
+  "F9": "command:sortlines"
 }
