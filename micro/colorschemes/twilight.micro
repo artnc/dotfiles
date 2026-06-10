@@ -13,7 +13,11 @@ color-link diff-modified "#FFAF00"
 color-link diff-deleted "#D70000"
 color-link gutter-error "#9B859D"
 color-link gutter-warning "#9B859D"
-color-link hlsearch "#141414,#C0C000"
+# Empty fg keeps the default light text; bg is a subtle dark gray over the
+# #141414 editor bg. micro's renderer replaces the whole cell style for search
+# matches (it can't merge bg onto each token's syntax color), so highlighted
+# words show in this fg, not their syntax color. Shared with manual Find
+color-link hlsearch ",#4D4D4D"
 color-link identifier "#9B703F"
 color-link identifier.class "#DAD085"
 color-link identifier.var "#7587A6"
