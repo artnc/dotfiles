@@ -7,6 +7,7 @@
   "Alt-Down": "MoveLinesDown",
   "Alt-G": "FindPrevious",
   "Alt-Left": "WordLeft",
+  "Alt-MouseLeft": "lua:clickselect.extend",
   "Alt-Right": "WordRight",
   "Alt-Shift-Left": "SelectWordLeft",
   "Alt-Shift-Right": "SelectWordRight",
