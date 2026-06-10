@@ -16,6 +16,7 @@
   },
   "colorcolumn": 100,
   "colorscheme": "twilight",
+  "cursorline": false,
   "diffgutter": true,
   "hltaberrors": true,
   "hltrailingws": true,
