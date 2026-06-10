@@ -136,7 +136,7 @@ orig = sys.argv[1].split(",", 1)[1]
 micro_idx = int(sys.argv[2])
 root, _ = parse(orig)
 w, h = root["w"], root["h"]
-left_w = min(85, w // 2)
+left_w = min(109, w // 2)
 rescale_x(root, left_w + 1, w - left_w - 1)
 new_root = {
     "h": h,

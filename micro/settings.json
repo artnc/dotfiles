@@ -1,11 +1,23 @@
 {
-  "colorcolumn": 80,
+  "*.js": {
+    "colorcolumn": 80
+  },
+  "*.jsx": {
+    "colorcolumn": 80
+  },
+  "*.py": {
+    "tabsize": 4
+  },
+  "*.ts": {
+    "colorcolumn": 80
+  },
+  "*.tsx": {
+    "colorcolumn": 80
+  },
+  "colorcolumn": 100,
   "colorscheme": "twilight",
   "copilot": false,
   "diffgutter": true,
-  "glob:*.py": {
-    "tabsize": 4
-  },
   "hltaberrors": true,
   "hltrailingws": true,
   "ignorecase": false,
