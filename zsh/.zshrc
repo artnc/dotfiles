@@ -115,6 +115,7 @@ function mp4 {
 
 # Reconnect to a wireless debugging device
 function _phone_connect {
+  echo "Connecting to ${1}..."
   # Disconnect first since `adb connect` returns success even for a stale or
   # offline session
   adb disconnect "${1}" >/dev/null 2>&1
@@ -129,24 +130,29 @@ function _phone_connect {
 
 # Deploy current Android project to phone over Tailscale wireless debugging
 function phone {
-  if [[ -z "${1}" ]]; then
-    echo 'Usage: phone <wireless-debugging-port>' >&2
-    return 1
-  fi
   local -r ip="$(tailscale ip -4 pixel-10-pro)"
-  local -r addr="${ip}:${1}"
-  echo "Connecting to ${addr}..."
-  if ! _phone_connect "${addr}"; then
-    # A failed connect almost always means that this machine is no longer paired
-    # with the phone, so prompt for a one-time pairing and then retry
-    echo "Could not connect to ${addr} (the connect port may have rotated). If this machine is not paired, open \"Pair device with pairing code\" on the phone and enter:" >&2
-    local pair_port pair_code
-    read "pair_port?Pairing port: "
-    read "pair_code?Pairing code: "
-    adb pair "${ip}:${pair_port}" "${pair_code}" || return 1
+  # The connect port rotates, so cache it in a temp file rather than taking it as
+  # an arg; prompt for the latest value only when the cache is missing or stale
+  local -r port_file=/tmp/phone-port.txt
+  local addr port pair_port pair_code
+  [[ -r "${port_file}" ]] && addr="${ip}:$(<"${port_file}")"
+  if [[ -z "${addr}" ]] || ! _phone_connect "${addr}"; then
+    # A stale/rotated connect port is the usual cause, so prompt for the latest
+    # one (shown on the phone's Wireless debugging screen) and retry
+    read "port?Settings > Developer options > Wireless debugging > Port: "
+    echo "${port}" > "${port_file}"
+    addr="${ip}:${port}"
     if ! _phone_connect "${addr}"; then
-      echo "Device ${addr} never came online; check the connect port on the phone's Wireless debugging screen" >&2
-      return 1
+      # Still failing almost always means this machine is no longer paired, so
+      # prompt for a one-time pairing and then retry
+      echo "Could not connect to ${addr}. Open \"Pair device with pairing code\" on the phone and enter..." >&2
+      read "pair_port?Pairing port: "
+      read "pair_code?Pairing code: "
+      adb pair "${ip}:${pair_port}" "${pair_code}" || return 1
+      _phone_connect "${addr}" || {
+        echo "Device ${addr} never came online; check the connect port on the phone's Wireless debugging screen" >&2
+        return 1
+      }
     fi
   fi
   echo 'Building APK...'
