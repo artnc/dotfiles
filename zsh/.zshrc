@@ -666,6 +666,11 @@ fi
 # less
 export LESS=-FRXQ
 
+# mise
+if _command_exists mise; then
+  eval "$(mise activate zsh)"
+fi
+
 # .NET
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
