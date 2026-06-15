@@ -17,6 +17,7 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "env": {
+    "CAVEMAN_DEFAULT_MODE": "lite",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_SCROLL_SPEED": "8"
   },
