@@ -25,6 +25,7 @@
   "reload": "auto",
   "scrollbar": true,
   "scrollspeed": 8,
+  "showchars": "ispace=▏,itab=▏",
   "softwrap": true,
   "statusformatl": "$(filename)",
   "statusformatr": "$(modified)$(overwrite)($(line),$(col)) $(status.paste)| ft:$(opt:filetype)",
