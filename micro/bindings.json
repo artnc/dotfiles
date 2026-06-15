@@ -28,5 +28,8 @@
   "Ctrl-r": "command:reload",
   "Ctrl-w": "command:smartquit",
   "F3": "FindNext",
-  "F9": "command:sortlines"
+  "F9": "command:sortlines",
+  "MouseLeft": "lua:scrollbardrag.press|MousePress",
+  "MouseLeftDrag": "lua:scrollbardrag.drag|MouseDrag",
+  "MouseLeftRelease": "lua:scrollbardrag.release|MouseRelease"
 }
