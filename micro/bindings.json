@@ -4,6 +4,8 @@
   "\u001b[1;3B": "MoveLinesDown",
   "Alt-n": "NextTab|FirstTab",
   "Alt-p": "PreviousTab|LastTab",
+  "Alt-N": "command:tabmove +1",
+  "Alt-P": "command:tabmove -1",
   "Alt-Down": "MoveLinesDown",
   "Alt-G": "FindPrevious",
   "Alt-Left": "WordLeft",
