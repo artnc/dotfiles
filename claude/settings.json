@@ -7,7 +7,6 @@
   "effortLevel": "xhigh",
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
-    "caveman@caveman": true,
     "figma@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "github@claude-plugins-official": true,
@@ -17,17 +16,8 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "env": {
-    "CAVEMAN_DEFAULT_MODE": "lite",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_SCROLL_SPEED": "8"
-  },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "repo": "juliusbrussee/caveman",
-        "source": "github"
-      }
-    }
   },
   "hooks": {
     "Notification": [

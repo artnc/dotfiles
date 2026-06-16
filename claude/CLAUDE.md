@@ -1,4 +1,4 @@
-Never modify, create, or delete any files or directories outside of the current working directory or /tmp. Never run `git commit` for me unless I explicitly tell you to. You have access to jq, ripgrep, and python3.
+Be concise. Never modify, create, or delete any files or directories outside of the current working directory or /tmp. Never run `git commit` for me unless I explicitly tell you to. You have access to jq, yq, ripgrep, and python3.
 
 When writing English prose (e.g. code comments, docs, PR descriptions):
 
