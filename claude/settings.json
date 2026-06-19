@@ -41,6 +41,17 @@
         "matcher": "elicitation_dialog|permission_prompt"
       }
     ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "\"${HOME}\"/git/dotfiles/claude/hook-posttooluse.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
+      }
+    ],
     "PreToolUse": [
       {
         "hooks": [
