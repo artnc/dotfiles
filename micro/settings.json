@@ -24,7 +24,7 @@
   "mkparents": true,
   "reload": "auto",
   "scrollbar": true,
-  "scrollspeed": 8,
+  "scrollspeed": 2,
   "showchars": "ispace=▏,itab=▏",
   "softwrap": true,
   "statusformatl": "$(filename)",
