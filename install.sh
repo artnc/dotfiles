@@ -124,9 +124,11 @@ ensure_symlink micro/bindings.json ~/.config/micro/bindings.json
 ensure_symlink micro/colorschemes ~/.config/micro/colorschemes
 ensure_symlink micro/plug ~/.config/micro/plug
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
+ensure_symlink mise/global.toml ~/.config/mise/config.toml
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
+ensure_symlink zsh/.zshenv ~/.zshenv
 ensure_symlink zsh/.zshrc ~/.zshrc
 
 # Install RTK

@@ -674,12 +674,6 @@ fi
 # .NET
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-# nodenv
-if [[ -d "${HOME}/.nodenv" ]]; then
-  PATH="${HOME}/.nodenv/bin:${PATH}"
-  eval "$(command nodenv init - --no-rehash zsh)"
-fi
-
 # pre-commit
 if [[ $IS_MAC = true ]]; then
   export SKIP=no-commit-to-branch
@@ -703,9 +697,6 @@ fi
 # Ruby
 if _command_exists ruby; then
   PATH="$(command ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
-fi
-if _command_exists rbenv; then
-  eval "$(command rbenv init - --no-rehash zsh)"
 fi
 
 # VSCode

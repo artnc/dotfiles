@@ -76,7 +76,14 @@
   },
   "sandbox": {
     "autoAllowBashIfSandboxed": true,
-    "enabled": true
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": [
+        "~/.cache/mise",
+        "~/.local/state/mise",
+        "~/Library/Caches/mise"
+      ]
+    }
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
