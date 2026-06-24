@@ -35,7 +35,7 @@
       {
         "hooks": [
           {
-            "command": "\"${HOME}\"/git/dotfiles/claude/hook-posttooluse.sh",
+            "command": "\"${HOME}\"/git/dotfiles/claude/hook-posttooluse.py",
             "type": "command"
           }
         ],
