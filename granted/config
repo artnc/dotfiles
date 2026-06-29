@@ -1,0 +1,8 @@
+DefaultBrowser = "FIREFOX"
+CustomBrowserPath = "/opt/homebrew/bin/firefox"
+CustomSSOBrowserPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+Ordering = ""
+ExportCredentialSuffix = ""
+
+[Keyring]
+  Backend = "keychain"

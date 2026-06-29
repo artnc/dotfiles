@@ -90,6 +90,7 @@ if [[ ${os_name} == Darwin ]]; then
   ensure_symlink ghostty/config-macos ~/.config/ghostty/config
   ensure_symlink hammerspoon ~/.hammerspoon
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
+  audit_nonsymlinks granted/config ~/.granted/config
   audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
   audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
 else
