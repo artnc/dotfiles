@@ -7,8 +7,11 @@ import sys
 tool_input = json.load(sys.stdin)["tool_input"]
 file = tool_input["file_path"]
 
-# Determine column limit based on extension
-limit = 80 if file.endswith((".cjs", ".js", ".jsx", ".mjs", ".ts", ".tsx")) else 100
+# Pick column limit and comment markers by language. Formatters reflow code
+# but leave over-long comments untouched, so we only flag comment lines
+js = file.endswith((".cjs", ".js", ".jsx", ".mjs", ".ts", ".tsx"))
+limit = 80 if js else 100
+markers = ("//", "/*", "*") if js else ("#",)
 
 # Grab the text this tool wrote (new_string for Edit, content for Write)
 new_text = tool_input.get("new_string") or tool_input.get("content") or ""
@@ -32,9 +35,11 @@ while (pos := content.find(new_text, pos + 1)) != -1:
     last = content.count("\n", 0, pos + len(new_text) - 1)
     touched.update(range(first, last + 1))
 
-# Find violations among touched lines
+# Find violations among touched comment lines
 violations = [
-    f"  L{i + 1} ({len(lines[i])} cols)" for i in sorted(touched) if len(lines[i]) > limit
+    f"  L{i + 1} ({len(lines[i])} cols)"
+    for i in sorted(touched)
+    if len(lines[i]) > limit and lines[i].lstrip().startswith(markers)
 ]
 if violations:
     print(
