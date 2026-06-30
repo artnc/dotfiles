@@ -93,6 +93,10 @@ if [[ ${os_name} == Darwin ]]; then
   audit_nonsymlinks granted/config ~/.granted/config
   audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
   audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
+  logI "Applying macOS settings..."
+  if [[ -z ${DRY_RUN:-} ]]; then
+    macos/settings.sh
+  fi
 else
   vscode_parent_dir="${HOME}/.config"
   # ensure_symlink feh/.fehbg ~/.fehbg
