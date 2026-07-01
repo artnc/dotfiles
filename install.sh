@@ -119,6 +119,7 @@ audit_nonsymlinks code/extensions.vscode.txt \
   <(jq -r '.[].identifier.id' ~/.vscode/extensions/extensions.json | sort)
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json
+ensure_symlink claude/skills ~/.claude/skills
 ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings.json"
 ensure_symlink code/settings.json "${vscode_parent_dir}/Code/User/settings.json"
 ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
