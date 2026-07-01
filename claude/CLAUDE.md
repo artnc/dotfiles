@@ -11,7 +11,6 @@ When writing English prose (e.g. code comments, docs, PR descriptions):
 In all programming languages:
 
 - Always use 2-space indentation unless stated otherwise.
-- Always wrap at 100 columns unless stated otherwise.
 - Always use braces around `if` statements' bodies, even if it's a single line.
 - Always sort literal dictionary keys and interface members alphabetically.
 - Prefer writing as little code as possible (but don't remove code comments just to decrease line count). Avoid code duplication.
@@ -32,7 +31,6 @@ In all programming languages:
 
 In TypeScript and JavaScript source code:
 
-- Wrap at 80 columns.
 - Always use arrow functions instead of the `function` keyword.
 - Always use spread syntax instead of `Array.from`.
 - Prefer `for ... of` loops instead of the `forEach` function.
