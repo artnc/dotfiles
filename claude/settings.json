@@ -87,7 +87,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
-    "command": "jq -r '.workspace.current_dir'",
+    "command": "jq -r '\"\\(.workspace.current_dir) - \\(.model.display_name)\"'",
     "type": "command"
   },
   "theme": "dark",
