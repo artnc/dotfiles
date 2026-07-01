@@ -87,7 +87,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
-    "command": "jq -r '\"\\(.workspace.current_dir) · \\(.model.display_name) · $\\(.cost.total_cost_usd | . * 100 | round | . / 100) · \\(.context_window.used_percentage)% ctx\"'",
+    "command": "jq -r '[(.workspace.current_dir | split(\"/\") | last), .model.display_name, \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring), (.context_window.used_percentage | tostring) + \"% ctx\"] | join(\" · \")'",
     "type": "command"
   },
   "theme": "dark",
