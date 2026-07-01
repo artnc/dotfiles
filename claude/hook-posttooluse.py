@@ -43,7 +43,7 @@ violations = [
 ]
 if violations:
     print(
-        f"Lines over {limit} cols in {file}! Rewrap before the formatter reflows and orphans them:",
+        f"Found code comment lines over {limit} cols in {file}! Reflow these comment lines (and ONLY these lines) now to prevent the code formatter from crudely chopping them and creating orphans:",
         *violations,
         sep="\n",
         file=sys.stderr,

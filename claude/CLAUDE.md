@@ -20,6 +20,7 @@ In all programming languages:
 - Prefer single-letter parameter names when defining simple lambdas (i.e. anonymous functions) as function predicates. For example: `.sort(key=lambda r: len(r))` in Python and `.filter(e => e.isCorrect)` in TypeScript.
 - Always order if-else branches and ternary operator branches so that the conditional expression has as few negations as possible, e.g. write `a == b ? c : d` instead of `a != b ? d : c`.
 - Never run linters or code formatters. I'll do that myself.
+- Never hand-wrap or restructure code to fit a line-length limit. Don't split calls, break strings or URLs, or add single-use variables just for width). That's the formatter's job. Comments are the exception - keep those within the limit.
 - When writing code comments (these are prose, so the English prose rules above also apply):
   - Comments should explain both WHAT non-trivial code does and WHY, since identifier names alone aren't sufficient documentation. Use them liberally, but keep each one terse: usually a single line.
   - When a comment explains WHY (especially to justify a workaround or non-obvious choice), be specific: cite the relevant URL (e.g. a GitHub issue or Stack Overflow answer) and quote the exact error message or benchmark numbers that motivated it.
