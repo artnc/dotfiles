@@ -15,6 +15,7 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "env": {
+    "ADB_MDNS_AUTO_CONNECT": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_SCROLL_SPEED": "8"
   },
@@ -67,6 +68,7 @@
   "outputStyle": "Concise",
   "permissions": {
     "allow": [
+      "Bash(adb *)",
       "WebFetch(domain:pypi.org)",
       "WebFetch(domain:registry.npmjs.org)",
       "WebFetch(domain:sts.us-east-1.amazonaws.com)"
@@ -76,6 +78,9 @@
   "sandbox": {
     "autoAllowBashIfSandboxed": true,
     "enabled": true,
+    "excludedCommands": [
+      "adb"
+    ],
     "filesystem": {
       "allowWrite": [
         "~/.cache/mise",
