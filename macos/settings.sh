@@ -11,9 +11,9 @@ defaults write NSGlobalDomain AppleShowScrollBars -string "Always"              
 defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false                                            # Disable natural scrolling
 defaults write NSGlobalDomain com.apple.trackpad.scaling -float 3                                                   # Max trackpad tracking speed
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true                                                # Tap to click
-defaults write com.apple.AppleMultitouchTrackpad TrackpadFiveFingerPinchGesture -int 0                              # Disable five-finger pinch (Launchpad)
+defaults write com.apple.AppleMultitouchTrackpad TrackpadFiveFingerPinchGesture -int 0                              # Disable five-finger pinch (Apps)
 defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerHorizSwipeGesture -int 0                         # Disable four-finger horizontal swipe
-defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerPinchGesture -int 0                              # Disable four-finger pinch (Launchpad)
+defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerPinchGesture -int 0                              # Disable four-finger pinch (Apps)
 defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerHorizSwipeGesture -int 0                        # Disable three-finger horizontal swipe (switch spaces)
 defaults write com.apple.AppleMultitouchTrackpad TrackpadTwoFingerFromRightEdgeSwipeGesture -int 0                  # Disable two-finger swipe from right edge (Notification Center)
 defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false                                         # No margins on tiled windows
@@ -26,9 +26,9 @@ defaults write com.apple.dock show-recents -bool false                          
 defaults write com.apple.dock showDesktopGestureEnabled -bool false                                                 # Disable show-desktop trackpad gesture
 defaults write com.apple.dock wvous-br-corner -int 1                                                                # Disable bottom-right hot corner
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true                               # Tap to click
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFiveFingerPinchGesture -int 0             # Disable five-finger pinch (Launchpad)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFiveFingerPinchGesture -int 0             # Disable five-finger pinch (Apps)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerHorizSwipeGesture -int 0        # Disable four-finger horizontal swipe
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerPinchGesture -int 0             # Disable four-finger pinch (Launchpad)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerPinchGesture -int 0             # Disable four-finger pinch (Apps)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerHorizSwipeGesture -int 0       # Disable three-finger horizontal swipe (switch spaces)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerFromRightEdgeSwipeGesture -int 0 # Disable two-finger swipe from right edge (Notification Center)
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"                                                 # Default to list view
