@@ -1,0 +1,7 @@
+# These contain Duolingo diff hunks and private repo names, so never commit
+# (this repo is public)
+corpus.jsonl
+corpus.tmp
+data/
+repos.txt
+state.json
