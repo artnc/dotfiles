@@ -20,3 +20,8 @@
 # checked into my public dotfiles repo) and the major disadvantage of globally
 # supporting only one version per package.
 node_modules/
+
+# Claude stuff
+**/.claude/.cc-writes/
+**/docs/superpowers/
+.playwright-mcp/
