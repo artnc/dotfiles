@@ -64,7 +64,7 @@
       }
     ]
   },
-  "model": "fable",
+  "model": "opus[1m]",
   "permissions": {
     "allow": [
       "WebFetch(domain:pypi.org)",
