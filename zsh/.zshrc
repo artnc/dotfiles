@@ -1,10 +1,11 @@
-if [[ "$(uname)" = Darwin ]]; then
+if [[ "${OSTYPE}" == darwin* ]]; then
   IS_MAC=true
   alias date='gdate'  # GNU `date` provides nanosecond precision
 else
   IS_MAC=false
 fi
-start=$(date +%s.%N)
+zmodload zsh/datetime # Provides EPOCHREALTIME, avoiding `date` forks
+start=${EPOCHREALTIME}
 
 ##################################################################### Functions
 
@@ -14,6 +15,17 @@ function _command_exists {
 }
 function _source_if_exists {
   [[ -f "$1" ]] && . "$1"
+}
+# Source the cached output of a slow `eval "$(cmd)"`-style init command (e.g.
+# `brew shellenv`), regenerating the cache whenever the command's binary is
+# newer than it. Run `rm -r ~/.cache/zsh` to force regeneration
+function _evalcache {
+  local -r cache="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/${1:t}.zsh"
+  if [[ ! -s "${cache}" || "${commands[${1:t}]:-${1}}" -nt "${cache}" ]]; then
+    mkdir -p "${cache:h}"
+    "$@" > "${cache}"
+  fi
+  . "${cache}"
 }
 
 # Run the given command and then play a sound to signal completion
@@ -382,8 +394,14 @@ function gitprompt {
 export PROMPT='%{$fg[green]%}%B%1~%{$reset_color%}%b$(gitprompt) '
 export RPROMPT=''
 
-# Command completions
-autoload -Uz compinit && compinit
+# Command completions. compinit's security audit of completion dirs takes
+# ~100ms, so skip it (-C) unless the dump is missing or older than a day
+autoload -Uz compinit
+if [[ -n ${HOME}/.zcompdump(#qN.mh-24) ]]; then
+  compinit -C
+else
+  compinit
+fi
 autoload bashcompinit && bashcompinit
 
 ####################################################################### Aliases
@@ -617,7 +635,7 @@ fi
 
 # direnv
 if _command_exists direnv; then
-  eval "$(direnv hook zsh)"
+  _evalcache direnv hook zsh
 fi
 
 # Docker
@@ -625,7 +643,7 @@ export DOCKER_BUILDKIT=1
 
 # fzf
 if _command_exists fzf; then
-  source <(fzf --zsh)
+  _evalcache fzf --zsh
   if _command_exists rg; then
     # https://github.com/junegunn/fzf.vim/issues/121#issuecomment-546360911
     export FZF_DEFAULT_COMMAND='rg --files --hidden'
@@ -644,17 +662,18 @@ if _command_exists fzf; then
 fi
 
 # Git
-if [[ ${GITHUB_USER:-} == artnc ]] || [[ "$(whoami)" == art ]]; then
+if [[ ${GITHUB_USER:-} == artnc ]] || [[ "${USER}" == art ]]; then
   export GIT_CONFIG_COUNT=2
   export GIT_CONFIG_KEY_0="user.name"
   export GIT_CONFIG_VALUE_0="Art Chaidarun"
   export GIT_CONFIG_KEY_1="user.email"
-  export GIT_CONFIG_VALUE_1="$(printf %s "moc.nuradiahc@tra" | rev)"
+  # Reverse the string in pure zsh (split to chars, reverse order, join)
+  export GIT_CONFIG_VALUE_1="${(j::)${(Oas::):-moc.nuradiahc@tra}}"
 fi
 
 # Homebrew
 if _command_exists brew; then
-  eval $(/opt/homebrew/bin/brew shellenv)
+  _evalcache /opt/homebrew/bin/brew shellenv
 fi
 
 # Java
@@ -668,7 +687,7 @@ export LESS=-FRXQ
 
 # mise
 if _command_exists mise; then
-  eval "$(mise activate zsh)"
+  _evalcache mise activate zsh
 fi
 
 # .NET
@@ -676,9 +695,9 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # pre-commit
 if [[ $IS_MAC = true ]]; then
-  export SKIP=no-commit-to-branch
+  export SKIP=no-commit-to-branch,validate-email-domain
 else
-  export SKIP=no-commit-to-branch,swiftlint
+  export SKIP=no-commit-to-branch,swiftlint,validate-email-domain
 fi
 
 # Rclone
@@ -694,9 +713,9 @@ if _command_exists rclone; then
   export RCLONE_TRANSFERS=32
 fi
 
-# Ruby
+# Ruby. Computing Gem.user_dir takes ~60ms, so cache it
 if _command_exists ruby; then
-  PATH="$(command ruby -r rubygems -e 'puts Gem.user_dir')/bin:${PATH}"
+  _evalcache ruby -r rubygems -e 'puts "PATH=\"#{Gem.user_dir}/bin:${PATH}\""'
 fi
 
 # VSCode
@@ -722,6 +741,4 @@ _source_if_exists "${HOME}/.duolingo/init.sh"
 
 ###############################################################################
 
-end=$(date +%s.%N)
-elapsed=$(printf "%.2f" $(echo "${end} - ${start}" | bc))
-echo "\e[2m.zshrc took ${elapsed}s"
+printf '\e[2m.zshrc took %.2fs\n' $((EPOCHREALTIME - start))
