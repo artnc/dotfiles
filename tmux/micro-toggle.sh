@@ -25,13 +25,17 @@ if [[ -n ${saved} ]]; then
   tmux set -wu "${state_var}"
 fi
 
-# Activation path: split off a new pane running micro, then shove it to the
-# absolute left of the window (split-window alone places it adjacent to the
-# active pane, not necessarily at the window edge)
+# Activation path: create the micro pane at the far left of the window. It
+# must land at the HEAD of tmux's pane list: select-layout below assigns panes
+# to layout cells in list order, ignoring the pane numbers embedded in the
+# layout string, so whichever pane is listed first gets the leftmost cell.
+# split-window -b targeting the list-first pane inserts before it in the list
+# (move-pane -b always inserts after its target, which put micro in the wrong
+# cell). -c is pre-expanded because split-window would otherwise expand it
+# against the target pane instead of the previously active one
 orig_layout=$(tmux display -p '#{window_layout}')
 first_pane=$(tmux list-panes -F '#{pane_id}' | head -1)
-micro_pane_id=$(tmux split-window -hP -c '#{pane_current_path}' -F '#{pane_id}' micro)
-tmux move-pane -bh -s "${micro_pane_id}" -t "${first_pane}"
+micro_pane_id=$(tmux split-window -bfhP -t "${first_pane}" -c "$(tmux display -p '#{pane_current_path}')" -F '#{pane_id}' micro)
 micro_idx="${micro_pane_id#%}"
 
 # The split above lets tmux pick the dimensions, which usually mangles any
