@@ -447,7 +447,7 @@ alias m='make'
 # Homebrew / pacman / pacaur / yay
 if _command_exists brew; then
   alias pi='brew install'
-  alias pu='brew upgrade && brew upgrade --cask'
+  alias pu='claude update && brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
 else
   function _pacman_remove_orphans {
