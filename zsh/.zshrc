@@ -502,7 +502,7 @@ fi
 
 # Claude
 if _command_exists claude; then
-  alias c='claude --dangerously-skip-permissions --model claude-fable-5'
+  alias c='claude --dangerously-skip-permissions'
 fi
 
 # fastmod
