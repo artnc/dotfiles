@@ -625,7 +625,11 @@ alias z='. ~/.zshrc'
 
 ############################################ Environment variables and sourcing
 
-export EDITOR=/usr/bin/micro
+if [[ $IS_MAC = true ]]; then
+  export EDITOR=/opt/homebrew/bin/micro
+else
+  export EDITOR=/usr/bin/micro
+fi
 
 # Android Studio
 if [[ -d "${HOME}/Android/Sdk" ]]; then
