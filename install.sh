@@ -134,6 +134,7 @@ ensure_symlink mise/global.toml ~/.config/mise/config.toml
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
+ensure_symlink yazi ~/.config/yazi
 ensure_symlink zsh/.zshenv ~/.zshenv
 ensure_symlink zsh/.zshrc ~/.zshrc
 
@@ -152,7 +153,7 @@ else
   fi
 fi
 
-# micro and vscode don't auto-install plugins/extensions
+# micro, vscode, and yazi don't auto-install plugins/extensions
 if command -v code > /dev/null; then
   installed="$(code --list-extensions)"
   # Extensions to keep in the manifest (so the audit tracks them) but never
@@ -187,4 +188,17 @@ if command -v micro > /dev/null; then
       fi
     fi
   done < <(jq -r '.pluginrepos[]?' micro/settings.json)
+fi
+if command -v ya > /dev/null; then
+  while read -r dep; do
+    flavor_name="${dep##*[:/]}"
+    if [[ -d ~/.config/yazi/flavors/${flavor_name}.yazi ]]; then
+      logI "Found existing yazi ${flavor_name} flavor"
+    else
+      logI "Installing yazi ${flavor_name} flavor..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        ya pkg install || logE "Failed to install yazi ${flavor_name} flavor"
+      fi
+    fi
+  done < <(yq -oy '.flavor.deps[].use' yazi/package.toml)
 fi

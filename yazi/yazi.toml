@@ -1,0 +1,6 @@
+# https://yazi-rs.github.io/docs/configuration/yazi
+
+[mgr]
+linemode = "size_and_mtime" # Defined in init.lua
+show_hidden = true
+sort_by = "natural"

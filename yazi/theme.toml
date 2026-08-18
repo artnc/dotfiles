@@ -1,0 +1,14 @@
+# https://github.com/gosxrgxx/flexoki-dark.yazi
+[flavor]
+dark = "flexoki-dark"
+# Pin light mode too. Yazi trusts the terminal's color scheme report (DSR 996)
+# over the actual background color, and ghostty answers that query from state
+# that defaults to "light" and only updates on macOS appearance *changes* (its
+# AppDelegate observes effectiveAppearance without .initial), so a fresh window
+# in always-dark mode can report "light". Our background is always black, so
+# the dark flavor is correct either way
+light = "flexoki-dark"
+
+[indicator]
+parent = { underline = false }
+preview = { underline = false }
