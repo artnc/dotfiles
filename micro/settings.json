@@ -21,6 +21,7 @@
   "hltaberrors": true,
   "hltrailingws": true,
   "ignorecase": false,
+  "linter": false,
   "mkparents": true,
   "reload": "auto",
   "scrollbar": true,
