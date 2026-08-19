@@ -501,7 +501,9 @@ else
 fi
 
 # Claude
-if _command_exists claude; then
+if _command_exists opencode; then
+  alias c='opencode'
+elif _command_exists claude; then
   alias c='claude --dangerously-skip-permissions'
 fi
 

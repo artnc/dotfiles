@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
+  "instructions": ["~/.claude/CLAUDE.md", "~/.claude/RTK.md"],
+  "lsp": true,
+  "mcp": {
+    "github": {
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "playwright": {
+      "command": ["npx", "@playwright/mcp@latest"],
+      "type": "local"
+    },
+    "unity-mcp": {
+      "command": [
+        "/Users/art/.unity/relay/relay_mac_arm64.app/Contents/MacOS/relay_mac_arm64",
+        "--mcp"
+      ],
+      "type": "local"
+    }
+  },
+  "model": "duolingo-anthropic/claude-opus-5",
+  "permission": {
+    "*": "allow"
+  },
+  "small_model": "duolingo-anthropic/claude-sonnet-5"
+}

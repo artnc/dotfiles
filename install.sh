@@ -132,6 +132,8 @@ ensure_symlink micro/plug ~/.config/micro/plug
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink mise/global.toml ~/.config/mise/config.toml
 ensure_symlink nano/.nanorc ~/.nanorc
+ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
+ensure_symlink opencode/plugins ~/.config/opencode/plugins
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink yazi ~/.config/yazi
