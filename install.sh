@@ -82,6 +82,27 @@ audit_nonsymlinks() {
   fi
 }
 
+# Merge tracked keys into a JSON file that we can't symlink because its owner
+# rewrites it via temp file + rename(), which replaces a symlink with a regular
+# file on the first write. Values in src win; untracked keys in dst are kept
+merge_json() {
+  local -r src="${1}"
+  local -r dst="${2}"
+  if [[ ! -f ${dst} ]]; then
+    logE "Didn't find ${dst}; please run its app once and rerun this script"
+    return
+  fi
+  if jq -es '.[0] * .[1] == .[0]' "${dst}" "${src}" > /dev/null; then
+    logI "Found matching ${dst}"
+    return
+  fi
+  logI "Updating ${dst}..."
+  if [[ -z ${DRY_RUN:-} ]]; then
+    jq -s '.[0] * .[1]' "${dst}" "${src}" > "${dst}.tmp"
+    mv "${dst}.tmp" "${dst}"
+  fi
+}
+
 # Process all dotfiles. Symlinks for programs that I'm not currently using but
 # might try again in the future are commented out for posterity
 if [[ ${os_name} == Darwin ]]; then
@@ -134,6 +155,7 @@ ensure_symlink mise/global.toml ~/.config/mise/config.toml
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
 ensure_symlink opencode/plugins ~/.config/opencode/plugins
+merge_json opencode/kv.json ~/.local/state/opencode/kv.json
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink yazi ~/.config/yazi
