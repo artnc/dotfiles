@@ -25,7 +25,13 @@
   },
   "model": "duolingo-anthropic/claude-opus-5",
   "permission": {
-    "*": "allow"
+    "*": "allow",
+    "read": {
+      "*": "allow",
+      "*.env": "ask",
+      "*.env.*": "ask",
+      "*.env.example": "allow"
+    }
   },
   "small_model": "duolingo-anthropic/claude-sonnet-5"
 }
