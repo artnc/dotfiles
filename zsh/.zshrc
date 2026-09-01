@@ -92,24 +92,22 @@ function gcna {
 #   2. Commit change directly onto branch
 #   3. Run `gpr` ("git push to review") to fork a new branch, push it to
 #      GitHub, and reset the original branch to its previous commit
-function gpr {
-  (
-    set -eu
-    git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
-    local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
-      | head -1 \
-      | xargs -0 echo -n \
-      | tr '[:space:]' '-' \
-      | tr -cd '[:alnum:]-' \
-      | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
-      | tr '[:upper:]' '[:lower:]' \
-    )
-    git checkout -b "${NEW_BRANCH_NAME}"
-    git push --set-upstream origin "${NEW_BRANCH_NAME}"
-    git checkout -
-    git reset --hard HEAD~1
+function gpr() (
+  set -eu
+  git log -n 1 | grep -q Chaidarun # Sanity check that I'm on my own commit
+  local -r NEW_BRANCH_NAME=$(git log --format=%B -n 1 HEAD \
+    | head -1 \
+    | xargs -0 echo -n \
+    | tr '[:space:]' '-' \
+    | tr -cd '[:alnum:]-' \
+    | sed -e 's/^-*//g' -e 's/-*$//g' -e 's/---*/-/g' \
+    | tr '[:upper:]' '[:lower:]' \
   )
-}
+  git checkout -b "${NEW_BRANCH_NAME}"
+  git push --set-upstream origin "${NEW_BRANCH_NAME}"
+  git checkout -
+  git reset --hard HEAD~1
+)
 
 # Convert all .mov files in /tmp to .mp4
 function mp4 {
@@ -192,8 +190,7 @@ function phone {
 }
 
 # Send files/folders to another tailnet host's /tmp/inbox/
-function send {
-  setopt local_options
+function send() (
   set -eu
 
   # Get target host
@@ -273,12 +270,12 @@ function send {
 
   # Send items
   local -r t_start=$(date +%s%3N)
-  rsync -ahR --mkpath "${sources[@]}" "${host}:/tmp/inbox/"
+  rsync -ahR --rsync-path="mkdir -p /tmp/inbox && rsync" "${sources[@]}" "${host}:/tmp/inbox/"
   printf 'Sent %d file(s) in %d ms\n' ${#items[@]} $(( $(date +%s%3N) - t_start ))
-}
+)
 
 # SSH / mosh
-function ssh {
+function ssh() (
   set -eu
 
   # Syncthing sometimes messes with perms. https://superuser.com/a/215506
@@ -313,7 +310,7 @@ function ssh {
   else
     command ssh -o ControlPath="${socket}" "${ssh_port[@]}" "${mosh_args[@]}"
   fi
-}
+)
 
 # Detach every other attached tmux client, keeping only the one that called this
 function tx {
@@ -450,8 +447,7 @@ if _command_exists brew; then
   alias pu='claude update && brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
 else
-  function _pacman_remove_orphans {
-  (
+  function _pacman_remove_orphans() (
     set -e
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
     local -r _pacman_orphans="$(pacman -Qtdq || true)"
@@ -461,7 +457,6 @@ else
     # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
     pacman -Qqd | sudo pacman -Rsu - 2> >(grep -v ' from target list$' >&2)
   )
-  }
   if _command_exists yay; then
     _pacman_helper='yay'
   elif _command_exists pacaur; then
@@ -471,8 +466,7 @@ else
   fi
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
   alias pi="pu && ${_pacman_helper} -S"
-  function pu {
-  (
+  function pu() (
     set -e
     _pacman_remove_orphans
     # https://unix.stackexchange.com/a/574496
@@ -490,14 +484,11 @@ else
       synclient TapButton3=2
     fi
   )
-  }
-  function px {
-  (
+  function px() (
     set -e
     "${_pacman_helper}" -Rncs "${1}"
     _pacman_remove_orphans
   )
-  }
 fi
 
 # Claude
