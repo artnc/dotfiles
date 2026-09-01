@@ -715,6 +715,9 @@ if _command_exists ruby; then
   _evalcache ruby -r rubygems -e 'puts "PATH=\"#{Gem.user_dir}/bin:${PATH}\""'
 fi
 
+# Unity CLI
+_source_if_exists "${HOME}/.unity/env"
+
 # VSCode
 if [[ $IS_MAC = true ]]; then
   PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:${PATH}"
