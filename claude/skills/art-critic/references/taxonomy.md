@@ -1,7 +1,7 @@
 # What Art catches
 
-Distilled from ~5.6k top-level review comments (2014-2026) across 10 Duolingo
-repos (TS/TSX, Kotlin, Python, SCSS, Bash, JSON schemas, Makefiles).
+Distilled from ~5.7k top-level review comments (2014-2026) across 11 Duolingo
+repos (TS/TSX, Kotlin, Python, Swift, SCSS, Bash, JSON schemas, Makefiles).
 Categories ranked by frequency. Percentages are share of substantive comments.
 
 ## 1. Simplification and less code (~15%, the signature)
@@ -78,6 +78,9 @@ Found by mentally executing the code and checking every caller:
   greppable than ad-hoc markers)
 - Comments are sentence-cased. Skeptical of section-marker comments ("tend to
   do more harm than good... which turns the comment into a lie")
+- When unusual code might be intentional, the ask is a WHY comment rather
+  than a change: "If so, it might be worth documenting why in a comment. If
+  not, I have bad news..."
 
 ## 5. Dead code and leftovers (~7%)
 
@@ -146,6 +149,13 @@ alphabetical order, generally not just at the bottom".
   bare `raise` re-raises, `in` checks before subscripting
 - Bash: `${foo}` braces always ("defensive measure against `$FOObar`"),
   double-quote interpolations, `[[`, `set -eu` with newlines over `&&` chains
+- Swift (he reviews iOS as an infra/tooling reviewer, self-identifies as not
+  a Swift expert, and hedges or question-frames accordingly): optional
+  chaining over manual unwraps, `nil` over dummy placeholder values,
+  `private(set)` where possible, drop non-obvious default parameter values,
+  separate initializers so mutually exclusive params can't both be set, name
+  backported APIs to match the future SDK signature so the compiler forces
+  cleanup after the upgrade
 
 ## 11. Tooling and linter automation (~4%, highly distinctive)
 
@@ -153,7 +163,11 @@ Any style rule worth stating twice becomes a lint rule - he writes it himself
 ("I'll add a linter check in a separate change"). Cardinal rule: "never
 forcing anyone to fix other people's mistakes" - fix all existing violations
 when introducing a rule, never add a check until existing code passes it.
-Anti-baseline. Flags when a linter should have caught something.
+Anti-baseline. Flags when a linter should have caught something. Reviews
+lint config itself rigorously: dedupe shared exclude lists, keep severity
+consistent across rules, prefer `git ls-files` over hand-maintained
+denylists that mirror `.gitignore`, and fix lint tools upstream rather than
+accepting local workarounds.
 
 ## 12. The rest (each ~1-3%)
 
@@ -180,6 +194,11 @@ Anti-baseline. Flags when a linter should have caught something.
   file or hand-rolling five lines
 - **File organization**: code lives with its domain, split gigantic files,
   locality ("move to line 354 for better locality"), blame-churn minimization
+- **Script DX**: configure scripts via env vars, not positional args
+  (order-free, saveable in shell rc, no argparse boilerplate). Scripts should
+  do X rather than tell the user to do X. Don't Dockerize
+  environment-agnostic scripts. Move longish Makefile recipes into standalone
+  script files, and chain Make targets instead of duplicating bodies
 - **Typos and prose**: relentless, in code, comments, UI copy, and docs -
   reviewed as rigorously as code, often fixed via suggestion block
 - **Experiments** (Duolingo-specific): order the experiment-treatment check

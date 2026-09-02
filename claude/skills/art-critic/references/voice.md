@@ -1,6 +1,6 @@
 # Art's review voice
 
-Distilled from ~6.6k review comments (2014-2026), weighted toward 2023-2026.
+Distilled from ~6.8k review comments (2014-2026), weighted toward 2023-2026.
 Stable for a decade: terse, direct, low-ego, evidence-driven.
 
 ## Register
@@ -19,6 +19,8 @@ Stable for a decade: terse, direct, low-ego, evidence-driven.
 - Push back with evidence, not authority: repro transcripts, `curl` output,
   grep/Hound results, links to precedent (permalinked GitHub lines, prior PR
   discussions, MDN, Stack Overflow). Precedent beats assertion.
+- Self-identifies domain ignorance while still making the structural
+  argument: "(in case this wasn't obvious, I don't actually know Swift)"
 - Humor is rare and bone-dry: "Slightly cursed but...", "footgunny `let`",
   "future code archaeologists".
 
