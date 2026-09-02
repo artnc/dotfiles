@@ -1,6 +1,6 @@
 -- Persistent scratch buffers that survive editor restarts, like VSCode's
 -- untitled tabs. Each scratch buffer is a real file; contents auto-save
--- (debounced) and on quit, and scratch buffers reopen as tabs on the next launch
+-- (throttled) and on quit, and scratch buffers reopen as tabs on the next launch
 local micro = import("micro")
 local config = import("micro/config")
 local buffer = import("micro/buffer")
@@ -11,13 +11,15 @@ local filepath = import("path/filepath")
 -- restores only the buffers created there. The cwd is mirrored as nested subdirs
 -- under the root (filepath.Join folds the absolute cwd into path components, and
 -- collapses the leading slash), so distinct cwds never collide
-local SCRATCH_ROOT = filepath.Join(os.Getenv("HOME"), ".config", "micro", "scratch")
+local SCRATCH_ROOT = filepath.Join(config.ConfigDir, "scratch")
 -- Bind to a local first: os.Getwd also returns an error, which would otherwise
 -- expand as a stray extra argument to filepath.Join
 local cwd = os.Getwd()
 local SCRATCH_DIR = filepath.Join(SCRATCH_ROOT, cwd)
-local SAVE_NS = 2000000000 -- 2s debounce before flushing edited scratch buffers
-local saveGen = 0          -- bumped per keystroke so only the latest timer saves
+-- Where micro keeps its own crash backups, i.e. the default of its `backupdir`
+local BACKUP_DIR = filepath.Join(config.ConfigDir, "backups")
+local SAVE_NS = 2000000000 -- edited scratch buffers are flushed at most this often (2s)
+local savePending = false  -- true while a flush timer is armed
 
 local function isScratch(buf)
   return buf.AbsPath ~= "" and filepath.Dir(buf.AbsPath) == SCRATCH_DIR
@@ -44,7 +46,7 @@ end
 
 -- Scratch tabs show "Untitled-N" and always carry the unsaved "+" of a VSCode
 -- untitled tab. micro appends its own "+" only while Buf:Modified(), which the
--- debounced AutoSave clears, so we add the "+" exactly when micro doesn't: a
+-- throttled AutoSave clears, so we add the "+" exactly when micro doesn't: a
 -- single steady indicator instead of one that flickers off after each save
 local function setDisplayName(buf)
   local name = filepath.Base(buf.Path)
@@ -54,8 +56,55 @@ local function setDisplayName(buf)
   buf:SetName(name)
 end
 
+-- micro names each buffer's crash backup after the buffer's absolute path,
+-- escaped the way Go's url.QueryEscape does: unreserved characters kept, space
+-- as "+", every other byte as %XX
+local function escapePath(path)
+  return (path:gsub("[^A-Za-z0-9%-_.~]", function(c)
+    return c == " " and "+" or string.format("%%%02X", c:byte())
+  end))
+end
+
+-- The backup micro keeps for a scratch file, or nil when it would use a name we
+-- can't reproduce: util.DetermineEscapePath switches to an md5 hash of the path
+-- once the escaped path plus micro's ".micro-backup" temp suffix exceeds the
+-- 255-byte filename limit, and prefers a pre-2.0.14 "%"-escaped name if one exists
+local function backupPath(path)
+  local p = filepath.Join(BACKUP_DIR, escapePath(path))
+  return #p + #".micro-backup" <= 255 and p or nil
+end
+
+-- Delete a scratch file along with micro's crash backup of it. Without this the
+-- backup outlives the discarded content and resurfaces when the Untitled-N
+-- number is reused, since micro only clears a backup on a successful save
+local function removeScratch(path)
+  os.Remove(path)
+  local backup = backupPath(path)
+  if backup ~= nil then
+    os.Remove(backup)
+  end
+end
+
+-- Apply any leftover crash backup to its scratch file before micro opens it.
+-- micro writes these for every modified buffer (every 8s, and again from its
+-- panic handler) and deletes them on a successful save, so one surviving here
+-- means micro died holding content newer than our last auto-save. micro would
+-- handle it by tearing down the screen for a blocking recover/ignore/abort
+-- prompt mid-restore, and its "abort" branch returns a pathless empty buffer,
+-- which collapses every scratch tab being restored into a single blank tab.
+-- For a scratch buffer the answer is always "recover", so do it silently: the
+-- rename both applies the backup and clears it, and simply fails when there is
+-- no backup, which is the common case
+local function recoverBackup(path)
+  local backup = backupPath(path)
+  if backup ~= nil then
+    os.Rename(backup, path)
+  end
+end
+
 -- Open a scratch file VSCode-style: reuse the current blank tab, else a new tab
 local function openScratch(path)
+  recoverBackup(path)
   local bp = micro.CurPane()
   if isBlank(bp.Buf) then
     local buf, err = buffer.NewBufferFromFile(path)
@@ -113,7 +162,7 @@ local function saveScratch()
   local removed = false
   eachScratchBuf(function(buf)
     if isEmpty(buf) then
-      os.Remove(buf.AbsPath)
+      removeScratch(buf.AbsPath)
       removed = true
     else
       buf:AutoSave()
@@ -122,7 +171,7 @@ local function saveScratch()
     end
   end)
   -- A dir can only be emptied by a removal, so skip the tree walk otherwise; this
-  -- keeps the 2s debounced auto-save from re-scanning the tree on every keystroke
+  -- keeps the 2s throttled auto-save from re-scanning the tree on every keystroke
   if removed then
     pruneEmptyDirs()
   end
@@ -195,8 +244,11 @@ local function restoreScratch()
   end
 end
 
--- Debounced auto-save: while editing a scratch buffer, (re)arm a 2s timer that
--- only the most recent keystroke's closure gets to act on
+-- Throttled auto-save: the first edit to a scratch buffer arms a 2s timer that
+-- flushes every scratch buffer. Deliberately a throttle and not a debounce:
+-- rearming on each keystroke starves the save for as long as typing continues,
+-- so a long uninterrupted burst would never reach disk and a crash mid-burst
+-- would leave nothing for restoreScratch to reopen
 function onAnyEvent()
   local bp = micro.CurPane()
   if bp == nil or bp.Buf == nil or not isScratch(bp.Buf) or not bp.Buf:Modified() then
@@ -204,12 +256,13 @@ function onAnyEvent()
   end
   -- Now modified, so micro shows its own "+"; drop ours so it isn't doubled
   setDisplayName(bp.Buf)
-  saveGen = saveGen + 1
-  local myGen = saveGen
+  if savePending then
+    return
+  end
+  savePending = true
   micro.After(SAVE_NS, function()
-    if myGen == saveGen then
-      saveScratch()
-    end
+    savePending = false
+    saveScratch()
   end)
 end
 
@@ -228,7 +281,7 @@ preQuitAll = preQuit
 local function promoteScratch(pane, andThen)
   local oldPath = pane.Buf.AbsPath
   pane:SaveAsCB("Save", function()
-    os.Remove(oldPath)
+    removeScratch(oldPath)
     pane.Buf:SetName("")
     if andThen ~= nil then
       andThen()
@@ -239,7 +292,7 @@ end
 -- Discard a scratch pane: drop the hidden file, reclaim any dir it empties, then
 -- run onClose to perform the actual close
 local function discardScratch(bp, onClose)
-  os.Remove(bp.Buf.AbsPath)
+  removeScratch(bp.Buf.AbsPath)
   pruneEmptyDirs()
   if onClose ~= nil then
     onClose()
@@ -275,7 +328,7 @@ end
 
 -- A manual save (Ctrl-S) of a scratch buffer must not write the hidden scratch
 -- file. Returning false cancels that default; promoteScratch prompts for a real
--- path instead. Our debounced persistence uses Buffer:AutoSave, not this action,
+-- path instead. Our throttled persistence uses Buffer:AutoSave, not this action,
 -- so it isn't intercepted
 function preSave(bp)
   if not isScratch(bp.Buf) then

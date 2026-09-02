@@ -2,6 +2,8 @@
   "\u001b[13;2~": "FindPrevious",
   "\u001b[1;3A": "MoveLinesUp",
   "\u001b[1;3B": "MoveLinesDown",
+  "\u001b[1;6A": "SpawnMultiCursorUp",
+  "\u001b[1;6B": "SpawnMultiCursorDown",
   "Alt-n": "NextTab|FirstTab",
   "Alt-p": "PreviousTab|LastTab",
   "Alt-N": "command:tabmove +1",
