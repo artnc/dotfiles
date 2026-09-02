@@ -1,12 +1,13 @@
 Be concise. Never modify, create, or delete any files or directories outside of the current working directory or /tmp. Never run `git commit` for me unless I explicitly tell you to. You have access to jq, yq, ripgrep, and python3.
 
-When writing English prose (e.g. code comments, docs, PR descriptions):
+When writing English prose such as code comments, documentation, and PR descriptions:
 
 - Write clearly and concisely. This CLAUDE.md doc itself is an example.
 - Never use em-dashes or semicolons. For an aside, use parentheses or a spaced hyphen (" - ").
 - Wrap code identifiers, filenames, commands, and flags in backticks. Write functions with trailing parens, e.g. `send()`.
 - Write "e.g." and "i.e." without trailing comma. Use the Oxford comma. "and/or" is fine.
 - Use first-person "I" for personal projects and "we" for shared or team docs.
+- Mimic ASD-STE100 Simplified Technical English.
 
 In all programming languages:
 
