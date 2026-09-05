@@ -448,8 +448,8 @@ alias m='make'
 
 # Homebrew / pacman / pacaur / yay
 if _command_exists brew; then
-  alias pi='brew install'
-  alias pu='claude update && brew upgrade && brew upgrade --cask'
+  alias pn='brew install'
+  alias pu='pi update --all && claude update && brew upgrade && brew upgrade --cask'
   alias px='brew uninstall'
 else
   function _pacman_remove_orphans() (
@@ -470,7 +470,7 @@ else
     _pacman_helper='pacman'
   fi
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
-  alias pi="pu && ${_pacman_helper} -S"
+  alias pn="pu && ${_pacman_helper} -S"
   function pu() (
     set -e
     _pacman_remove_orphans
@@ -496,8 +496,22 @@ else
   )
 fi
 
-# Claude
-if _command_exists opencode; then
+# Coding agents
+if _command_exists pi; then
+  alias c='pi update --extensions &> /dev/null; pi'
+  # Pi has no setting to hide only its "Package updates are available" startup
+  # notice (`checkForPackageUpdates()` in `interactive-mode.js` bails out only on
+  # `PI_OFFLINE`). Disable startup network checks since `pu` updates Pi and its
+  # packages. Package commands must stay
+  # online: `PI_OFFLINE=1 pi update` prints "Updated packages" but does nothing
+  function pi() (
+    if [[ ${1} == (install|update) ]]; then
+      command pi "${@}"
+    else
+      PI_OFFLINE=1 command pi "${@}"
+    fi
+  )
+elif _command_exists opencode; then
   alias c='opencode'
 elif _command_exists claude; then
   alias c='claude --dangerously-skip-permissions'

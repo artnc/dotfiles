@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "atlassian": {
+      "exposure": "deferred",
+      "url": "https://mcp.atlassian.com/v2/mcp"
+    },
+    "figma": {
+      "exposure": "deferred",
+      "oauth": {
+        "callbackUrl": "http://localhost:58651/callback",
+        "clientId": "ZxLkzBQUZbSpax92bAup9Q",
+        "clientSecret": "!/usr/bin/security find-generic-password -s pi-mcp-adapter.oauth -a sha256-5b79d0d574eedd091c02692026ecfa1c617af2432c0a9b401e623e67d78a179c -w | /opt/homebrew/bin/jq -er '.clientInfo.clientSecret | select(type == \"string\" and length > 0)'"
+      },
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "unity-ai-legacy": {
+      "args": [
+        "--mcp",
+        "--project-path",
+        "/Users/art/git/duolingo-unity"
+      ],
+      "command": "/Users/art/.unity/relay/relay_mac_arm64.app/Contents/MacOS/relay_mac_arm64",
+      "enabled": false
+    },
+    "unity-mcp": {
+      "args": [
+        "mcp"
+      ],
+      "command": "/Users/art/.unity/bin/unity"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "braveApiKey": "${BRAVE_API_KEY}",
+  "provider": "brave",
+  "workflow": "none"
+}

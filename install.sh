@@ -157,6 +157,17 @@ ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
 ensure_symlink opencode/plugins ~/.config/opencode/plugins
 merge_json opencode/kv.json ~/.local/state/opencode/kv.json
+ensure_symlink pi/extensions ~/.pi/agent/extensions
+ensure_symlink pi/keybindings.json ~/.pi/agent/keybindings.json
+ensure_symlink pi/mcp.json ~/.pi/agent/mcp.json
+ensure_symlink pi/session-summary.json ~/.pi/agent/session-summary.json
+if [[ -f pi/models.json ]]; then
+  ensure_symlink pi/models.json ~/.pi/agent/models.json
+else
+  logE "Didn't find pi/models.json! Please copy it from another machine"
+fi
+ensure_symlink pi/settings.json ~/.pi/agent/settings.json
+ensure_symlink pi/web-search.json ~/.pi/web-search.json
 ensure_symlink ripgrep/.rgignore ~/.rgignore
 ensure_symlink tmux/.tmux.conf ~/.tmux.conf
 ensure_symlink yazi ~/.config/yazi

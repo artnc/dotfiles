@@ -1,0 +1,37 @@
+{
+  "defaultModel": "gpt-6.1-sol",
+  "defaultProjectTrust": "always",
+  "defaultProvider": "duolingo-openai",
+  "defaultThinkingLevel": "xhigh",
+  "enableInstallTelemetry": false,
+  "enabledModels": [
+    "duolingo-anthropic/*",
+    "duolingo-openai/*"
+  ],
+  "followUpMode": "all",
+  "fullscreenExitOutput": "resume-hint",
+  "fullscreenScrollbar": "hidden",
+  "hideThinkingBlock": true,
+  "lastChangelogVersion": "1.2.0",
+  "outputPad": 0,
+  "packages": [
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:pi-background-tasks",
+    "npm:pi-session-summary",
+    "npm:pi-subagents",
+    "npm:pi-web-access"
+  ],
+  "quietStartup": true,
+  "retry": {
+    "baseDelayMs": 2000,
+    "enabled": true,
+    "maxAgentDelayMs": 60000,
+    "maxRetries": 60
+  },
+  "skills": [
+    "~/.claude/skills"
+  ],
+  "steeringMode": "all",
+  "tuiMode": "fullscreen",
+  "theme": "dark"
+}

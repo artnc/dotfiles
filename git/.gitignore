@@ -25,3 +25,8 @@ node_modules/
 **/.claude/.cc-writes/
 **/docs/superpowers/
 .playwright-mcp/
+
+# Pi runtime artifacts
+**/.pi/delegate/
+**/.pi/fusion/
+**/.pi/tasks/
