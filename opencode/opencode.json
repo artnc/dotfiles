@@ -23,7 +23,7 @@
       "type": "local"
     }
   },
-  "model": "duolingo-anthropic/claude-opus-5",
+  "model": "duolingo-anthropic/claude-fable-5-1",
   "permission": {
     "*": "allow",
     "read": {
