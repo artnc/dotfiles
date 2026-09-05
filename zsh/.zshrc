@@ -36,6 +36,11 @@ function beep {
   afplay '/System/Library/Sounds/Glass.aiff'
 }
 
+# Headless Claude Code review and autofixer
+function cr() (
+  claude -p --dangerously-skip-permissions "/code-review xhigh --fix $*"
+)
+
 # Mount/unmount LUKS-encrypted HDD
 function hdd {
   local -r mount_name='seagate'
