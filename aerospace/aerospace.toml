@@ -4,6 +4,8 @@
 # field has focus, e.g. KeePassXC login screen :|
 # https://github.com/nikitabobko/AeroSpace/discussions/959
 
+# https://github.com/nikitabobko/AeroSpace/issues/775#issuecomment-2516931688
+after-startup-command = ['layout tiles']
 enable-normalization-flatten-containers = false
 enable-normalization-opposite-orientation-for-nested-containers = false
 
