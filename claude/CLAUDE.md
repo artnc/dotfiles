@@ -3,6 +3,7 @@ Be concise. Ask me before you modify, create, or delete any files or directories
 When writing English prose such as code comments, documentation, and PR descriptions:
 
 - Write clearly and concisely. This CLAUDE.md doc itself is an example.
+- Always use American spellings, never British.
 - Never use em-dashes or semicolons. For an aside, use parentheses or a spaced hyphen (" - ").
 - Wrap code identifiers, filenames, commands, and flags in backticks. Write functions with trailing parens, e.g. `send()`.
 - Write "e.g." and "i.e." without trailing comma. Use the Oxford comma. "and/or" is fine.
