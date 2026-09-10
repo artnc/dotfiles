@@ -14,6 +14,7 @@
   "*.tsx": {
     "colorcolumn": 80
   },
+  "basename": true,
   "colorcolumn": 100,
   "colorscheme": "twilight",
   "cursorline": false,
@@ -25,7 +26,6 @@
   "mkparents": true,
   "reload": "auto",
   "scrollbar": true,
-  "scrollspeed": 2,
   "showchars": "ispace=▏,itab=▏",
   "softwrap": true,
   "statusformatl": "$(filename)",
