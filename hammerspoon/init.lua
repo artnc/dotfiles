@@ -14,3 +14,12 @@ local typeKeystrokes = function(email) return function() hs.eventtap.keyStrokes(
 hs.hotkey.bind({"alt", "shift"}, "C", typeKeystrokes(string.reverse("moc.nuradiahc@tra")))
 hs.hotkey.bind({"alt", "shift"}, "D", typeKeystrokes(string.reverse("moc.ogniloud@tra")))
 hs.hotkey.bind({"alt", "shift"}, "E", typeKeystrokes(string.reverse("moc.liamg@nuradiahctra")))
+
+-- Mute audio except when on home Wi-Fi
+-- https://github.com/Hammerspoon/hammerspoon/issues/3537
+hs.location.start()
+local muteUnlessHome = function()
+  hs.audiodevice.defaultOutputDevice():setMuted(hs.wifi.currentNetwork() ~= "Art")
+end
+muteUnlessHome()
+_wifiWatcher = hs.wifi.watcher.new(muteUnlessHome):start()
