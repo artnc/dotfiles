@@ -23,6 +23,7 @@
   "Ctrl-Shift-d": "DuplicateLine",
   "Ctrl-Shift-k": "CutLine",
   "Ctrl-Shift-p": "CommandMode",
+  "Ctrl-Shift-t": "command:reopentab",
   "Ctrl-d": "SpawnMultiCursor",
   "Ctrl-g": "JumpLine",
   "Ctrl-h": "command-edit:replace ",
