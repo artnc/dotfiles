@@ -4,6 +4,8 @@ When writing English prose such as code comments, documentation, and PR descript
 
 - Write clearly and concisely. This CLAUDE.md doc itself is an example.
 - Always use American spellings, never British.
+- Always use contractions where possible, e.g. "can't" instead of "cannot".
+- Never shorten "so that" to just "so".
 - Never use em-dashes or semicolons. For an aside, use parentheses or a spaced hyphen (" - ").
 - Wrap code identifiers, filenames, commands, and flags in backticks. Write functions with trailing parens, e.g. `send()`.
 - Write "e.g." and "i.e." without trailing comma. Use the Oxford comma. "and/or" is fine.
