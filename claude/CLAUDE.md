@@ -12,6 +12,17 @@ When writing English prose such as code comments, documentation, and PR descript
 - Use first-person "I" for personal projects and "we" for shared or team docs.
 - Mimic ASD-STE100 Simplified Technical English.
 
+In GitHub pull requests:
+
+- Never use the draft PR feature. Just create the PR as ready for review.
+- Never assign humans to a PR. I'll do that myself.
+- Include screenshots in the PR description if applicable.
+  - When showing before and after screenshots, use a Markdown table with column names "Before" and "After".
+  - The screenshots speak for themselves. Don't annotate them with any further text or headings.
+  - Upload via `gh pr edit --attach` instead of committing the images to the repo.
+  - If the PR description already contains a "## Description" section, place the screenshots inside that section.
+- When posting a new comment, state the model name in a byline like `GPT-6.1 Sol says:` and then show the message inside a Markdown blockquote.
+
 In all programming languages:
 
 - Always use 2-space indentation unless stated otherwise.
@@ -23,7 +34,6 @@ In all programming languages:
 - Prefer to log before performing actions ("Doing thing...") rather than afterward ("Did thing").
 - Prefer single-letter parameter names when defining simple lambdas (i.e. anonymous functions) as function predicates. For example: `.sort(key=lambda r: len(r))` in Python and `.filter(e => e.isCorrect)` in TypeScript.
 - Always order if-else branches and ternary operator branches so that the conditional expression has as few negations as possible, e.g. write `a == b ? c : d` instead of `a != b ? d : c`.
-- Never run linters or code formatters. I'll do that myself.
 - Never hand-wrap or restructure code to fit a line-length limit. Don't split calls, break strings or URLs, or add single-use variables just for width). That's the formatter's job. Comments are the exception - keep those within the limit.
 - When writing code comments (these are prose, so the English prose rules above also apply):
   - Comments should explain both WHAT non-trivial code does and WHY, since identifier names alone aren't sufficient documentation. Use them liberally, but keep each one terse: usually a single line.
