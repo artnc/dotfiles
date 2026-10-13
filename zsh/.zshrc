@@ -722,6 +722,11 @@ fi
 
 # Unity CLI
 _source_if_exists "${HOME}/.unity/env"
+# Unity crudely greps .zshrc for its own snippet and will silently add it if absent :|
+: '
+# Unity CLI
+. "/Users/art/.unity/env"
+'
 
 # VSCode
 if [[ $IS_MAC = true ]]; then
