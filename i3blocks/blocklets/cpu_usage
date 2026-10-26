@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Like /usr/lib/i3blocks/cpu_usage, but counts iowait as idle (like htop). This
+# laptop's kernel leaks its `nr_iowait` counter, so idle time shows up as a
+# permanent ~60% iowait that the stock script reports as CPU usage
+
+# Sample CPU usage for 1 second and print usage, then usage again as
+# `short_text`, then a color based on the stock script's thresholds
+LC_ALL=C mpstat 1 1 | awk '
+  /^Average:/ {
+    usage = 100 - $NF - $6
+    printf "%.2f%%\n%.2f%%\n", usage, usage
+    print usage >= 80 ? "#FF0000" : usage >= 50 ? "#FFFC00" : "#EBDBB2"
+  }
+'

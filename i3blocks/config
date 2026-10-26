@@ -54,6 +54,7 @@ instance=mem;used
 interval=30
 
 [cpu_usage]
+command=~/.config/i3blocks/blocklets/cpu_usage
 label=CPU 
 interval=10
 min_width=CPU:99.00%
