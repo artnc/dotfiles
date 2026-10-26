@@ -65,7 +65,7 @@
       }
     ]
   },
-  "model": "fable",
+  "model": "opus",
   "outputStyle": "Concise",
   "permissions": {
     "allow": [
