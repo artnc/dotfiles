@@ -491,7 +491,7 @@ else
   )
   function px() (
     set -e
-    "${_pacman_helper}" -Rncs "${1}"
+    "${_pacman_helper}" -Rncs "${@}"
     _pacman_remove_orphans
   )
 fi
