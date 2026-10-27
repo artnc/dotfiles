@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vocalinux
+Exec=/usr/bin/vocalinux --start-minimized
+Icon=vocalinux
+Comment=Voice dictation for Linux
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

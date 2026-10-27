@@ -131,6 +131,7 @@ else
   ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
+  ensure_symlink xdg-autostart ~/.config/autostart
   while read -r src; do
     audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)

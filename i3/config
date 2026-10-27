@@ -164,5 +164,5 @@ bar {
         tray_output primary
 }
 
-exec --no-startup-id nm-applet
-exec --no-startup-id xfce4-clipman
+# Run XDG autostart entries (~/.config/autostart, /etc/xdg/autostart)
+exec --no-startup-id dex --autostart --environment i3
