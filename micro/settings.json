@@ -1,17 +1,5 @@
 {
-  "*.js": {
-    "colorcolumn": 80
-  },
   "*.jsx": {
-    "colorcolumn": 80
-  },
-  "*.py": {
-    "tabsize": 4
-  },
-  "*.ts": {
-    "colorcolumn": 80
-  },
-  "*.tsx": {
     "colorcolumn": 80
   },
   "basename": true,
@@ -19,6 +7,15 @@
   "colorscheme": "twilight",
   "cursorline": false,
   "diffgutter": true,
+  "ft:javascript": {
+    "colorcolumn": 80
+  },
+  "ft:python": {
+    "tabsize": 4
+  },
+  "ft:typescript": {
+    "colorcolumn": 80
+  },
   "hltaberrors": true,
   "hltrailingws": true,
   "ignorecase": false,
