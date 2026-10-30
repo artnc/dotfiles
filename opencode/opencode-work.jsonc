@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "duolingo-openai/gpt-6.1-sol",
+  "providers": {
+    "duolingo-openai": {
+      "models": {
+        "gpt-6.1-sol": {
+          "settings": {
+            "reasoningEffort": "xhigh"
+          }
+        }
+      }
+    }
+  }
+}

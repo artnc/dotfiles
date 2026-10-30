@@ -1,39 +1,93 @@
-/**
- * Port of the Claude Code PostToolUse hook: after each edit/write, flag
- * over-long comment lines so the model reflows them itself instead of letting
- * the code formatter chop them. Reuses claude/hook-posttooluse.py by feeding
- * it a Claude-style JSON payload on stdin
- */
-export const CommentLength = async ({ $ }) => {
-  // opencode's after-hook doesn't expose tool args, so stash them by callID
-  const argsByCall = {};
-  return {
-    "tool.execute.after": async input => {
-      const args = argsByCall[input.callID];
-      if (!args) {
+import { spawnSync } from "node:child_process";
+import { realpathSync } from "node:fs";
+import { homedir } from "node:os";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+/** Find the shared checker relative to this repo, wherever it's cloned */
+const checker = resolve(
+  realpathSync(dirname(fileURLToPath(import.meta.url))),
+  "../../claude/hook-posttooluse.py"
+);
+
+/** Reuse the Claude Code comment check after successful file changes */
+export default {
+  id: "comment-length",
+  setup: async ctx => {
+    // Inspect V2's completed input directly instead of caching tool arguments
+    await ctx.tool.hook("execute.after", event => {
+      if (
+        event.status !== "completed" ||
+        !["edit", "patch", "write"].includes(event.tool)
+      ) {
         return;
       }
-      delete argsByCall[input.callID];
-      const payload = JSON.stringify({
-        tool_input: {
-          content: args.content,
-          file_path: args.filePath,
-          new_string: args.newString,
-        },
+
+      // Use diff line numbers because formatters can rewrite edited text and
+      // patch output can trim common indentation
+      const inputs =
+        event.tool === "write"
+          ? [
+              {
+                content: event.input.content,
+                file_path: resolve(
+                  ctx.location.directory,
+                  event.input.path.replace(/^~(?=\/|$)/, homedir())
+                ),
+              },
+            ]
+          : (event.result.output?.files ?? [])
+              .filter(f => f.status !== "deleted")
+              .map(f => {
+                let line;
+                const touched = [];
+                for (const text of f.patch.split("\n")) {
+                  const hunk = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(
+                    text
+                  );
+                  if (hunk) {
+                    line = Number(hunk[1]) - 1;
+                    continue;
+                  }
+                  if (line === undefined) {
+                    continue;
+                  }
+                  if (text.startsWith("+")) {
+                    touched.push(line++);
+                  } else if (text.startsWith(" ")) {
+                    line++;
+                  }
+                }
+                return {
+                  file_path: resolve(ctx.location.directory, f.file),
+                  touched_lines: touched,
+                };
+              });
+
+      // Check each file with a hard timeout so that helpers can't stall sessions
+      const violations = inputs.flatMap(input => {
+        const result = spawnSync(checker, [], {
+          encoding: "utf8",
+          input: JSON.stringify({ tool_input: input }),
+          killSignal: "SIGKILL",
+          timeout: 5000,
+        });
+        return result.status === 2 ? [result.stderr.trim()] : [];
       });
-      const result =
-        await $`${process.env.HOME}/git/dotfiles/claude/hook-posttooluse.py < ${new Response(payload)}`
-          .quiet()
-          .nothrow();
-      // Exit code 2 means violations; throw so the model sees the line list
-      if (result.exitCode === 2) {
-        throw new Error(result.stderr.toString());
+      if (violations.length === 0) {
+        return;
       }
-    },
-    "tool.execute.before": async (input, output) => {
-      if (input.tool === "edit" || input.tool === "write") {
-        argsByCall[input.callID] = output.args;
-      }
-    },
-  };
+
+      // Show violations without misreporting an already-applied change as failed
+      event.result = {
+        ...event.result,
+        content: [
+          ...(typeof event.result.content === "string"
+            ? [{ text: event.result.content, type: "text" }]
+            : (event.result.content ?? [])),
+          { text: violations.join("\n"), type: "text" },
+        ],
+      };
+    });
+  },
 };

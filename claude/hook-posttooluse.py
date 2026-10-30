@@ -13,9 +13,11 @@ js = file.endswith((".cjs", ".js", ".jsx", ".mjs", ".ts", ".tsx"))
 limit = 80 if js else 100
 markers = ("//", "/*", "*") if js else ("#",)
 
-# Grab the text this tool wrote (new_string for Edit, content for Write)
-new_text = tool_input.get("new_string") or tool_input.get("content") or ""
-if not new_text:
+# Read edit text, written file text, or zero-based line numbers from patch tools
+new_text = tool_input.get("new_string") or ""
+written = tool_input.get("content")
+touched_lines = tool_input.get("touched_lines", [])
+if not (new_text or written or touched_lines):
     sys.exit(0)
 
 # Read the post-edit file
@@ -25,12 +27,15 @@ except OSError:
     sys.exit(0)
 lines = content.split("\n")
 
+# Check every line of a fully written file because a formatter can rewrite its
+# text before this hook runs
+touched = set(range(len(lines)) if written else touched_lines)
+
 # Map every occurrence of the new text (replace_all can write several) onto the
 # full file lines it overlaps. Using whole lines means a fragment swapped into
 # an already-long line still flags that line by its resulting length
-touched = set()
 pos = -1
-while (pos := content.find(new_text, pos + 1)) != -1:
+while new_text and (pos := content.find(new_text, pos + 1)) != -1:
     first = content.count("\n", 0, pos)
     last = content.count("\n", 0, pos + len(new_text) - 1)
     touched.update(range(first, last + 1))
@@ -39,7 +44,7 @@ while (pos := content.find(new_text, pos + 1)) != -1:
 violations = [
     f"  L{i + 1} ({len(lines[i])} cols)"
     for i in sorted(touched)
-    if len(lines[i]) > limit and lines[i].lstrip().startswith(markers)
+    if 0 <= i < len(lines) and len(lines[i]) > limit and lines[i].lstrip().startswith(markers)
 ]
 if violations:
     print(

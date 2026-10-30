@@ -155,8 +155,13 @@ ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink mise/global.toml ~/.config/mise/config.toml
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
+if [[ "$(uname -n)" == 'art-macbook-pro' ]]; then
+  ensure_symlink opencode/opencode-work.jsonc ~/.config/opencode/opencode.jsonc
+else
+  ensure_symlink opencode/opencode-personal.jsonc ~/.config/opencode/opencode.jsonc
+fi
 ensure_symlink opencode/plugins ~/.config/opencode/plugins
-merge_json opencode/kv.json ~/.local/state/opencode/kv.json
+merge_json opencode/cli.json ~/.config/opencode/cli.json
 ensure_symlink pi/extensions ~/.pi/agent/extensions
 ensure_symlink pi/keybindings.json ~/.pi/agent/keybindings.json
 ensure_symlink pi/mcp.json ~/.pi/agent/mcp.json

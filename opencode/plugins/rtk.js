@@ -1,22 +1,27 @@
-/**
- * Port of the Claude Code PreToolUse `rtk hook claude` hook: rewrite bash
- * commands through rtk (Rust Token Killer) to cut token usage. rtk has no
- * native opencode hook, but `rtk hook check` dry-runs the same rewrite
- * engine and prints the resulting command, e.g. `git status` -> `rtk git
- * status`
- */
-export const Rtk = async ({ $ }) => ({
-  "tool.execute.before": async (input, output) => {
-    if (input.tool !== "bash" || !output.args?.command) {
-      return;
-    }
-    const result = await $`rtk hook check ${output.args.command}`
-      .quiet()
-      .nothrow();
-    const rewritten = result.stdout.toString().trim();
-    // Keep the original command if rtk is missing or prints nothing
-    if (result.exitCode === 0 && rewritten) {
-      output.args.command = rewritten;
-    }
+import { spawnSync } from "node:child_process";
+
+/** Rewrite shell tool commands through RTK to reduce tool output */
+export default {
+  id: "rtk",
+  setup: async ctx => {
+    // Rewrite before tool execution so that permissions check the final command
+    await ctx.tool.hook("execute.before", event => {
+      if (event.tool !== "shell" || !event.input?.command) {
+        return;
+      }
+
+      // Bound RTK's runtime so that a hung helper can't freeze the shared server
+      const result = spawnSync("rtk", ["hook", "check", event.input.command], {
+        encoding: "utf8",
+        killSignal: "SIGKILL",
+        timeout: 5000,
+      });
+
+      // Keep the original command if RTK is missing, fails, or times out
+      const rewritten = result.stdout?.trim();
+      if (result.status === 0 && rewritten) {
+        event.input.command = rewritten;
+      }
+    });
   },
-});
+};

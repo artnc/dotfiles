@@ -498,7 +498,6 @@ fi
 
 # Coding agents
 if _command_exists pi; then
-  alias c='pi update --extensions &> /dev/null; pi'
   # Pi has no setting to hide only its "Package updates are available" startup
   # notice (`checkForPackageUpdates()` in `interactive-mode.js` bails out only on
   # `PI_OFFLINE`). Disable startup network checks since `pu` updates Pi and its
@@ -511,8 +510,11 @@ if _command_exists pi; then
       PI_OFFLINE=1 command pi "${@}"
     fi
   )
-elif _command_exists opencode; then
+fi
+if _command_exists opencode; then
   alias c='opencode'
+elif _command_exists pi; then
+  alias c='pi update --extensions &> /dev/null; pi'
 elif _command_exists claude; then
   alias c='claude --dangerously-skip-permissions'
 fi

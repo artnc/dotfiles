@@ -65,7 +65,7 @@
       }
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "outputStyle": "Concise",
   "permissions": {
     "allow": [
@@ -74,7 +74,7 @@
       "WebFetch(domain:registry.npmjs.org)",
       "WebFetch(domain:sts.us-east-1.amazonaws.com)"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "auto"
   },
   "sandbox": {
     "autoAllowBashIfSandboxed": true,
