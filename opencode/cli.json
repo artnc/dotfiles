@@ -30,7 +30,7 @@
     "image_preview": false,
     "permissions": "prompt",
     "scrollbar": true,
-    "sidebar": "auto",
+    "sidebar": "hide",
     "thinking": "hide",
     "tps": false,
     "verbosity": "low"

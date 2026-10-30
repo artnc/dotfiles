@@ -12,7 +12,7 @@
   "fullscreenExitOutput": "resume-hint",
   "fullscreenScrollbar": "hidden",
   "hideThinkingBlock": true,
-  "lastChangelogVersion": "1.2.0",
+  "lastChangelogVersion": "1.4.0",
   "outputPad": 0,
   "packages": [
     "npm:@juicesharp/rpiv-ask-user-question",
