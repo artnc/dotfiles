@@ -7,9 +7,7 @@
   "effortLevel": "xhigh",
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
-    "figma@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
-    "github@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
@@ -17,7 +15,9 @@
   "env": {
     "ADB_MDNS_AUTO_CONNECT": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "CLAUDE_CODE_SCROLL_SPEED": "8"
+    "CLAUDE_CODE_SCROLL_SPEED": "8",
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "false",
+    "PLAYWRIGHT_MCP_EXECUTABLE_PATH": "/usr/bin/chromium"
   },
   "hooks": {
     "Notification": [
@@ -84,6 +84,7 @@
     ],
     "filesystem": {
       "allowWrite": [
+        "/tmp",
         "~/.cache/mise",
         "~/.local/state/mise",
         "~/Library/Caches/mise"
@@ -92,7 +93,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
-    "command": "jq -r '[(.workspace.current_dir | split(\"/\") | last), .model.display_name, \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring), (.context_window.used_percentage | tostring) + \"% ctx\"] | join(\" · \")'",
+    "command": "jq -r '[(.workspace.current_dir | split(\"/\") | last), (.model.display_name | gsub(\" context\"; \"\")), ((.context_window.used_percentage // 0 | tostring) + \"% ctx\"), ((.rate_limits.five_hour // empty) as $r | (($r.resets_at - now) / 60 | floor) as $m | (if $m > 0 then $m else 0 end) as $m | ($r.used_percentage | floor | tostring) + \"% \" + (($m / 60 * 10 | round) / 10 | tostring) + \"h\"), \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring)] | join(\", \")'",
     "type": "command"
   },
   "theme": "dark",

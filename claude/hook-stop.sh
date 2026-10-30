@@ -7,10 +7,14 @@ dir_name="$(basename "${PWD}")"
 if [[ "$(uname)" == Darwin ]]; then
   osascript -e "display notification \"${dir_name}\" with title \"Claude finished\""
 else
-  notify-send "Claude finished" "${dir_name}"
+  # Ignore failure on headless sessions, e.g. "GDBus.Error:org.freedesktop.DBus.Error.
+  # ServiceUnknown: The name is not activatable"
+  notify-send "Claude finished" "${dir_name}" 2> /dev/null || true
 fi
 if [[ -n ${TMUX:-} ]]; then
-  printf '\a' > "$(tmux display-message -p '#{pane_tty}')" 2> /dev/null || true
+  # Target the hook's own pane since without `-t`, tmux resolves to whichever
+  # pane the most recently active client is viewing
+  printf '\a' > "$(tmux display-message -p -t "${TMUX_PANE}" '#{pane_tty}')" 2> /dev/null || true
 else
   printf '\a' > /dev/tty 2> /dev/null || true
 fi
