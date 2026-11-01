@@ -73,7 +73,9 @@ function hdd {
   local -r mount_point="/mnt/${mount_name}"
   local -r mapper_path="/dev/mapper/${mount_name}"
   if mount | grep -qF "${mount_point}"; then
-    # Unmount
+    # Unmount. Stop Immich first since its bind mount keeps the fs busy, which
+    # makes `luksClose` fail with "device in use"
+    docker compose --project-directory ~/immich-app stop immich-server
     sudo umount "${mapper_path}"
     sleep 1
     sudo cryptsetup luksClose "${mount_name}"
@@ -94,6 +96,8 @@ function hdd {
     fi
     sudo mkdir -p "${mount_point}"
     sudo mount "${mapper_path}" "${mount_point}" || return 1
+    # Start Immich, which refuses to start at boot while the drive is unmounted
+    docker compose --project-directory ~/immich-app up -d
   fi
 }
 
