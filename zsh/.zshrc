@@ -78,11 +78,22 @@ function hdd {
     sleep 1
     sudo cryptsetup luksClose "${mount_name}"
   else
-    # Mount
-    sudo cryptsetup luksOpen /dev/sda1 "${mount_name}"
+    # Mount. Address the LUKS container by UUID: the drive re-enumerated from
+    # sda1 to sdb1 on 2026-10-04, so the hardcoded sda1 opened nothing and ext4
+    # aborted its journal with "ext4_journal_check_start" once I/O started failing
+    sudo cryptsetup luksOpen /dev/disk/by-uuid/4a49b7bb-8bda-440b-8c60-a073b79d9c60 "${mount_name}" || return 1
     sleep 1
+    # Replay the journal and repair before mounting, in case the last unmount was
+    # unclean. Preen mode (-p) fixes only unambiguously-safe problems. Exit codes
+    # are a bitmask: 1 = errors corrected, 2 = corrected and reboot advised, but
+    # >=4 means errors remain, so refuse to mount rather than touch a broken fs
+    sudo fsck -p "${mapper_path}"
+    if (( $? >= 4 )); then
+      echo "hdd: fsck left errors uncorrected. Mapper is still open; run: sudo fsck -f ${mapper_path}" >&2
+      return 1
+    fi
     sudo mkdir -p "${mount_point}"
-    sudo mount "${mapper_path}" "${mount_point}"
+    sudo mount "${mapper_path}" "${mount_point}" || return 1
   fi
 }
 
