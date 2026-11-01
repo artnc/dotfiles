@@ -41,6 +41,32 @@ function cr() (
   claude -p --dangerously-skip-permissions "/code-review xhigh --fix $*"
 )
 
+# Restart Claude Code sessions in tmux panes that run an outdated version,
+# resuming each conversation in the same pane
+function claude-restart {
+  local pid id pane state name
+  # Pass /dev/null so that jq doesn't read stdin when no session files exist
+  jq -r --arg v "${$(claude --version)%% *}" 'select(.kind == "interactive" and .version != $v and .tmux != null) | "\(.pid) \(.sessionId) \(.tmux | split(".")[-1]) \(.status) \(.name)"' ~/.claude/sessions/*.json(N) /dev/null |
+    while read -r pid id pane state name; do
+      # Skip stale session files whose PID is gone or reused
+      [[ $(ps -o args= -p "${pid}") == *claude* ]] || continue
+
+      # Skip sessions that are mid-task so that we don't interrupt them
+      if [[ ${state} != idle ]]; then
+        echo "Skipping ${state} Claude session ${name}"
+        continue
+      fi
+
+      # Exit Claude and wait for the pane's shell prompt to return
+      echo "Restarting Claude session ${name} in pane ${pane}..."
+      kill "${pid}"
+      while kill -0 "${pid}" 2> /dev/null; do sleep 0.1; done
+
+      # Resume the same conversation
+      tmux send-keys -t "${pane}" "claude --dangerously-skip-permissions --resume ${id}" Enter
+    done
+}
+
 # Mount/unmount LUKS-encrypted HDD
 function hdd {
   local -r mount_name='seagate'
@@ -449,7 +475,7 @@ alias m='make'
 # Homebrew / pacman / pacaur / yay
 if _command_exists brew; then
   alias pn='brew install'
-  alias pu='pi update --all && claude update && brew upgrade && brew upgrade --cask'
+  alias pu='pi update --all && claude update && brew upgrade && brew upgrade --cask && claude-restart'
   alias px='brew uninstall'
 else
   function _pacman_remove_orphans() (
@@ -487,6 +513,9 @@ else
       synclient TapButton1=1
       synclient TapButton2=3
       synclient TapButton3=2
+    fi
+    if _command_exists claude; then
+      claude-restart
     fi
   )
   function px() (
