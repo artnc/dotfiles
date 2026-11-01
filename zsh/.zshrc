@@ -169,70 +169,159 @@ function mp4 {
   echo 'Done!'
 }
 
-# Reconnect to a wireless debugging device
-function _phone_connect {
-  echo "Connecting to ${1}..."
-  # Disconnect first since `adb connect` returns success even for a stale or
-  # offline session
-  adb disconnect "${1}" >/dev/null 2>&1
-  local i
-  for i in {1..20}; do
-    adb connect "${1}" >/dev/null 2>&1
-    adb devices | grep -q "^${1}[[:space:]]\+device$" && return 0
+# Print the adb transport of the one connected device whose
+# ro.build.characteristics matches $1: "watch", or "phone" for anything that is
+# not a watch. Empty output and nonzero exit unless exactly one device matches
+function _adb_device_of_type {
+  local -r want="$1"
+  local serial hw characteristics match='' match_hw=''
+  # adb's mDNS auto-connect already surfaces paired devices in `adb devices`
+  # under their service name, so we just classify whatever is connected
+  while read -r serial; do
+    # </dev/null so adb doesn't drain the loop's stdin (the device list)
+    read -r hw characteristics < <(adb -s "${serial}" shell 'echo $(getprop ro.serialno) $(getprop ro.build.characteristics)' </dev/null 2>/dev/null | tr -d '\r')
+    if [[ "${want}" == watch ]]; then
+      [[ "${characteristics}" == *watch* ]] || continue
+    else
+      [[ "${characteristics}" == *watch* ]] && continue
+    fi
+    # One device can have two connections (mDNS auto-connect plus `adb connect`
+    # by ip:port), so skip any whose hardware serial we already matched
+    [[ -n "${match}" && "${hw}" == "${match_hw}" ]] && continue
+    # A second distinct match means we can't tell them apart, so refuse to guess
+    [[ -n "${match}" ]] && return 1
+    match="${serial}" match_hw="${hw}"
+  done < <(adb devices | awk 'NR>1 && $2=="device" {print $1}')
+  [[ -n "${match}" ]] && print -r -- "${match}"
+}
+
+# Best-effort explicit connect for the rare case where adb's mDNS auto-connect
+# is off. If auto-connect is on, this adds a second connection to the same device
+# under its ip:port, which `_adb_device_of_type` dedupes. Tries every ip:port adb
+# advertises for the `_adb-tls-connect._tcp` service, so it doesn't depend on the
+# exact column layout of `adb mdns services`
+function _adb_mdns_connect {
+  local line tok
+  adb mdns services 2>/dev/null | while read -r line; do
+    [[ "${line}" == *_adb-tls-connect._tcp* ]] || continue
+    for tok in ${(z)line}; do
+      [[ "${tok}" == *:* ]] && adb connect "${tok}" >/dev/null 2>&1
+    done
+  done
+}
+
+# Ensure a wireless-debugging device of type $1 ("watch" or "phone") is connected
+# over the LAN and print its adb transport on stdout. adb discovers paired
+# devices over mDNS on its own (ADB_MDNS_AUTO_CONNECT, on by default), so the
+# rotating ip:port never has to be entered - only a one-time pairing does
+function _adb_ensure {
+  local -r type="$1"
+  local found i
+
+  # Wait briefly for mDNS to surface the device (nudging a connect in case
+  # auto-connect is off), then classify it by type
+  for i in {1..10}; do
+    found="$(_adb_device_of_type "${type}")" && { print -r -- "${found}"; return 0; }
+    _adb_mdns_connect
     sleep 0.5
   done
+
+  # Nothing appeared: this machine has probably never paired with the device.
+  # Pairing is one-time
+  echo "No ${type} found over mDNS. On the device: Settings > Developer options > Wireless debugging." >&2
+  local target code
+  if [[ "${type}" == phone ]]; then
+    # Pair by QR code like Android Studio does. The QR code holds a made-up
+    # service name and password, and scanning it makes the phone advertise a
+    # pairing service under that name over mDNS, which reveals its ip:port
+    local -r name="studio-${RANDOM}${RANDOM}"
+    code="${RANDOM}${RANDOM}${RANDOM}"
+    echo 'If this machine has never paired with it, open "Pair device with QR code" and scan:' >&2
+    qrencode -t ANSIUTF8 "WIFI:T:ADB;S:${name};P:${code};;" >&2
+    local line tok
+    for i in {1..120}; do
+      line="$(adb mdns services 2>/dev/null | grep -F "${name}" | grep -F _adb-tls-pairing._tcp)"
+      for tok in ${(z)line}; do
+        [[ "${tok}" == *:* ]] && target="${tok}"
+      done
+      [[ -n "${target}" ]] && break
+      sleep 0.5
+    done
+    if [[ -z "${target}" ]]; then
+      echo 'Timed out waiting for the scan. Is the phone on the same Wi-Fi as this machine?' >&2
+      return 1
+    fi
+  else
+    # Watches have no camera, so pair with the code shown on the watch instead
+    echo 'If this machine has never paired with it, open "Pair device with pairing code" and enter:' >&2
+    local host pair_port
+    read "host?Device IP address (top of the Wireless debugging screen): "
+    read "pair_port?Pairing port: "
+    read "code?Pairing code: "
+    target="${host}:${pair_port}"
+  fi
+  # Send adb's output to stderr since callers capture stdout as the transport
+  adb pair "${target}" "${code}" >&2 || return 1
+
+  # After pairing, mDNS auto-connect should bring it online within a few seconds
+  for i in {1..20}; do
+    found="$(_adb_device_of_type "${type}")" && { print -r -- "${found}"; return 0; }
+    _adb_mdns_connect
+    sleep 0.5
+  done
+  echo "Paired but no ${type} came online; is Wireless debugging still enabled?" >&2
   return 1
 }
 
-# Deploy current Android project to phone over Tailscale wireless debugging
-function phone {
-  local -r ip="$(tailscale ip -4 pixel-10-pro)"
-  # The connect port rotates, so cache it in a temp file rather than taking it as
-  # an arg; prompt for the latest value only when the cache is missing or stale
-  local -r port_file=/tmp/phone-port.txt
-  local addr port pair_port pair_code
-  [[ -r "${port_file}" ]] && addr="${ip}:$(<"${port_file}")"
-  if [[ -z "${addr}" ]] || ! _phone_connect "${addr}"; then
-    # A stale/rotated connect port is the usual cause, so prompt for the latest
-    # one (shown on the phone's Wireless debugging screen) and retry
-    read "port?Settings > Developer options > Wireless debugging > Port: "
-    echo "${port}" > "${port_file}"
-    addr="${ip}:${port}"
-    if ! _phone_connect "${addr}"; then
-      # Still failing almost always means this machine is no longer paired, so
-      # prompt for a one-time pairing and then retry
-      echo "Could not connect to ${addr}. Open \"Pair device with pairing code\" on the phone and enter..." >&2
-      read "pair_port?Pairing port: "
-      read "pair_code?Pairing code: "
-      adb pair "${ip}:${pair_port}" "${pair_code}" || return 1
-      _phone_connect "${addr}" || {
-        echo "Device ${addr} never came online; check the connect port on the phone's Wireless debugging screen" >&2
-        return 1
-      }
-    fi
-  fi
+# Build a Gradle module's release APK and install+launch it on a connected
+# device. $1 = device addr (ip:port). $2 = Gradle task. $3 = module dir, which is
+# also where the release APK and the module's applicationId live
+function _adb_deploy {
+  local -r addr="$1" task="$2" module="$3"
   echo 'Building APK...'
-  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew assembleRelease || return 1
-  local -r apk="$(find app -path '*release*' -name '*.apk' -print -quit)"
+  JAVA_HOME="${JAVA_HOME:-/opt/android-studio/jbr}" ./gradlew "${task}" || return 1
+  # Scope to the AGP output dir so the search skips the huge build/intermediates tree
+  local -r apk="$(find "${module}/build/outputs/apk" -path '*release*' -name '*.apk' -print -quit)"
   if [[ -z "${apk}" ]]; then
-    echo 'No release APK found' >&2
+    echo "No release APK found in ${module}" >&2
     return 1
   fi
   echo "Installing ${apk}..."
   adb -s "${addr}" install -r --user 0 "${apk}" || return 1
-  local -r pkg="$(sed -nE 's/.*applicationId = "([^"]+)".*/\1/p' app/build.gradle.kts | head -1)"
-  local -r activity="$(awk '
-    /<activity/ && !/<\/activity/ { in_activity=1; name="" }
-    in_activity && !name && match($0, /android:name="[^"]+"/) {
-      name = substr($0, RSTART+14, RLENGTH-15)
-    }
-    /android.intent.category.LAUNCHER/ && in_activity { print name; exit }
-    /<\/activity>|<activity[^>]*\/>/ { in_activity=0 }
-  ' app/src/main/AndroidManifest.xml)"
-  if [[ -n "${pkg}" && -n "${activity}" ]]; then
+  # Quit at the first applicationId line so sed needn't read the rest of the file
+  local -r pkg="$(sed -nE '/applicationId =/{s/.*applicationId = "([^"]+)".*/\1/p;q;}' "${module}/build.gradle.kts")"
+  if [[ -n "${pkg}" ]]; then
     echo 'Launching app...'
-    adb -s "${addr}" shell am start --user 0 -n "${pkg}/${activity}"
+    # Launch via monkey's LAUNCHER intent rather than `am start -n pkg/activity`:
+    # the wear activity lives in a `.wear` namespace, not under the applicationId,
+    # so a relative component would resolve to the wrong class
+    adb -s "${addr}" shell monkey -p "${pkg}" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
   fi
+}
+
+# Deploy this Android project's phone app over LAN wireless debugging. Connect to
+# the device's LAN IP directly; set a DHCP reservation to keep that IP stable
+function phone {
+  local addr
+  addr="$(_adb_ensure phone)" || return 1
+  _adb_deploy "${addr}" :app:assembleRelease app
+}
+
+# Deploy this Android project's Wear OS app over LAN wireless debugging
+function wear {
+  local addr
+  addr="$(_adb_ensure watch)" || return 1
+  _adb_deploy "${addr}" :wear:assembleRelease wear
+}
+
+# Deploy the watch-face repo's WFF watch face over LAN wireless debugging and
+# make it the active watch face
+function watchface {
+  local addr
+  addr="$(_adb_ensure watch)" || return 1
+  _adb_deploy "${addr}" :watchface:assembleRelease watchface || return 1
+  echo 'Activating watch face...'
+  adb -s "${addr}" shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE --es operation set-watchface --es watchFaceId com.chaidarun.watchface >/dev/null
 }
 
 # Send files/folders to another tailnet host's /tmp/inbox/
