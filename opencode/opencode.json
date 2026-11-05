@@ -1,23 +1,47 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agents": {
-    "plan": { "disabled": true }
+    "plan": {
+      "disabled": true
+    }
   },
   "default_agent": "build",
-  "instructions": ["~/.claude/CLAUDE.md", "~/.claude/RTK.md"],
+  "instructions": [
+    "~/.claude/CLAUDE.md",
+    "~/.claude/RTK.md"
+  ],
   "mcp": {
     "servers": {
       "playwright": {
-        "command": ["npx", "@playwright/mcp@latest"],
+        "command": [
+          "npx",
+          "@playwright/mcp@latest"
+        ],
         "type": "local"
       }
     }
   },
   "permissions": [
-    { "action": "*", "effect": "allow", "resource": "*" },
-    { "action": "read", "effect": "ask", "resource": "*.env" },
-    { "action": "read", "effect": "ask", "resource": "*.env.*" },
-    { "action": "read", "effect": "allow", "resource": "*.env.example" }
+    {
+      "action": "*",
+      "effect": "allow",
+      "resource": "*"
+    },
+    {
+      "action": "read",
+      "effect": "ask",
+      "resource": "*.env"
+    },
+    {
+      "action": "read",
+      "effect": "ask",
+      "resource": "*.env.*"
+    },
+    {
+      "action": "read",
+      "effect": "allow",
+      "resource": "*.env.example"
+    }
   ],
   "update": "disable"
 }

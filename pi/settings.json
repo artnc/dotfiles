@@ -32,6 +32,6 @@
     "~/.claude/skills"
   ],
   "steeringMode": "all",
-  "tuiMode": "fullscreen",
-  "theme": "dark"
+  "theme": "dark",
+  "tuiMode": "fullscreen"
 }

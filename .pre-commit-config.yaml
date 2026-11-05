@@ -12,6 +12,17 @@ repos:
         language: system
         types: [shell]
         exclude_types: [zsh]
+      - id: sort-json
+        name: Sort JSON keys
+        entry: |
+          sh -e -c '
+          for file in "$@"; do
+            sorted_json=$(jq -S . "${file}")
+            printf "%s\n" "${sorted_json}" > "${file}"
+          done
+          ' --
+        language: system
+        types: [json]
       - id: zsh-syntax
         name: Zsh syntax check
         entry: bash -c 'for f in "$@"; do zsh -n "$f" || exit 1; done' --
