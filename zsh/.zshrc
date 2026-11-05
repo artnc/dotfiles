@@ -163,7 +163,7 @@ function mp4 {
     local mp4_file="${base_name}.mp4"
     if [[ ! -f "${mp4_file}" ]]; then
       echo "Creating ${mp4_file}..."
-      ffmpeg -i "${mov_file}" -loglevel error -vcodec h264 "${mp4_file}"
+      ffmpeg -nostdin -i "${mov_file}" -loglevel error -vcodec h264 "${mp4_file}" || return 1
     fi
   done < <(find -H /tmp -maxdepth 1 -type f -name '*.mov' | sort)
   echo 'Done!'
