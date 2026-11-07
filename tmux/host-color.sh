@@ -1,35 +1,37 @@
 #!/usr/bin/env bash
 # Pick a color deterministically from the hostname, in one of three tiers of the
-# same hue: the default 'dark', a saturated 'mid' tone, and a 'light' pastel
+# same hue: the default 'dark', a saturated 'mid' tone, and a 'light' pastel.
+# Hex must be lowercase because tmux 3.8 expands styles as formats, e.g.
+# '#F08C8C' becomes '*08C8C' since '#F' is the `window_flags` alias
 dark=(
   '#145220' # pine
-  '#5C4400' # amber
-  '#6B1A1A' # crimson
-  '#401A6B' # violet
-  '#1A5A5A' # teal
-  '#1A276B' # navy
-  '#6B1A4D' # plum
-  '#6B3A1A' # sienna
+  '#5c4400' # amber
+  '#6b1a1a' # crimson
+  '#401a6b' # violet
+  '#1a5a5a' # teal
+  '#1a276b' # navy
+  '#6b1a4d' # plum
+  '#6b3a1a' # sienna
 )
 mid=(
-  '#3CB371' # pine
-  '#D4A017' # amber
-  '#D94545' # crimson
-  '#9B59D0' # violet
-  '#3CB8B8' # teal
-  '#5571E0' # navy
-  '#D14A99' # plum
-  '#D4823C' # sienna
+  '#3cb371' # pine
+  '#d4a017' # amber
+  '#d94545' # crimson
+  '#9b59d0' # violet
+  '#3cb8b8' # teal
+  '#5571e0' # navy
+  '#d14a99' # plum
+  '#d4823c' # sienna
 )
 light=(
-  '#87DDA5' # pine
-  '#EBCB5E' # amber
-  '#F08C8C' # crimson
-  '#C9A0E8' # violet
-  '#80DADA' # teal
-  '#9DB0F2' # navy
-  '#E89AC8' # plum
-  '#EBAC7B' # sienna
+  '#87dda5' # pine
+  '#ebcb5e' # amber
+  '#f08c8c' # crimson
+  '#c9a0e8' # violet
+  '#80dada' # teal
+  '#9db0f2' # navy
+  '#e89ac8' # plum
+  '#ebac7b' # sienna
 )
 case ${1} in
   light) colors=("${light[@]}") ;;
