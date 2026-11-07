@@ -5,3 +5,4 @@ Exec=xfce4-clipman
 TryExec=xfce4-clipman
 Icon=xfce4-clipman-plugin
 Terminal=false
+Hidden=false
