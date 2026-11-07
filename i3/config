@@ -166,3 +166,6 @@ bar {
 
 # Run XDG autostart entries (~/.config/autostart, /etc/xdg/autostart)
 exec --no-startup-id dex --autostart --environment i3
+
+# Run compositor for window transparency and tear-free vsync
+exec --no-startup-id picom -b

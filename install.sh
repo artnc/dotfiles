@@ -127,6 +127,7 @@ else
   ensure_symlink i3 ~/.config/i3
   ensure_symlink i3blocks ~/.config/i3blocks
   ensure_symlink iftop/.iftoprc ~/.iftoprc
+  ensure_symlink picom ~/.config/picom
   ensure_symlink thunar/thunar.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
   ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
   ensure_symlink x/.xinitrc ~/.xinitrc
