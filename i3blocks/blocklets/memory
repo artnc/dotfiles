@@ -1,75 +1,42 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# First argument is source (mem/swap), second is output value
-# Check /proc/meminfo for possible instances
-INSTANCE="${BLOCK_INSTANCE:-mem;free}"
+# Shows memory or swap usage. `BLOCK_INSTANCE` is `<source>;<display>`, where
+# source is `mem` or `swap` and display is `free`, `used`, `total`, or `perc`
 
-SOURCE=$(echo "${INSTANCE}" | awk -F ';' '{print $1}')
-DISPLAY=$(echo "${INSTANCE}" | awk -F ';' '{print $2}')
+set -eu
 
-if [[ ${SOURCE} == "mem" ]]; then
-  URGENT_VALUE=90
-elif [[ ${SOURCE} == "swap" ]]; then
-  URGENT_VALUE=50
-fi
+IFS=';' read -r source display <<< "${BLOCK_INSTANCE:-mem;free}"
 
-if [[ ${DISPLAY} == "" ]]; then
-  DISPLAY="free"
-fi
+# Print the value as full and short text, then exit 33 to mark the block urgent
+# when usage is high
+awk -v source="${source}" -v display="${display:-free}" '
+  # Collect sizes in kB, e.g. "MemTotal:  16005312 kB"
+  { kb[tolower($1)] = $2 }
 
-ONE_KB=1024
-ONE_MB=$(echo "${ONE_KB}*1024" | bc -l)
-ONE_GB=$(echo "${ONE_MB}*1024" | bc -l)
-ONE_TB=$(echo "${ONE_GB}*1024" | bc -l)
+  END {
+    # Count available memory (not just free memory) as free, like `free -h`
+    total = kb[source "total:"]
+    free = kb[source (source == "mem" ? "available:" : "free:")]
+    if (total <= 0) {
+      exit
+    }
+    used = total - free
+    perc = int(used * 100 / total)
 
-# Grep the value and remove KB so we can calculate with it later
-#MEMINFO=$(cat /proc/meminfo | grep "${INSTANCE}" | awk -F ':' '{print $2}' | tr -d ' kB')
-MEMORY_INFOS=$(cat /proc/meminfo)
-SOURCE_TOTAL=$(echo "${MEMORY_INFOS}" | grep -i "${SOURCE}total" | awk -F ':' '{print $2}' | tr -d ' kB')
-
-if [[ ${SOURCE_TOTAL} -le 0 ]]; then
-  exit
-fi
-
-if [[ ${SOURCE} == "mem" ]]; then
-  SOURCE_FREE_KEY="available"
-elif [[ ${SOURCE} == "swap" ]]; then
-  SOURCE_FREE_KEY="free"
-fi
-
-SOURCE_FREE=$(echo "${MEMORY_INFOS}" | grep -i "${SOURCE}${SOURCE_FREE_KEY}" | awk -F ':' '{print $2}' | tr -d ' kB')
-SOURCE_USED=$(echo "scale=0; ${SOURCE_TOTAL}-${SOURCE_FREE}" | bc -l)
-SOURCE_PERC=$(echo "scale=0; (${SOURCE_USED}*100)/${SOURCE_TOTAL}" | bc -l)
-
-if [[ ${DISPLAY} == "free" ]]; then
-  MEMINFO="${SOURCE_FREE}"
-elif [[ ${DISPLAY} == "used" ]]; then
-  MEMINFO="${SOURCE_USED}"
-elif [[ ${DISPLAY} == "total" ]]; then
-  MEMINFO="${SOURCE_TOTAL}"
-elif [[ ${DISPLAY} == "perc" ]]; then
-  MEMINFO="${SOURCE_PERC}%"
-fi
-
-if [[ ${DISPLAY} != "perc" ]]; then
-  # Convert KB meminfo to bytes
-  MEMINFO=$(echo "${MEMINFO}*${ONE_KB}" | bc -l)
-
-  if [[ ${MEMINFO} -ge ${ONE_TB} ]]; then
-    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_TB}" | bc -l)" TB"
-  elif [[ ${MEMINFO} -ge ${ONE_GB} ]]; then
-    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_GB}" | bc -l)" GB"
-  elif [[ ${MEMINFO} -ge ${ONE_MB} ]]; then
-    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_MB}" | bc -l)" MB"
-  else
-    MEMINFO=$(echo "scale=2;${MEMINFO}/${ONE_KB}" | bc -l)" KB"
-  fi
-fi
-
-echo "${MEMINFO}"
-echo "${MEMINFO}"
-echo ""
-
-if [[ ${SOURCE_PERC} -gt ${URGENT_VALUE} ]]; then
-  exit 33
-fi
+    # Format value
+    if (display == "perc") {
+      text = perc "%"
+    } else {
+      value = display == "used" ? used : display == "total" ? total : free
+      split("KB MB GB TB", units, " ")
+      for (i = 1; value >= 1024 && i < 4; i++) {
+        value /= 1024
+      }
+      text = sprintf("%.2f %s", value, units[i])
+    }
+    print text
+    print text
+    print ""
+    exit perc > (source == "swap" ? 50 : 90) ? 33 : 0
+  }
+' /proc/meminfo

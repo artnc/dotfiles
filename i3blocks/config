@@ -32,7 +32,7 @@ label=❄
 interval=10
 
 [uptime]
-command=uptime | awk '{print $3 "d"}'
+command=awk '{print int($1 / 86400) "d"}' /proc/uptime
 label=UP 
 interval=3600
 
