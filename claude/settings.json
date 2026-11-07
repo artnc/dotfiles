@@ -94,7 +94,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
-    "command": "jq -r '[(.workspace.current_dir | split(\"/\") | last), (.model.display_name | gsub(\" context\"; \"\")), (((.context_window.current_usage // {} | (.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)) / 1000 | floor | tostring) + \"k ctx\"), ((.rate_limits.five_hour // empty) as $r | (($r.resets_at - now) / 60 | floor) as $m | (if $m > 0 then $m else 0 end) as $m | ($r.used_percentage | floor | tostring) + \"% \" + (($m / 60 * 10 | round) / 10 | tostring) + \"h\"), \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring)] | join(\", \")'",
+    "command": "jq -r 'def rl($s; $u): (([.resets_at - now, 0] | max) / $s * 10 | round / 10) as $t | (.used_percentage | floor | tostring) + \"% \" + ($t | tostring) + $u; [(.workspace.current_dir | split(\"/\") | last), (.model.display_name | gsub(\" context\"; \"\")), (((.context_window.current_usage // {} | (.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)) / 1000 | floor | tostring) + \"k ctx\"), (.rate_limits.five_hour // empty | rl(3600; \"h\")), (.rate_limits.seven_day // empty | rl(86400; \"d\")), \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring)] | join(\", \")'",
     "type": "command"
   },
   "theme": "dark",
