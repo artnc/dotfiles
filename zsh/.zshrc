@@ -576,7 +576,7 @@ alias adbe='adb -e install -d -r'
 # make
 alias m='make'
 
-# Homebrew / pacman / pacaur / yay
+# Homebrew / yay
 if _command_exists brew; then
   alias pn='brew install'
   alias pu='pi update --all && claude update && brew upgrade && brew upgrade --cask && claude-restart'
@@ -585,31 +585,24 @@ else
   function _pacman_remove_orphans() (
     set -e
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
-    local -r _pacman_orphans="$(pacman -Qtdq || true)"
-    [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | sudo pacman -Rns -
-    # Hide the "removing X from target list" warning message that pacman spams
+    local -r _pacman_orphans="$(yay -Qtdq || true)"
+    [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | yay -Rns -
+    # Hide the "removing X from target list" warning message that yay spams
     # for each still-needed package
     # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
-    pacman -Qqd | sudo pacman -Rsu - 2> >(grep -v ' from target list$' >&2)
+    yay -Qqd | yay -Rsu - 2> >(grep -v ' from target list$' >&2)
   )
-  if _command_exists yay; then
-    _pacman_helper='yay'
-  elif _command_exists pacaur; then
-    _pacman_helper='pacaur'
-  else
-    _pacman_helper='pacman'
-  fi
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
-  alias pn="pu && ${_pacman_helper} -S"
+  alias pn="pu && yay -S"
   function pu() (
     set -e
     _pacman_remove_orphans
     # https://unix.stackexchange.com/a/574496
-    sudo pacman -Sy --noconfirm archlinux-keyring
-    "${_pacman_helper}" --noconfirm -Syu
+    yay -Sy --noconfirm archlinux-keyring
+    yay --noconfirm -Syu
     paccache -rk1
     paccache -ruk0
-    "${_pacman_helper}" -Sac --noconfirm
+    yay -Sac --noconfirm
     if _command_exists xmodmap; then
       xmodmap ~/.Xmodmap
     fi
@@ -624,7 +617,7 @@ else
   )
   function px() (
     set -e
-    "${_pacman_helper}" -Rncs "${@}"
+    yay -Rncs "${@}"
     _pacman_remove_orphans
   )
 fi
