@@ -208,7 +208,6 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       vocalinux
       wireplumber
       # xarchiver
-      xbindkeys
       xclip
       xdotool
       xfce4-clipman-plugin
@@ -314,7 +313,6 @@ else
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   ensure_symlink picom ~/.config/picom
   ensure_symlink thunar/thunar.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
-  ensure_symlink x/.xbindkeysrc ~/.xbindkeysrc
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
   ensure_symlink xdg-autostart ~/.config/autostart

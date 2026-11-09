@@ -41,8 +41,6 @@ export XSECURELOCK_SAVER_STOP_ON_BLANK=0
 # eval `ssh-agent -s`
 echo 'Starting numlockx...'
 command -v numlockx > /dev/null && numlockx &
-echo 'Starting xbindkeys...'
-xbindkeys
 echo 'Starting xfce4-power-manager...'
 xfce4-power-manager &
 echo 'Starting xss-lock...'
