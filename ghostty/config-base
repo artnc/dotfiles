@@ -1,7 +1,7 @@
 auto-update = off
 background = 000000
 bell-audio-volume = 1
-bell-features = audio
+bell-features = attention,audio
 bold-color = bright
 confirm-close-surface = false
 cursor-style = bar

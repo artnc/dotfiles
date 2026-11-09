@@ -10,6 +10,9 @@ else
   # Ignore failure on headless sessions, e.g. "GDBus.Error:org.freedesktop.DBus.Error.
   # ServiceUnknown: The name is not activatable"
   notify-send "Claude finished" "${dir_name}" 2> /dev/null || true
+  # Play sound here since Ghostty's GTK bell can't decode audio without extra
+  # GStreamer plugins. Run in background to avoid blocking the hook
+  paplay "${BASH_SOURCE[0]%/*}/bell.mp3" &> /dev/null &
 fi
 if [[ -n ${TMUX:-} ]]; then
   # Target the hook's own pane since without `-t`, tmux resolves to whichever
