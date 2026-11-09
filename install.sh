@@ -103,6 +103,191 @@ merge_json() {
   fi
 }
 
+# Install Arch packages and enable their services. Commented-out packages are
+# ones that I've used before but don't currently need
+if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
+  # Install yay, which installs both official and AUR packages. Every Arch
+  # machine needs it since this script and `.zshrc` use it instead of pacman
+  # https://github.com/Jguer/yay#binary
+  if command -v yay > /dev/null; then
+    logI 'Found existing yay'
+  else
+    logI 'Installing yay...'
+    if [[ -z ${DRY_RUN:-} ]]; then
+      yay_dir="$(mktemp -d)"
+      { sudo pacman -Syu --needed git base-devel && git clone https://aur.archlinux.org/yay-bin.git "${yay_dir}" && (cd "${yay_dir}" && makepkg -si); } || {
+        logE 'Failed to install yay'
+        exit 1
+      }
+      rm -rf "${yay_dir}"
+    fi
+  fi
+
+  # List packages for all machines
+  pkgs=(
+    base-devel
+    # bc
+    # cronie
+    curl
+    # direnv
+    fzf
+    git
+    go-yq
+    htop
+    # iftop
+    jq
+    man-db
+    micro
+    # mise
+    mosh
+    ncdu
+    # opencode-bin
+    openssh
+    pacman-contrib
+    prek
+    rclone
+    ripgrep
+    # rsync
+    syncthing
+    tailscale
+    tmux
+    unzip
+    wget
+    # yazi
+    zip
+    zsh
+    zsh-syntax-highlighting
+  )
+  # Arch Linux ARM lacks these. Its mirrorlist uses a GeoIP redirector instead
+  # of reflector, and claude-code has no `armv7h` build
+  if [[ "$(uname -m)" == x86_64 ]]; then
+    pkgs+=(claude-code reflector)
+  fi
+  # pi isn't packaged: `npm install -g @mariozechner/pi-coding-agent`
+
+  # List packages for graphical machines. Detect them by `xorg-server` rather
+  # than `DISPLAY`, which is unset over SSH/mosh and set by X forwarding. Set
+  # `GRAPHICAL=1` to install these on a new machine
+  if [[ -n ${GRAPHICAL:-} ]] || yay -Qq xorg-server &> /dev/null; then
+    pkgs+=(
+      # adwaita-qt5-git
+      # adwaita-qt6-git
+      acpi
+      alsa-utils
+      dex
+      dmenu
+      docker
+      docker-compose
+      # ffmpeg
+      firefox
+      ghostty
+      # gimp
+      # gnome-themes-extra
+      # gnome-themes-extra-gtk2
+      i3-wm
+      i3blocks
+      # i3blocks-contrib-git
+      # i3status
+      # imagemagick
+      keepassxc
+      # mpv
+      network-manager-applet
+      # numlockx
+      # pacgraph
+      picom
+      pipewire
+      pipewire-alsa
+      pipewire-pulse
+      ristretto
+      sysstat
+      thunar
+      # thunar-archive-plugin
+      ttf-dejavu
+      ttf-liberation
+      # visual-studio-code-bin
+      vocalinux
+      wireplumber
+      # xarchiver
+      xbindkeys
+      xclip
+      xdotool
+      xfce4-clipman-plugin
+      xfce4-power-manager
+      xfce4-screenshooter
+      xorg-server
+      xorg-xinit
+      xorg-xset
+      # xpra
+      xsecurelock
+      xss-lock
+    )
+  fi
+
+  # Install missing packages in a single transaction. Sync and upgrade first
+  # since partial upgrades are unsupported and a stale sync DB 404s on download
+  # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
+  missing_pkgs=()
+  for pkg in "${pkgs[@]}"; do
+    if yay -Qq "${pkg}" &> /dev/null; then
+      logI "Found existing ${pkg}"
+    else
+      missing_pkgs+=("${pkg}")
+    fi
+  done
+  if [[ ${#missing_pkgs[@]} -gt 0 ]]; then
+    logI "Installing ${missing_pkgs[*]}..."
+    if [[ -z ${DRY_RUN:-} ]]; then
+      yay -Syu --needed "${missing_pkgs[@]}" || logE 'Failed to install packages'
+    fi
+  fi
+
+  # Enable services of installed packages
+  while read -r scope svc; do
+    if systemctl "${scope}" is-enabled "${svc}" &> /dev/null; then
+      logI "Found enabled ${svc}"
+    elif ! systemctl "${scope}" cat "${svc}" &> /dev/null; then
+      logI "Skipping ${svc} since it isn't installed"
+    else
+      logI "Enabling ${svc}..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        # System units need root, but `sudo` would make user units target root's
+        # service manager instead of mine
+        $([[ ${scope} == --system ]] && echo sudo) systemctl "${scope}" enable --now "${svc}" || logE "Failed to enable ${svc}"
+      fi
+    fi
+  done << 'EOF'
+--system docker.service
+--system tailscaled.service
+--user syncthing.service
+EOF
+
+  # Let me run docker without sudo. Query the group DB rather than this
+  # session's groups, which lag `usermod` until I log in again
+  if ! getent group docker > /dev/null; then
+    logI "Skipping docker group since docker isn't installed"
+  elif [[ " $(id -nG "$(whoami)") " == *' docker '* ]]; then
+    logI 'Found existing docker group membership'
+  else
+    logI "Adding $(whoami) to docker group..."
+    if [[ -z ${DRY_RUN:-} ]]; then
+      sudo usermod -aG docker "$(whoami)" || logE "Failed to add $(whoami) to docker group"
+    fi
+  fi
+
+  # Make libadwaita apps (e.g. Ghostty) dark. libadwaita doesn't support
+  # `GTK_THEME`, and setting it strips the background from Ghostty's toasts
+  if ! command -v gsettings > /dev/null; then
+    logI "Skipping dark color scheme since gsettings isn't installed"
+  elif [[ $(gsettings get org.gnome.desktop.interface color-scheme) == "'prefer-dark'" ]]; then
+    logI 'Found existing dark color scheme'
+  else
+    logI 'Setting dark color scheme...'
+    if [[ -z ${DRY_RUN:-} ]]; then
+      gsettings set org.gnome.desktop.interface color-scheme prefer-dark || logE 'Failed to set dark color scheme'
+    fi
+  fi
+fi
+
 # Process all dotfiles. Symlinks for programs that I'm not currently using but
 # might try again in the future are commented out for posterity
 if [[ ${os_name} == Darwin ]]; then
