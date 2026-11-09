@@ -22,7 +22,7 @@ fi
 [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
 
 # Set wallpaper
-sh ~/.fehbg &
+[[ -f ~/.fehbg ]] && sh ~/.fehbg &
 
 # Because nvidia driver makes fonts huge by default (?!)
 [[ "$(cat /etc/hostname)" = "absol" ]] && xrandr --output DP-2 --dpi 96 --primary
@@ -40,7 +40,7 @@ export XSECURELOCK_SAVER_STOP_ON_BLANK=0
 # echo 'Starting ssh-agent...'
 # eval `ssh-agent -s`
 echo 'Starting numlockx...'
-numlockx &
+command -v numlockx > /dev/null && numlockx &
 echo 'Starting xbindkeys...'
 xbindkeys
 echo 'Starting xfce4-power-manager...'
