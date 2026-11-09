@@ -319,8 +319,32 @@ else
   ensure_symlink x/.Xmodmap ~/.Xmodmap
   ensure_symlink xdg-autostart ~/.config/autostart
   while read -r src; do
+    # Only x13 has the swap file that suspend-then-hibernate needs. Elsewhere,
+    # logind would refuse the lid action and the machine would stay awake
+    if [[ ${src} == etc/systemd/logind.conf.d/lid.conf && "$(uname -n)" != x13 ]]; then
+      continue
+    fi
     audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)
+
+  # Make xfce4-power-manager let logind handle the lid (for
+  # suspend-then-hibernate), and lock via xss-lock since xfpm's default lockers
+  # (e.g. `xflock4`) aren't installed
+  while read -r channel prop type value; do
+    if ! command -v xfconf-query > /dev/null; then
+      logI "Skipping ${channel}${prop} since xfconf isn't installed"
+    elif [[ "$(xfconf-query -c "${channel}" -p "${prop}" 2> /dev/null)" == "${value}" ]]; then
+      logI "Found existing ${channel}${prop}"
+    else
+      logI "Setting ${channel}${prop}..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        xfconf-query -c "${channel}" -p "${prop}" -n -t "${type}" -s "${value}" || logE "Failed to set ${channel}${prop}"
+      fi
+    fi
+  done << 'EOF'
+xfce4-power-manager /xfce4-power-manager/logind-handle-lid-switch bool true
+xfce4-session /general/LockCommand string loginctl lock-session
+EOF
 fi
 audit_nonsymlinks code/extensions.vscode.txt \
   ~/.vscode/extensions/extensions.json \
