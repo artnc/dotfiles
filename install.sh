@@ -185,6 +185,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       # gimp
       # gnome-themes-extra
       # gnome-themes-extra-gtk2
+      gvfs
       i3-wm
       i3blocks
       # i3blocks-contrib-git
@@ -211,6 +212,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       # xarchiver
       xclip
       xdotool
+      xfce-polkit
       xfce4-clipman-plugin
       xfce4-power-manager
       xfce4-screenshooter
