@@ -194,6 +194,9 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       keepassxc
       # mpv
       network-manager-applet
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
       # numlockx
       # pacgraph
       picom
@@ -309,6 +312,7 @@ else
   vscode_parent_dir="${HOME}/.config"
   # ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink dunst ~/.config/dunst
+  ensure_symlink fontconfig ~/.config/fontconfig
   ensure_symlink ghostty/config-linux ~/.config/ghostty/config
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0
