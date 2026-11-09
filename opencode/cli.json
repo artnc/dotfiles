@@ -13,10 +13,21 @@
   },
   "highlights": false,
   "keybinds": {
+    "input.delete.word.backward": [
+      "ctrl+backspace",
+      "alt+backspace"
+    ],
+    "session.clear": "ctrl+l",
     "session.new": [
       "ctrl+n",
+      "ctrl+t",
       "<leader>n"
-    ]
+    ],
+    "session.tab.close": [
+      "ctrl+w",
+      "<leader>w"
+    ],
+    "variant.cycle": false
   },
   "prompt": {
     "image_preview": true,
