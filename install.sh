@@ -178,6 +178,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       dmenu
       docker
       docker-compose
+      dunst
       # ffmpeg
       firefox
       ghostty
@@ -305,6 +306,7 @@ if [[ ${os_name} == Darwin ]]; then
 else
   vscode_parent_dir="${HOME}/.config"
   # ensure_symlink feh/.fehbg ~/.fehbg
+  ensure_symlink dunst ~/.config/dunst
   ensure_symlink ghostty/config-linux ~/.config/ghostty/config
   ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0

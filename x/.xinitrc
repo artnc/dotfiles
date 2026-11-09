@@ -14,7 +14,7 @@ if command -v synclient > /dev/null; then
   synclient TapButton3=2  # triple-finger -> middle click
 fi
 
-# Enable XFCE notifications
+# Import DISPLAY into the systemd user env for D-Bus-activated apps (e.g. dunst)
 # https://bbs.archlinux.org/viewtopic.php?id=202812
 . /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 

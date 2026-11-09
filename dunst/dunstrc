@@ -1,0 +1,42 @@
+# Make notifications big and colorful so that I notice them. See all options:
+# https://dunst-project.org/documentation/
+
+[global]
+corner_radius = 12
+enable_recursive_icon_lookup = true
+# Show on the monitor with keyboard focus instead of always the primary
+follow = keyboard
+font = DejaVu Sans 12
+format = "<b>%s</b>\n%b"
+frame_width = 3
+gap_size = 8
+horizontal_padding = 16
+icon_corner_radius = 8
+icon_theme = Adwaita
+max_icon_size = 48
+# Clear the i3bar at the top of the screen
+offset = (12, 32)
+origin = top-right
+padding = 14
+width = (300, 500)
+
+[urgency_low]
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+frame_color = "#45475a"
+timeout = 5
+
+[urgency_normal]
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+frame_color = "#89b4fa"
+highlight = "#89b4fa"
+timeout = 10
+
+# Keep critical notifications (e.g. low battery) until I dismiss them
+[urgency_critical]
+background = "#3d1a22"
+foreground = "#cdd6f4"
+frame_color = "#f38ba8"
+highlight = "#f38ba8"
+timeout = 0

@@ -168,6 +168,10 @@ bindsym Control+Mod1+c exec --no-startup-id sleep 0.3 && xdotool type $(printf %
 bindsym Control+Mod1+d exec --no-startup-id sleep 0.3 && xdotool type $(printf %s YXJ0QGR1b2xpbmdvLmNvbQ== | base64 -d)
 bindsym Control+Mod1+e exec --no-startup-id sleep 0.3 && xdotool type $(printf %s YXJ0Y2hhaWRhcnVuQGdtYWlsLmNvbQ== | base64 -d)
 
+# Dismiss notification, or show the previous one again
+bindsym $mod+grave exec --no-startup-id dunstctl close
+bindsym $mod+Shift+grave exec --no-startup-id dunstctl history-pop
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
