@@ -126,8 +126,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # List packages for all machines
   pkgs=(
     base-devel
-    # bc
-    # cronie
+    cronie
     curl
     # direnv
     fzf
@@ -138,22 +137,20 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
     jq
     man-db
     micro
-    # mise
     mosh
     ncdu
-    # opencode-bin
     openssh
     pacman-contrib
     prek
     rclone
     ripgrep
-    # rsync
+    rsync
     syncthing
     tailscale
     tmux
     unzip
     wget
-    # yazi
+    yazi
     zip
     zsh
     zsh-syntax-highlighting
@@ -170,35 +167,30 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # `GRAPHICAL=1` to install these on a new machine
   if [[ -n ${GRAPHICAL:-} ]] || yay -Qq xorg-server &> /dev/null; then
     pkgs+=(
-      # adwaita-qt5-git
-      # adwaita-qt6-git
       acpi
       alsa-utils
+      bc # i3blocks' bandwidth block uses bc to show rates above 1 MiB/s in MiB
       dex
       dmenu
       docker
       docker-compose
       dunst
-      # ffmpeg
+      ffmpeg
       firefox
       ghostty
-      # gimp
-      # gnome-themes-extra
-      # gnome-themes-extra-gtk2
+      gimp
       gvfs
       i3-wm
       i3blocks
-      # i3blocks-contrib-git
-      # i3status
-      # imagemagick
+      i3blocks-contrib-git
+      imagemagick
       keepassxc
-      # mpv
+      mpv
       network-manager-applet
       noto-fonts
       noto-fonts-cjk
       noto-fonts-emoji
-      # numlockx
-      # pacgraph
+      pacgraph
       picom
       pipewire
       pipewire-alsa
@@ -206,13 +198,12 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       ristretto
       sysstat
       thunar
-      # thunar-archive-plugin
+      thunar-archive-plugin
       ttf-dejavu
       ttf-liberation
-      # visual-studio-code-bin
       vocalinux
       wireplumber
-      # xarchiver
+      xarchiver
       xclip
       xdotool
       xfce-polkit
@@ -222,10 +213,13 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       xorg-server
       xorg-xinit
       xorg-xset
-      # xpra
+      xpra
       xsecurelock
       xss-lock
     )
+    if [[ "$(hostnamectl chassis 2> /dev/null)" == desktop ]]; then
+      pkgs+=(numlockx)
+    fi
   fi
 
   # Install missing packages in a single transaction. Sync and upgrade first
@@ -261,6 +255,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       fi
     fi
   done << 'EOF'
+--system cronie.service
 --system docker.service
 --system tailscaled.service
 --user syncthing.service
@@ -370,7 +365,6 @@ ensure_symlink micro/plug ~/.config/micro/plug
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink mise/global.toml ~/.config/mise/config.toml
 ensure_symlink mpv/mpv.conf ~/.config/mpv/mpv.conf
-ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
 if [[ "$(uname -n)" == 'art-macbook-pro' ]]; then
   ensure_symlink opencode/opencode-work.jsonc ~/.config/opencode/opencode.jsonc
