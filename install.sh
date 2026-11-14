@@ -51,7 +51,7 @@ ensure_symlink_if_artnc() {
 
 os_name="$(uname)"
 
-# Audit files that we can't easily symlink (e.g. Xcode's)
+# Audit files that we can't easily symlink
 audit_nonsymlinks() {
   local -r src="${1}"
   local -r dst="${2}"
@@ -354,8 +354,6 @@ if [[ ${os_name} == Darwin ]]; then
   ensure_symlink hammerspoon ~/.hammerspoon
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
   audit_nonsymlinks granted/config ~/.granted/config
-  audit_nonsymlinks xcode/artnc.idekeybindings ~/Library/Developer/Xcode/UserData/KeyBindings/artnc.idekeybindings
-  audit_nonsymlinks xcode/Twilight.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/Twilight.xccolortheme
   logI "Applying macOS settings..."
   if [[ -z ${DRY_RUN:-} ]]; then
     macos/settings.sh
