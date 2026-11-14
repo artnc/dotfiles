@@ -369,6 +369,7 @@ ensure_symlink micro/colorschemes ~/.config/micro/colorschemes
 ensure_symlink micro/plug ~/.config/micro/plug
 ensure_symlink micro/settings.json ~/.config/micro/settings.json
 ensure_symlink mise/global.toml ~/.config/mise/config.toml
+ensure_symlink mpv/mpv.conf ~/.config/mpv/mpv.conf
 ensure_symlink nano/.nanorc ~/.nanorc
 ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
 if [[ "$(uname -n)" == 'art-macbook-pro' ]]; then
