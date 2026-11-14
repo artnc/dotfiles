@@ -51,7 +51,7 @@ ensure_symlink_if_artnc() {
 
 os_name="$(uname)"
 
-# Audit /etc and other files that we can't easily symlink
+# Audit files that we can't easily symlink (e.g. Xcode's)
 audit_nonsymlinks() {
   local -r src="${1}"
   local -r dst="${2}"
@@ -65,19 +65,6 @@ audit_nonsymlinks() {
     fi
   else
     logE "Didn't find ${dst}; please copy from this repo"
-  fi
-
-  # https://wiki.archlinux.org/title/Pacman/Pacnew_and_Pacsave
-  if [[ ${os_name} != Darwin ]]; then
-    pacnew_path="${dst}.pacnew"
-    if [[ -f ${pacnew_path} ]]; then
-      logE "Found ${pacnew_path}; please merge changes into ${dst} and delete"
-      diff "${dst}" "${dst}.pacnew" || true
-    fi
-    pacsave_path="${dst}.pacsave"
-    if [[ -f ${pacsave_path} ]]; then
-      logE "Found ${pacsave_path}; please delete if obsolete"
-    fi
   fi
 }
 
@@ -285,6 +272,78 @@ EOF
       gsettings set org.gnome.desktop.interface color-scheme prefer-dark || logE 'Failed to set dark color scheme'
     fi
   fi
+
+  # Install my /etc files from etc/common, then from this machine's overlay (e.g.
+  # etc/x13). Drop-ins are named 90-dotfiles.conf in etc/common and
+  # 91-dotfiles.conf in overlays, so that overlays win and stale ones are findable
+  etc_changed=()
+  etc_wanted=" "
+  while read -r src; do
+    dst="/etc/${src#etc/*/}"
+    etc_wanted+="${dst} "
+    if cmp -s "${src}" "${dst}"; then
+      logI "Found matching ${dst}"
+    else
+      logI "Installing ${dst}..."
+      etc_changed+=("${dst}")
+      if [[ -z ${DRY_RUN:-} ]]; then
+        sudo install -Dm644 "${src}" "${dst}" || logE "Failed to install ${dst}"
+      fi
+    fi
+    # The repo version is authoritative for whole files (e.g. reflector.conf),
+    # so upstream changes to them are noise
+    if [[ -f ${dst}.pacnew ]]; then
+      logI "Deleting ${dst}.pacnew..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        sudo rm "${dst}.pacnew"
+      fi
+    fi
+  done < <(find etc/common "etc/$(uname -n)" -type f 2> /dev/null)
+
+  # Delete drop-ins that I've since removed from this repo
+  while read -r dst; do
+    if [[ ${etc_wanted} == *" ${dst} "* ]]; then
+      continue
+    fi
+    logI "Deleting ${dst}..."
+    etc_changed+=("${dst}")
+    if [[ -z ${DRY_RUN:-} ]]; then
+      sudo rm "${dst}"
+    fi
+  done < <(find /etc -name '9[01]-dotfiles.conf' 2> /dev/null)
+
+  # Apply changed /etc files. Dedupe the commands since several files can share
+  # one. X11 changes need a new X server, which would kill this session. logind
+  # reloads on SIGHUP without dropping sessions since systemd 254
+  declare -A etc_cmds=()
+  for dst in "${etc_changed[@]}"; do
+    case ${dst} in
+      /etc/NetworkManager/*) etc_cmds['sudo nmcli general reload']=1 ;;
+      /etc/mkinitcpio.conf.d/*) etc_cmds['sudo mkinitcpio -P']=1 ;;
+      /etc/systemd/journald.conf.d/*) etc_cmds['sudo systemctl restart systemd-journald']=1 ;;
+      /etc/X11/*) logE "Changed ${dst}; please log out and back in to apply" ;;
+      /etc/systemd/logind.conf.d/*) etc_cmds['sudo systemctl reload systemd-logind']=1 ;;
+    esac
+  done
+  for cmd in "${!etc_cmds[@]}"; do
+    logI "Running ${cmd}..."
+    if [[ -z ${DRY_RUN:-} ]]; then
+      ${cmd} || logE "Failed to run ${cmd}"
+    fi
+  done
+
+  # Report stock files that my drop-ins replaced but that are still modified,
+  # e.g. full copies from before I switched to drop-ins
+  for path in /etc/makepkg.conf /etc/mkinitcpio.conf /etc/pacman.conf /etc/security/faillock.conf /etc/systemd/journald.conf; do
+    if pkg="$(pacman -Qqo "${path}" 2> /dev/null)" && pacman -Qii "${pkg}" | grep -qF "${path} [modified]"; then
+      logE "Found modified ${path}; please restore it from the ${pkg} package"
+    fi
+  done
+
+  # https://wiki.archlinux.org/title/Pacman/Pacnew_and_Pacsave
+  while read -r path; do
+    logE "Found ${path}; please merge it into ${path%.*} and delete it"
+  done < <(find /etc \( -name '*.pacnew' -o -name '*.pacsave' \) 2> /dev/null)
 fi
 
 # Process all dotfiles. Symlinks for programs that I'm not currently using but
@@ -315,14 +374,6 @@ else
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
   ensure_symlink xdg-autostart ~/.config/autostart
-  while read -r src; do
-    # Only x13 has the swap file that suspend-then-hibernate needs. Elsewhere,
-    # logind would refuse the lid action and the machine would stay awake
-    if [[ ${src} == etc/systemd/logind.conf.d/lid.conf && "$(uname -n)" != x13 ]]; then
-      continue
-    fi
-    audit_nonsymlinks "${src}" "/${src}"
-  done < <(find etc -type f)
 
   # Set xfconf properties, which can't be symlinked since xfconfd saves each
   # channel via temp file + rename(). Make xfce4-power-manager let logind handle

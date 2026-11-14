@@ -582,6 +582,7 @@ if _command_exists brew; then
   alias pu='pi update --all && claude update && brew upgrade && brew upgrade --cask && claude-restart'
   alias px='brew uninstall'
 else
+  alias yay='yay --color=auto'
   function _pacman_remove_orphans() (
     set -e
     # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
