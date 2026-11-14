@@ -55,9 +55,8 @@ os_name="$(uname)"
 audit_nonsymlinks() {
   local -r src="${1}"
   local -r dst="${2}"
-  local -r dst_contents="${3:-${dst}}"
-  if [[ -f ${dst_contents} || -p ${dst_contents} ]]; then
-    differences="$(diff "${src}" "${dst_contents}" || true)"
+  if [[ -f ${dst} ]]; then
+    differences="$(diff "${src}" "${dst}" || true)"
     if [[ -n ${differences} ]]; then
       logE "Found mismatched ${dst}; please resolve conflicts by hand"
       echo "${differences}"
@@ -291,7 +290,6 @@ fi
 # Process all dotfiles. Symlinks for programs that I'm not currently using but
 # might try again in the future are commented out for posterity
 if [[ ${os_name} == Darwin ]]; then
-  vscode_parent_dir="${HOME}/Library/Application Support"
   ensure_symlink aerospace ~/.config/aerospace
   ensure_symlink ghostty/config-macos ~/.config/ghostty/config
   ensure_symlink hammerspoon ~/.hammerspoon
@@ -304,7 +302,6 @@ if [[ ${os_name} == Darwin ]]; then
     macos/settings.sh
   fi
 else
-  vscode_parent_dir="${HOME}/.config"
   # ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink dunst ~/.config/dunst
   ensure_symlink fontconfig ~/.config/fontconfig
@@ -315,7 +312,6 @@ else
   ensure_symlink i3blocks ~/.config/i3blocks
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   ensure_symlink picom ~/.config/picom
-  ensure_symlink thunar/thunar.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
   ensure_symlink xdg-autostart ~/.config/autostart
@@ -328,9 +324,10 @@ else
     audit_nonsymlinks "${src}" "/${src}"
   done < <(find etc -type f)
 
-  # Make xfce4-power-manager let logind handle the lid (for
-  # suspend-then-hibernate), and lock via xss-lock since xfpm's default lockers
-  # (e.g. `xflock4`) aren't installed
+  # Set xfconf properties, which can't be symlinked since xfconfd saves each
+  # channel via temp file + rename(). Make xfce4-power-manager let logind handle
+  # the lid (for suspend-then-hibernate), and lock via xss-lock since xfpm's
+  # default lockers (e.g. `xflock4`) aren't installed
   while read -r channel prop type value; do
     if ! command -v xfconf-query > /dev/null; then
       logI "Skipping ${channel}${prop} since xfconf isn't installed"
@@ -343,18 +340,24 @@ else
       fi
     fi
   done << 'EOF'
+thunar /default-view string ThunarDetailsView
+thunar /last-menubar-visible bool true
+thunar /last-restore-tabs bool true
+thunar /misc-date-style string THUNAR_DATE_STYLE_YYYYMMDD
+thunar /misc-full-path-in-tab-title bool true
+thunar /misc-middle-click-in-tab bool true
+thunar /misc-open-new-window-as-tab bool true
+thunar /misc-single-click bool false
+thunar /misc-symbolic-icons-in-sidepane bool false
+thunar /shortcuts-icon-emblems bool true
+thunar /shortcuts-icon-size string THUNAR_ICON_SIZE_24
 xfce4-power-manager /xfce4-power-manager/logind-handle-lid-switch bool true
 xfce4-session /general/LockCommand string loginctl lock-session
 EOF
 fi
-audit_nonsymlinks code/extensions.vscode.txt \
-  ~/.vscode/extensions/extensions.json \
-  <(jq -r '.[].identifier.id' ~/.vscode/extensions/extensions.json | sort)
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json
 ensure_symlink claude/skills ~/.claude/skills
-ensure_symlink code/keybindings.json "${vscode_parent_dir}/Code/User/keybindings.json"
-ensure_symlink code/settings.json "${vscode_parent_dir}/Code/User/settings.json"
 ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
@@ -405,25 +408,7 @@ else
   fi
 fi
 
-# micro, vscode, and yazi don't auto-install plugins/extensions
-if command -v code > /dev/null; then
-  installed="$(code --list-extensions)"
-  # Extensions to keep in the manifest (so the audit tracks them) but never
-  # auto-install
-  ignored=" github.copilot github.copilot-chat stkb.rewrap "
-  while read -r ext_id || [[ -n ${ext_id} ]]; do
-    if [[ ${ignored} == *" ${ext_id} "* ]]; then
-      logI "Ignoring code ${ext_id} extension"
-    elif grep -qixF "${ext_id}" <<< "${installed}"; then
-      logI "Found existing code ${ext_id} extension"
-    else
-      logI "Installing code ${ext_id} extension..."
-      if [[ -z ${DRY_RUN:-} ]]; then
-        code --install-extension "${ext_id}" || logE "Failed to install code ${ext_id} extension"
-      fi
-    fi
-  done < code/extensions.vscode.txt
-fi
+# micro and yazi don't auto-install plugins/extensions
 if command -v micro > /dev/null; then
   while read -r repo_url; do
     # repo.json is an array for hosted plugins but an object for vendored ones
