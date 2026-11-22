@@ -324,89 +324,50 @@ function watchface {
   adb -s "${addr}" shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE --es operation set-watchface --es watchFaceId com.chaidarun.watchface >/dev/null
 }
 
-# Send files/folders to another tailnet host's /tmp/inbox/
+# Send files/folders (default: clipboard contents) to an rsync destination,
+# e.g. `send arbok:~/Downloads/ foo.txt`
 function send() (
   set -eu
 
-  # Get target host
-  if (( $# < 1 )); then
-    echo 'Usage: send <host> [path...]' >&2
+  # Get destination
+  if (( $# == 0 )); then
+    echo 'Usage: send <host:path> [path...]' >&2
     return 1
   fi
-  local -r host="${1}"
+  local dest="${1}" ip
   shift
 
-  # Determine list of items to send
-  local -a items
-  local tmp=''
-  trap '[[ -n "${tmp}" ]] && rm -f "${tmp}"' EXIT
-  if (( $# > 0 )); then
-    items=("$@")
-  elif [[ $IS_MAC == true ]]; then
-    local mac_files=''
-    mac_files=$(osascript -e 'POSIX path of (the clipboard as «class furl»)' 2>/dev/null || true)
-    if [[ -n "${mac_files}" ]]; then
-      local path
-      while IFS= read -r path; do
-        [[ -n "${path}" ]] && items+=("${path}")
-      done <<< "${mac_files}"
-    else
-      tmp="${TMPDIR:-/tmp}/clipboard"
-      if command -v pngpaste &>/dev/null && pngpaste "${tmp}" 2>/dev/null; then
-        true
-      else
-        pbpaste > "${tmp}"
-      fi
-      items=("${tmp}")
-    fi
-  else
-    local -r targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null || true)
-    if grep -q '^text/uri-list$' <<< "${targets}"; then
-      local uri
-      while IFS= read -r uri; do
-        [[ "${uri}" == file://* ]] || continue
-        # Strip file:// prefix, URL-decode percent-encoded chars
-        items+=("$(printf '%b' "${${uri#file://}//%/\\x}")")
-      done < <(xclip -selection clipboard -t text/uri-list -o | tr -d '\r')
-    else
-      tmp="${TMPDIR:-/tmp}/clipboard"
-      local target=''
-      target=$(grep -m1 '^image/png$' <<< "${targets}") \
-        || target=$(grep -v '^text/' <<< "${targets}" | grep -m1 '/') \
-        || true
-      if [[ -n "${target}" ]]; then
-        xclip -selection clipboard -t "${target}" -o > "${tmp}"
-      else
-        xclip -selection clipboard -o > "${tmp}"
-      fi
-      items=("${tmp}")
-    fi
+  # Expand a bare number host to a LAN IP, e.g. `42:~/` to `192.168.0.42:~/`.
+  # Swap a Tailscale machine name for its IP, since MagicDNS names don't
+  # resolve on machines that run Tailscale with `--accept-dns=false`
+  if [[ ${dest} == <->:* ]]; then
+    dest="192.168.0.${dest}"
+  elif [[ ${dest} == *:* ]] && ip="$(tailscale ip -4 "${dest%%:*}" 2>/dev/null)"; then
+    dest="${ip}:${dest#*:}"
   fi
 
-  # Preserve each item's path below the lowest common ancestor of all items
-  # so a lone file keeps just its basename while siblings keep their shared tree
-  # Use absolute normalized paths without resolving symlinks (:a, not :A)
-  local -ar abs=("${items[@]:a}")
-  # root = longest directory prefix shared by every item's parent dir
-  local root="${abs[1]:h}"
-  local p
-  for p in "${abs[@]}"; do
-    # Shrink root until it is an ancestor of (or equal to) this item's parent
-    while [[ "${root}" != "/" && "${p:h}" != "${root}" && "${p:h}" != "${root}/"* ]]; do
-      root="${root:h}"
-    done
-  done
-  # Mark the root boundary with /./ so rsync -R recreates only the part below it
-  local -r base="${root%/}"
-  local -a sources=()
-  for p in "${abs[@]}"; do
-    sources+=("${base}/./${p#${base}/}")
-  done
+  # Default to the clipboard's copied files, else dump its image or text to a file
+  local -a items=("$@")
+  if (( $# == 0 )); then
+    local -r tmp="${TMPDIR:-/tmp}/clipboard"
+    trap 'rm -f "${tmp}"' EXIT
+    if [[ ${IS_MAC} == true ]]; then
+      items=(${(f)"$(osascript -e 'POSIX path of (the clipboard as «class furl»)' 2>/dev/null || true)"})
+      (( ${#items} )) || pngpaste "${tmp}" 2>/dev/null || pbpaste > "${tmp}"
+    else
+      # Strip each file URI's `file://` prefix and decode its `%XX` escapes
+      local uri
+      for uri in ${(M)${(f)"$(xclip -sel c -t text/uri-list -o 2>/dev/null | tr -d '\r')"}:#file://*}; do
+        items+=("$(printf '%b' "${${uri#file://}//\%/\\x}")")
+      done
+      (( ${#items} )) || xclip -sel c -t image/png -o > "${tmp}" 2>/dev/null || xclip -sel c -o > "${tmp}"
+    fi
+    (( ${#items} )) || items=("${tmp}")
+  fi
 
   # Send items
-  local -r t_start=$(date +%s%3N)
-  rsync -ahR --rsync-path="mkdir -p /tmp/inbox && rsync" "${sources[@]}" "${host}:/tmp/inbox/"
-  printf 'Sent %d file(s) in %d ms\n' ${#items[@]} $(( $(date +%s%3N) - t_start ))
+  echo "Sending ${#items} item(s) to ${dest}..."
+  rsync -ah "${items[@]}" "${dest}"
 )
 
 # SSH / mosh
