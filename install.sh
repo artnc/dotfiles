@@ -230,6 +230,8 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       thunar-archive-plugin
       ttf-dejavu
       ttf-liberation
+      ttf-ms-fonts # Real Verdana, Georgia, etc. instead of Noto fallbacks
+      ttf-roboto
       vocalinux
       wireplumber
       xarchiver
