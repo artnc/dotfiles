@@ -537,34 +537,54 @@ alias adbe='adb -e install -d -r'
 # make
 alias m='make'
 
-# Homebrew / yay
+# Homebrew / apt / yay
 if _command_exists brew; then
   alias pn='brew install'
   alias pu='pi update --all && claude update && brew upgrade && brew upgrade --cask && claude-restart'
   alias px='brew uninstall'
 else
-  alias yay='yay --color=auto'
-  function _pacman_remove_orphans() (
-    set -e
-    # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
-    local -r _pacman_orphans="$(yay -Qtdq || true)"
-    [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | yay -Rns -
-    # Hide the "removing X from target list" warning message that yay spams
-    # for each still-needed package
-    # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
-    yay -Qqd | yay -Rsu - 2> >(grep -v ' from target list$' >&2)
-  )
-  # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
-  alias pn="pu && yay -S"
+  if _command_exists apt-get; then
+    alias pn='sudo apt update && sudo apt install'
+    alias px='sudo apt purge --autoremove'
+  else
+    alias yay='yay --color=auto'
+    function _pacman_remove_orphans() (
+      set -e
+      # https://www.reddit.com/r/archlinux/comments/kc4zq3/removing_orphans/
+      local -r _pacman_orphans="$(yay -Qtdq || true)"
+      [[ -z ${_pacman_orphans} ]] || printf %s "${_pacman_orphans}" | yay -Rns -
+      # Hide the "removing X from target list" warning message that yay spams
+      # for each still-needed package
+      # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
+      yay -Qqd | yay -Rsu - 2> >(grep -v ' from target list$' >&2)
+    )
+    # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
+    alias pn="pu && yay -S"
+    function px() (
+      set -e
+      yay -Rncs "${@}"
+      _pacman_remove_orphans
+    )
+  fi
   function pu() (
     set -e
-    _pacman_remove_orphans
-    # https://unix.stackexchange.com/a/574496
-    yay -Sy --noconfirm archlinux-keyring
-    yay --noconfirm -Syu
-    paccache -rk1
-    paccache -ruk0
-    yay -Sac --noconfirm
+    # Upgrade packages and clear unneeded ones from disk
+    if _command_exists apt-get; then
+      sudo apt update
+      sudo apt full-upgrade -y
+      sudo apt autoremove --purge -y
+      sudo apt clean
+    else
+      _pacman_remove_orphans
+      # https://unix.stackexchange.com/a/574496
+      yay -Sy --noconfirm archlinux-keyring
+      yay --noconfirm -Syu
+      paccache -rk1
+      paccache -ruk0
+      yay -Sac --noconfirm
+    fi
+
+    # Reapply input settings
     if _command_exists xmodmap; then
       xmodmap ~/.Xmodmap
     fi
@@ -573,14 +593,11 @@ else
       synclient TapButton2=3
       synclient TapButton3=2
     fi
+
+    # Restart outdated Claude sessions
     if _command_exists claude; then
       claude-restart
     fi
-  )
-  function px() (
-    set -e
-    yay -Rncs "${@}"
-    _pacman_remove_orphans
   )
 fi
 
@@ -846,7 +863,9 @@ export DISPLAY=:0
 if [[ $IS_MAC = true ]]; then
   _source_if_exists /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 else
-  _source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  # Arch and Ubuntu install it to different paths
+  _source_if_exists /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ||
+    _source_if_exists /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # Duolingo (must be declared last)
