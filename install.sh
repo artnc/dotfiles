@@ -202,6 +202,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       dex
       dmenu
       docker
+      docker-buildx
       docker-compose
       dunst
       ffmpeg
