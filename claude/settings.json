@@ -5,7 +5,6 @@
     "pr": ""
   },
   "autoCompactWindow": 200000,
-  "effortLevel": "xhigh",
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
@@ -67,6 +66,11 @@
     ]
   },
   "model": "opus",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
   "outputStyle": "Concise",
   "permissions": {
     "allow": [
@@ -94,7 +98,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
-    "command": "jq -r 'def rl($s; $u): (([.resets_at - now, 0] | max) / $s * 10 | round / 10) as $t | (.used_percentage | floor | tostring) + \"% \" + ($t | tostring) + $u; [(.workspace.current_dir | split(\"/\") | last), (.model.display_name | gsub(\" context\"; \"\")), (((.context_window.current_usage // {} | (.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)) / 1000 | floor | tostring) + \"k ctx\"), (.rate_limits.five_hour // empty | rl(3600; \"h\")), (.rate_limits.seven_day // empty | rl(86400; \"d\")), \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring)] | join(\", \")'",
+    "command": "jq -r 'def rl: ([.resets_at - now, 0] | max) as $s | (.used_percentage | floor | tostring) + \"% \" + (if $s < 3600 then ($s / 60 | floor | tostring) + \"m\" elif $s < 86400 then ($s / 360 | floor / 10 | tostring) + \"h\" else ($s / 8640 | floor / 10 | tostring) + \"d\" end); [(.workspace.current_dir | split(\"/\") | last), (.model.display_name | gsub(\" context\"; \"\")), (((.context_window.current_usage // {} | (.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)) / 1000 | floor | tostring) + \"k ctx\"), (.rate_limits.five_hour // empty | rl), (.rate_limits.seven_day // empty | rl), \"$\" + (.cost.total_cost_usd * 100 | round | . / 100 | tostring)] | join(\", \")'",
     "type": "command"
   },
   "theme": "dark",
