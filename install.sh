@@ -89,6 +89,49 @@ merge_json() {
   fi
 }
 
+# Merge tracked keys into a Qt INI file that we can't symlink because its owner
+# writes secrets into it, e.g. KeePassXC's KeeShare private key. Values in src
+# win, and untracked keys in dst are kept
+merge_ini() {
+  local -r src="${1}"
+  local -r dst="${2}"
+  if [[ ! -f ${dst} ]]; then
+    logE "Didn't find ${dst}; please run its app once and rerun this script"
+    return
+  fi
+  # Print the merged INI only if a tracked key differs. Declare separately so
+  # that a Python error trips `set -e`
+  local merged
+  merged="$(
+    python3 - "${src}" "${dst}" << 'EOF'
+import configparser
+import sys
+
+
+def parse(path):
+    # Keep `%` literal and keys case-sensitive like Qt's QSettings does
+    p = configparser.ConfigParser(delimiters=("=",), interpolation=None)
+    p.optionxform = str
+    p.read(path)
+    return p
+
+
+src, dst = parse(sys.argv[1]), parse(sys.argv[2])
+if any(dst.get(s, k, fallback=None) != v for s in src.sections() for k, v in src.items(s)):
+    dst.read_dict(src)
+    dst.write(sys.stdout, space_around_delimiters=False)
+EOF
+  )"
+  if [[ -z ${merged} ]]; then
+    logI "Found matching ${dst}"
+    return
+  fi
+  logI "Updating ${dst}..."
+  if [[ -z ${DRY_RUN:-} ]]; then
+    printf '%s\n' "${merged}" > "${dst}"
+  fi
+}
+
 # Install Arch packages and enable their services. Commented-out packages are
 # ones that I've used before but don't currently need
 if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
@@ -351,9 +394,10 @@ fi
 if [[ ${os_name} == Darwin ]]; then
   ensure_symlink aerospace ~/.config/aerospace
   ensure_symlink ghostty/config-macos ~/.config/ghostty/config
-  ensure_symlink hammerspoon ~/.hammerspoon
-  ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
   audit_nonsymlinks granted/config ~/.granted/config
+  ensure_symlink hammerspoon ~/.hammerspoon
+  merge_ini keepassxc/keepassxc.ini ~/Library/Application\ Support/keepassxc/keepassxc.ini
+  ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
   logI "Applying macOS settings..."
   if [[ -z ${DRY_RUN:-} ]]; then
     macos/settings.sh
@@ -368,6 +412,7 @@ else
   ensure_symlink i3 ~/.config/i3
   ensure_symlink i3blocks ~/.config/i3blocks
   ensure_symlink iftop/.iftoprc ~/.iftoprc
+  merge_ini keepassxc/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
   ensure_symlink picom ~/.config/picom
   ensure_symlink x/.xinitrc ~/.xinitrc
   ensure_symlink x/.Xmodmap ~/.Xmodmap
