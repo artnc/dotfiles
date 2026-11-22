@@ -816,12 +816,15 @@ fi
 # .NET
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-# pre-commit
-if [[ $IS_MAC = true ]]; then
-  export SKIP=no-commit-to-branch,validate-email-domain
-else
-  export SKIP=no-commit-to-branch,swiftlint,validate-email-domain
-fi
+# pre-commit. prek warns "the following selectors did not match any hooks", so
+# before each prompt we set SKIP to include only hooks the current repo uses
+_update_precommit_skip() {
+  local -a hooks=(no-commit-to-branch validate-email-domain) words
+  words=(${=$(<"$(git rev-parse --show-toplevel 2>/dev/null)/.pre-commit-config.yaml")//[^[:alnum:]_-]/ }) 2>/dev/null
+  export SKIP=${(j:,:)hooks:*words}
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _update_precommit_skip
 
 # Rclone
 # https://rclone.org/docs/#environment-variables
