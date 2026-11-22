@@ -102,5 +102,6 @@
     "type": "command"
   },
   "theme": "dark",
-  "tui": "fullscreen"
+  "tui": "fullscreen",
+  "viewMode": "focus"
 }
