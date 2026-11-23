@@ -374,9 +374,10 @@ function send() (
 function ssh() (
   set -eu
 
-  # Syncthing sometimes messes with perms. https://superuser.com/a/215506
+  # Remove group/other access since Syncthing can sync loose perms, and SSH
+  # refuses private keys that others can read. https://superuser.com/a/215506
   if [[ -d "${HOME}/.ssh" ]]; then
-    chmod 700 ~/.ssh && chmod 600 ~/.ssh/*.pem ~/.ssh/config
+    chmod -R go-rwx ~/.ssh/
   fi
 
   # Translate -p flag, which mosh treats differently from ssh
@@ -395,8 +396,9 @@ function ssh() (
   done
 
   # Use mosh only if present on both local and remote. ControlMaster reuses the
-  # probe's auth session and typed password for the real connection
-  local -r socket="${HOME}/.ssh/mosh-probe-$$"
+  # probe's auth session and typed password for the real connection. Keep the
+  # socket out of `~/.ssh` since Syncthing syncs that
+  local -r socket="${XDG_RUNTIME_DIR:-/tmp}/mosh-probe-$$"
   if _command_exists mosh && command ssh \
       -o ControlMaster=auto \
       -o ControlPath="${socket}" \

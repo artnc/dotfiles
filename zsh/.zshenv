@@ -7,3 +7,11 @@ fi
 # ungraceful disconnects hold their UDP ports forever, and external mosh has only 11
 # (60000-60010). Set here because mosh starts the server via non-interactive `zsh -c`
 export MOSH_SERVER_NETWORK_TMOUT=604800
+
+# Point SSH at the agent that `ssh-agent.socket` starts on demand, so that
+# KeePassXC can load my SSH key into it on unlock. Set here so that X apps (via
+# startx) and mosh sessions inherit it. Keep an existing value, e.g. from macOS
+# launchd or a forwarded agent
+if [[ -z ${SSH_AUTH_SOCK:-} && -S "${XDG_RUNTIME_DIR:-}/ssh-agent.socket" ]]; then
+  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+fi

@@ -290,6 +290,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
 --system cronie.service
 --system docker.service
 --system tailscaled.service
+--user ssh-agent.socket
 --user syncthing.service
 EOF
 
