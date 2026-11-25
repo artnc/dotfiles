@@ -321,8 +321,8 @@ EOF
   fi
 
   # Install my /etc files from etc/common, then from this machine's overlay (e.g.
-  # etc/x13). Drop-ins are named 90-dotfiles.conf in etc/common and
-  # 91-dotfiles.conf in overlays, so that overlays win and stale ones are findable
+  # etc/x13). Drop-ins are named 90-dotfiles.* in etc/common and 91-dotfiles.*
+  # in overlays, so that overlays win and stale ones are findable
   etc_changed=()
   etc_wanted=" "
   while read -r src; do
@@ -357,11 +357,12 @@ EOF
     if [[ -z ${DRY_RUN:-} ]]; then
       sudo rm "${dst}"
     fi
-  done < <(find /etc -name '9[01]-dotfiles.conf' 2> /dev/null)
+  done < <(find /etc -name '9[01]-dotfiles.*' 2> /dev/null)
 
   # Apply changed /etc files. Dedupe the commands since several files can share
   # one. X11 changes need a new X server, which would kill this session. logind
-  # reloads on SIGHUP without dropping sessions since systemd 254
+  # reloads on SIGHUP without dropping sessions since systemd 254. udevd rereads
+  # changed rules by itself before it handles new events, so a trigger is enough
   declare -A etc_cmds=()
   for dst in "${etc_changed[@]}"; do
     case ${dst} in
@@ -370,6 +371,7 @@ EOF
       /etc/systemd/journald.conf.d/*) etc_cmds['sudo systemctl restart systemd-journald']=1 ;;
       /etc/X11/*) logE "Changed ${dst}; please log out and back in to apply" ;;
       /etc/systemd/logind.conf.d/*) etc_cmds['sudo systemctl reload systemd-logind']=1 ;;
+      /etc/udev/rules.d/*) etc_cmds['sudo udevadm trigger --subsystem-match=serio']=1 ;;
     esac
   done
   for cmd in "${!etc_cmds[@]}"; do

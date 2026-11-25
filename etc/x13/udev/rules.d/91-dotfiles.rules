@@ -1,0 +1,4 @@
+# Raise TrackPoint sensitivity from the default 128 (range 0-255). Match bind
+# because psmouse creates the attribute when it probes (after the add event),
+# and match change for `udevadm trigger`
+ACTION=="bind|change", SUBSYSTEM=="serio", DRIVER=="psmouse", ATTR{sensitivity}=="?*", ATTR{sensitivity}="200"
