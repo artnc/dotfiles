@@ -325,15 +325,9 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
     fi
   fi
 
-  # Install missing packages in a single transaction. Sync and upgrade first
-  # since partial upgrades are unsupported and a stale sync DB 404s on download
+  # Find and install missing packages
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
-  missing_pkgs=()
-  for pkg in "${pkgs[@]}"; do
-    if ! yay -Qq "${pkg}" &> /dev/null; then
-      missing_pkgs+=("${pkg}")
-    fi
-  done
+  mapfile -t missing_pkgs < <(pacman -T "${pkgs[@]}")
   logI "Found $((${#pkgs[@]} - ${#missing_pkgs[@]})) existing Arch packages"
   if [[ ${#missing_pkgs[@]} -gt 0 ]]; then
     logI "Installing ${missing_pkgs[*]}..."
