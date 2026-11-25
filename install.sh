@@ -3,12 +3,16 @@
 
 set -eu
 
+# Resolve repo-relative paths (e.g. `etc/common`) against this repo instead of
+# the caller's cwd
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
 # Colored stderr loggers
 logE() {
-  printf '%s%s%s\n' "$(tput setaf 1)" "${1//${HOME}/~}" "$(tput sgr0)" >&2
+  printf '%s%s%s\n' "$(tput setaf 1 2> /dev/null)" "${1//"${HOME}"/\~}" "$(tput sgr0 2> /dev/null)" >&2
 }
 logI() {
-  printf '%s%s%s\n' "$(tput setaf 2)" "${1//${HOME}/~}" "$(tput sgr0)" >&2
+  printf '%s%s%s\n' "$(tput setaf 2 2> /dev/null)" "${1//"${HOME}"/\~}" "$(tput sgr0 2> /dev/null)" >&2
 }
 
 # Create missing symlinks within home directory
@@ -22,14 +26,18 @@ ensure_symlink() {
   if [[ -n ${CODESPACES:-} ]]; then
     logI "Creating ${dst}..."
     if [[ -z ${DRY_RUN:-} ]]; then
-      ln -fs "${PWD}/${src}" "${dst}"
+      ln -fns "${PWD}/${src}" "${dst}"
     fi
-  elif [[ -f ${dst} ]] || [[ -d ${dst} ]]; then
-    if [[ -L ${dst} ]]; then
+  # Check `-L` before `-e` since `-e` is false for a dangling symlink, which
+  # would make `ln` fail and trip `set -e`
+  elif [[ -L ${dst} ]]; then
+    if [[ "$(readlink "${dst}")" == "${PWD}/${src}" ]]; then
       logI "Found existing ${dst}"
     else
-      logE "Found unsymlinked ${dst}"
+      logE "Found ${dst} symlinked to $(readlink "${dst}") instead of ${PWD}/${src}"
     fi
+  elif [[ -e ${dst} ]]; then
+    logE "Found unsymlinked ${dst}"
   else
     logI "Creating ${dst}..."
     if [[ -z ${DRY_RUN:-} ]]; then
@@ -56,26 +64,31 @@ audit_nonsymlinks() {
   local -r src="${1}"
   local -r dst="${2}"
   if [[ -f ${dst} ]]; then
-    differences="$(diff "${src}" "${dst}" || true)"
+    local -r differences="$(diff "${src}" "${dst}" || true)"
     if [[ -n ${differences} ]]; then
-      logE "Found mismatched ${dst}; please resolve conflicts by hand"
+      logE "Found mismatched ${dst}. Please resolve conflicts by hand"
       echo "${differences}"
     else
       logI "Found matching ${dst}"
     fi
   else
-    logE "Didn't find ${dst}; please copy from this repo"
+    logE "Didn't find ${dst}. Please copy from this repo"
   fi
 }
 
 # Merge tracked keys into a JSON file that we can't symlink because its owner
 # rewrites it via temp file + rename(), which replaces a symlink with a regular
-# file on the first write. Values in src win; untracked keys in dst are kept
+# file on the first write. Values in src win, and untracked keys in dst are kept
 merge_json() {
   local -r src="${1}"
   local -r dst="${2}"
   if [[ ! -f ${dst} ]]; then
-    logE "Didn't find ${dst}; please run its app once and rerun this script"
+    logE "Didn't find ${dst}. Please run its app once and rerun this script"
+    return
+  fi
+  # Arch installs jq only after this runs, so a fresh machine may lack it
+  if ! command -v jq > /dev/null; then
+    logE "Skipping ${dst} since jq isn't installed"
     return
   fi
   if jq -es '.[0] * .[1] == .[0]' "${dst}" "${src}" > /dev/null; then
@@ -96,7 +109,12 @@ merge_ini() {
   local -r src="${1}"
   local -r dst="${2}"
   if [[ ! -f ${dst} ]]; then
-    logE "Didn't find ${dst}; please run its app once and rerun this script"
+    logE "Didn't find ${dst}. Please run its app once and rerun this script"
+    return
+  fi
+  # Arch's package list doesn't include Python, so a fresh machine may lack it
+  if ! command -v python3 > /dev/null; then
+    logE "Skipping ${dst} since python3 isn't installed"
     return
   fi
   # Print the merged INI only if a tracked key differs. Declare separately so
@@ -141,7 +159,7 @@ if [[ ${os_name} == Darwin ]]; then
   ensure_symlink hammerspoon ~/.hammerspoon
   merge_ini keepassxc/keepassxc.ini ~/Library/Application\ Support/keepassxc/keepassxc.ini
   ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
-  logI "Applying macOS settings..."
+  logI 'Applying macOS settings...'
   if [[ -z ${DRY_RUN:-} ]]; then
     macos/settings.sh
   fi
@@ -265,7 +283,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # List packages for graphical machines. Detect them by `xorg-server` rather
   # than `DISPLAY`, which is unset over SSH/mosh and set by X forwarding. Set
   # `GRAPHICAL=1` to install these on a new machine
-  if [[ -n ${GRAPHICAL:-} ]] || yay -Qq xorg-server &> /dev/null; then
+  if [[ -n ${GRAPHICAL:-} ]] || pacman -Qq xorg-server &> /dev/null; then
     pkgs+=(
       acpi
       alsa-utils
@@ -328,6 +346,11 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # Find and install missing packages
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
   mapfile -t missing_pkgs < <(pacman -T "${pkgs[@]}")
+  # `pacman -T` exits 127 if some are missing but 1 if it can't check at all
+  wait "${!}" || [[ ${?} == 127 ]] || {
+    logE 'Failed to check for missing Arch packages'
+    exit 1
+  }
   logI "Found $((${#pkgs[@]} - ${#missing_pkgs[@]})) existing Arch packages"
   if [[ ${#missing_pkgs[@]} -gt 0 ]]; then
     logI "Installing ${missing_pkgs[*]}..."
@@ -419,7 +442,7 @@ EOF
   # etc/x13). Drop-ins are named 90-dotfiles.* in etc/common and 91-dotfiles.*
   # in overlays, so that overlays win and stale ones are findable
   etc_changed=()
-  etc_wanted=" "
+  etc_wanted=' '
   while read -r src; do
     dst="/etc/${src#etc/*/}"
     etc_wanted+="${dst} "
@@ -437,7 +460,7 @@ EOF
     if [[ -f ${dst}.pacnew ]]; then
       logI "Deleting ${dst}.pacnew..."
       if [[ -z ${DRY_RUN:-} ]]; then
-        sudo rm "${dst}.pacnew"
+        sudo rm "${dst}.pacnew" || logE "Failed to delete ${dst}.pacnew"
       fi
     fi
   done < <(find etc/common "etc/$(uname -n)" -type f 2> /dev/null)
@@ -450,7 +473,7 @@ EOF
     logI "Deleting ${dst}..."
     etc_changed+=("${dst}")
     if [[ -z ${DRY_RUN:-} ]]; then
-      sudo rm "${dst}"
+      sudo rm "${dst}" || logE "Failed to delete ${dst}"
     fi
   done < <(find /etc -name '9[01]-dotfiles.*' 2> /dev/null)
 
@@ -464,7 +487,7 @@ EOF
       /etc/NetworkManager/*) etc_cmds['sudo nmcli general reload']=1 ;;
       /etc/mkinitcpio.conf.d/*) etc_cmds['sudo mkinitcpio -P']=1 ;;
       /etc/systemd/journald.conf.d/*) etc_cmds['sudo systemctl restart systemd-journald']=1 ;;
-      /etc/X11/*) logE "Changed ${dst}; please log out and back in to apply" ;;
+      /etc/X11/*) logE "Changed ${dst}. Please log out and back in to apply" ;;
       /etc/systemd/logind.conf.d/*) etc_cmds['sudo systemctl reload systemd-logind']=1 ;;
       /etc/udev/rules.d/*) etc_cmds['sudo udevadm trigger --subsystem-match=serio']=1 ;;
     esac
@@ -480,27 +503,28 @@ EOF
   # e.g. full copies from before I switched to drop-ins
   for path in /etc/makepkg.conf /etc/mkinitcpio.conf /etc/pacman.conf /etc/security/faillock.conf /etc/systemd/journald.conf; do
     if pkg="$(pacman -Qqo "${path}" 2> /dev/null)" && pacman -Qii "${pkg}" | grep -qF "${path} [modified]"; then
-      logE "Found modified ${path}; please restore it from the ${pkg} package"
+      logE "Found modified ${path}. Please restore it from the ${pkg} package"
     fi
   done
 
   # https://wiki.archlinux.org/title/Pacman/Pacnew_and_Pacsave
   while read -r path; do
-    logE "Found ${path}; please merge it into ${path%.*} and delete it"
+    logE "Found ${path}. Please merge it into ${path%.*} and delete it"
   done < <(find /etc \( -name '*.pacnew' -o -name '*.pacsave' \) 2> /dev/null)
 fi
 
 # Install RTK
 if command -v rtk > /dev/null; then
-  logI "Found existing rtk"
+  logI 'Found existing rtk'
 else
-  logI "Installing rtk..."
+  logI 'Installing rtk...'
   if [[ -z ${DRY_RUN:-} ]]; then
     if [[ ${os_name} == Darwin ]] && command -v brew > /dev/null; then
-      brew install rtk || logE "Failed to install rtk"
+      brew install rtk || logE 'Failed to install rtk'
     else
-      # Install to ~/.local/bin
-      curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh || logE "Failed to install rtk"
+      # Install to ~/.local/bin. Use `pipefail` so that `sh` exiting 0 on empty
+      # input doesn't hide a failed download
+      (set -o pipefail && curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh) || logE 'Failed to install rtk'
     fi
   fi
 fi
@@ -508,8 +532,9 @@ fi
 # micro and yazi don't auto-install plugins/extensions
 if command -v micro > /dev/null; then
   while read -r repo_url; do
-    # repo.json is an array for hosted plugins but an object for vendored ones
-    plugin_name="$(curl -fsSL "${repo_url}" | jq -r 'if type == "array" then .[].Name else .Name end')"
+    # repo.json is an array for hosted plugins but an object for vendored ones.
+    # Tolerate non-JSON responses so that `set -e` doesn't abort the script
+    plugin_name="$(curl -fsSL "${repo_url}" | jq -r 'if type == "array" then .[].Name else .Name end' || true)"
     if [[ -z ${plugin_name} ]]; then
       logE "Couldn't resolve micro plugin name from ${repo_url}"
       continue
@@ -518,7 +543,7 @@ if command -v micro > /dev/null; then
     else
       logI "Installing micro ${plugin_name} plugin..."
       if [[ -z ${DRY_RUN:-} ]]; then
-        micro -plugin install "${plugin_name}"
+        micro -plugin install "${plugin_name}" || logE "Failed to install micro ${plugin_name} plugin"
       fi
     fi
   done < <(jq -r '.pluginrepos[]?' micro/settings.json)
