@@ -865,6 +865,9 @@ fi
 # https://stackoverflow.com/a/79028896
 export DISPLAY=:0
 
+# zsh-autosuggestions
+_source_if_exists /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 # zsh-syntax-highlighting (should appear at end of .zshrc)
 # https://github.com/zsh-users/zsh-syntax-highlighting
 if [[ $IS_MAC = true ]]; then

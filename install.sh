@@ -183,6 +183,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
     yazi
     zip
     zsh
+    zsh-autosuggestions
     zsh-syntax-highlighting
   )
   # Arch Linux ARM lacks these. Its mirrorlist uses a GeoIP redirector instead
