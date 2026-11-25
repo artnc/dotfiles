@@ -152,6 +152,11 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
     fi
   fi
 
+  # Symlink yay's config before installing packages so that yay skips its
+  # prompts (clean, diff, upgrade, removemake, and sudo timeout). yay merges
+  # it over its defaults, so it only needs the keys that I change
+  ensure_symlink yay/config.json ~/.config/yay/config.json
+
   # List packages for all machines
   pkgs=(
     base-devel
@@ -261,12 +266,11 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
   missing_pkgs=()
   for pkg in "${pkgs[@]}"; do
-    if yay -Qq "${pkg}" &> /dev/null; then
-      logI "Found existing ${pkg}"
-    else
+    if ! yay -Qq "${pkg}" &> /dev/null; then
       missing_pkgs+=("${pkg}")
     fi
   done
+  logI "Found $((${#pkgs[@]} - ${#missing_pkgs[@]})) existing Arch packages"
   if [[ ${#missing_pkgs[@]} -gt 0 ]]; then
     logI "Installing ${missing_pkgs[*]}..."
     if [[ -z ${DRY_RUN:-} ]]; then
