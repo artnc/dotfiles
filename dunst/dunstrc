@@ -18,6 +18,8 @@ max_icon_size = 48
 offset = (12, 32)
 origin = top-right
 padding = 10
+# Hide the "(A)" and "(U)" title prefixes for notifications with actions or URLs
+show_indicators = no
 width = (200, 500)
 
 [urgency_low]
