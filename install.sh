@@ -159,6 +159,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
     curl
     # direnv
     fzf
+    fzf-tab
     git
     go-yq
     htop

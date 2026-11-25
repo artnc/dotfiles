@@ -784,6 +784,8 @@ if _command_exists fzf; then
       head -50
     )
   }
+
+  _source_if_exists /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
 fi
 
 # Git
