@@ -132,8 +132,77 @@ EOF
   fi
 }
 
-# Install Arch packages and enable their services. Commented-out packages are
-# ones that I've used before but don't currently need
+# Process all dotfiles. Symlinks for programs that I'm not currently using but
+# might try again in the future are commented out for posterity
+if [[ ${os_name} == Darwin ]]; then
+  ensure_symlink aerospace ~/.config/aerospace
+  ensure_symlink ghostty/config-macos ~/.config/ghostty/config
+  audit_nonsymlinks granted/config ~/.granted/config
+  ensure_symlink hammerspoon ~/.hammerspoon
+  merge_ini keepassxc/keepassxc.ini ~/Library/Application\ Support/keepassxc/keepassxc.ini
+  ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
+  logI "Applying macOS settings..."
+  if [[ -z ${DRY_RUN:-} ]]; then
+    macos/settings.sh
+  fi
+else
+  # ensure_symlink feh/.fehbg ~/.fehbg
+  ensure_symlink dunst ~/.config/dunst
+  ensure_symlink fontconfig ~/.config/fontconfig
+  ensure_symlink ghostty/config-linux ~/.config/ghostty/config
+  ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
+  ensure_symlink gtk-3.0 ~/.config/gtk-3.0
+  ensure_symlink i3 ~/.config/i3
+  ensure_symlink i3blocks ~/.config/i3blocks
+  ensure_symlink iftop/.iftoprc ~/.iftoprc
+  merge_ini keepassxc/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
+  ensure_symlink picom ~/.config/picom
+  ensure_symlink x/.xinitrc ~/.xinitrc
+  ensure_symlink x/.Xmodmap ~/.Xmodmap
+  ensure_symlink xdg-autostart ~/.config/autostart
+  ensure_symlink yay/config.json ~/.config/yay/config.json
+fi
+ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
+ensure_symlink claude/settings.json ~/.claude/settings.json
+ensure_symlink claude/skills ~/.claude/skills
+ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
+ensure_symlink git/.git-template ~/.git-template
+ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
+ensure_symlink git/.gitignore ~/.gitignore
+ensure_symlink micro/bindings.json ~/.config/micro/bindings.json
+ensure_symlink micro/colorschemes ~/.config/micro/colorschemes
+ensure_symlink micro/plug ~/.config/micro/plug
+ensure_symlink micro/settings.json ~/.config/micro/settings.json
+ensure_symlink mise/global.toml ~/.config/mise/config.toml
+ensure_symlink mpv/mpv.conf ~/.config/mpv/mpv.conf
+ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
+if [[ "$(uname -n)" == 'art-macbook-pro' ]]; then
+  ensure_symlink opencode/opencode-work.jsonc ~/.config/opencode/opencode.jsonc
+else
+  ensure_symlink opencode/opencode-personal.jsonc ~/.config/opencode/opencode.jsonc
+fi
+ensure_symlink opencode/plugins ~/.config/opencode/plugins
+merge_json opencode/cli.json ~/.config/opencode/cli.json
+ensure_symlink pi/extensions ~/.pi/agent/extensions
+ensure_symlink pi/keybindings.json ~/.pi/agent/keybindings.json
+ensure_symlink pi/mcp.json ~/.pi/agent/mcp.json
+ensure_symlink pi/session-summary.json ~/.pi/agent/session-summary.json
+if [[ -f pi/models.json ]]; then
+  ensure_symlink pi/models.json ~/.pi/agent/models.json
+else
+  logE "Didn't find pi/models.json! Please copy it from another machine"
+fi
+ensure_symlink pi/settings.json ~/.pi/agent/settings.json
+ensure_symlink pi/web-search.json ~/.pi/web-search.json
+ensure_symlink ripgrep/.rgignore ~/.rgignore
+ensure_symlink tmux/.tmux.conf ~/.tmux.conf
+ensure_symlink yazi ~/.config/yazi
+ensure_symlink zsh/.zshenv ~/.zshenv
+ensure_symlink zsh/.zshrc ~/.zshrc
+
+# Install Arch packages and enable their services. Run this after symlinking
+# dotfiles so that yay uses my config. Commented-out packages are ones that
+# I've used before but don't currently need
 if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # Install yay, which installs both official and AUR packages. Every Arch
   # machine needs it since this script and `.zshrc` use it instead of pacman
@@ -151,11 +220,6 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       rm -rf "${yay_dir}"
     fi
   fi
-
-  # Symlink yay's config before installing packages so that yay skips its
-  # prompts (clean, diff, upgrade, removemake, and sudo timeout). yay merges
-  # it over its defaults, so it only needs the keys that I change
-  ensure_symlink yay/config.json ~/.config/yay/config.json
 
   # List packages for all machines
   pkgs=(
@@ -326,6 +390,37 @@ EOF
     fi
   fi
 
+  # Set xfconf properties, which can't be symlinked since xfconfd saves each
+  # channel via temp file + rename(). Make xfce4-power-manager let logind handle
+  # the lid (for suspend-then-hibernate), and lock via xss-lock since xfpm's
+  # default lockers (e.g. `xflock4`) aren't installed
+  while read -r channel prop type value; do
+    if ! command -v xfconf-query > /dev/null; then
+      logI "Skipping ${channel}${prop} since xfconf isn't installed"
+    elif [[ "$(xfconf-query -c "${channel}" -p "${prop}" 2> /dev/null)" == "${value}" ]]; then
+      logI "Found existing ${channel}${prop}"
+    else
+      logI "Setting ${channel}${prop}..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        xfconf-query -c "${channel}" -p "${prop}" -n -t "${type}" -s "${value}" || logE "Failed to set ${channel}${prop}"
+      fi
+    fi
+  done << 'EOF'
+thunar /default-view string ThunarDetailsView
+thunar /last-menubar-visible bool true
+thunar /last-restore-tabs bool true
+thunar /misc-date-style string THUNAR_DATE_STYLE_YYYYMMDD
+thunar /misc-full-path-in-tab-title bool true
+thunar /misc-middle-click-in-tab bool true
+thunar /misc-open-new-window-as-tab bool true
+thunar /misc-single-click bool false
+thunar /misc-symbolic-icons-in-sidepane bool false
+thunar /shortcuts-icon-emblems bool true
+thunar /shortcuts-icon-size string THUNAR_ICON_SIZE_24
+xfce4-power-manager /xfce4-power-manager/logind-handle-lid-switch bool true
+xfce4-session /general/LockCommand string loginctl lock-session
+EOF
+
   # Install my /etc files from etc/common, then from this machine's overlay (e.g.
   # etc/x13). Drop-ins are named 90-dotfiles.* in etc/common and 91-dotfiles.*
   # in overlays, so that overlays win and stale ones are findable
@@ -400,104 +495,6 @@ EOF
     logE "Found ${path}; please merge it into ${path%.*} and delete it"
   done < <(find /etc \( -name '*.pacnew' -o -name '*.pacsave' \) 2> /dev/null)
 fi
-
-# Process all dotfiles. Symlinks for programs that I'm not currently using but
-# might try again in the future are commented out for posterity
-if [[ ${os_name} == Darwin ]]; then
-  ensure_symlink aerospace ~/.config/aerospace
-  ensure_symlink ghostty/config-macos ~/.config/ghostty/config
-  audit_nonsymlinks granted/config ~/.granted/config
-  ensure_symlink hammerspoon ~/.hammerspoon
-  merge_ini keepassxc/keepassxc.ini ~/Library/Application\ Support/keepassxc/keepassxc.ini
-  ensure_symlink unity/Dvorak.shortcut ~/Library/Preferences/Unity/Editor-5.x/shortcuts/default/Dvorak.shortcut
-  logI "Applying macOS settings..."
-  if [[ -z ${DRY_RUN:-} ]]; then
-    macos/settings.sh
-  fi
-else
-  # ensure_symlink feh/.fehbg ~/.fehbg
-  ensure_symlink dunst ~/.config/dunst
-  ensure_symlink fontconfig ~/.config/fontconfig
-  ensure_symlink ghostty/config-linux ~/.config/ghostty/config
-  ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
-  ensure_symlink gtk-3.0 ~/.config/gtk-3.0
-  ensure_symlink i3 ~/.config/i3
-  ensure_symlink i3blocks ~/.config/i3blocks
-  ensure_symlink iftop/.iftoprc ~/.iftoprc
-  merge_ini keepassxc/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
-  ensure_symlink picom ~/.config/picom
-  ensure_symlink x/.xinitrc ~/.xinitrc
-  ensure_symlink x/.Xmodmap ~/.Xmodmap
-  ensure_symlink xdg-autostart ~/.config/autostart
-
-  # Set xfconf properties, which can't be symlinked since xfconfd saves each
-  # channel via temp file + rename(). Make xfce4-power-manager let logind handle
-  # the lid (for suspend-then-hibernate), and lock via xss-lock since xfpm's
-  # default lockers (e.g. `xflock4`) aren't installed
-  while read -r channel prop type value; do
-    if ! command -v xfconf-query > /dev/null; then
-      logI "Skipping ${channel}${prop} since xfconf isn't installed"
-    elif [[ "$(xfconf-query -c "${channel}" -p "${prop}" 2> /dev/null)" == "${value}" ]]; then
-      logI "Found existing ${channel}${prop}"
-    else
-      logI "Setting ${channel}${prop}..."
-      if [[ -z ${DRY_RUN:-} ]]; then
-        xfconf-query -c "${channel}" -p "${prop}" -n -t "${type}" -s "${value}" || logE "Failed to set ${channel}${prop}"
-      fi
-    fi
-  done << 'EOF'
-thunar /default-view string ThunarDetailsView
-thunar /last-menubar-visible bool true
-thunar /last-restore-tabs bool true
-thunar /misc-date-style string THUNAR_DATE_STYLE_YYYYMMDD
-thunar /misc-full-path-in-tab-title bool true
-thunar /misc-middle-click-in-tab bool true
-thunar /misc-open-new-window-as-tab bool true
-thunar /misc-single-click bool false
-thunar /misc-symbolic-icons-in-sidepane bool false
-thunar /shortcuts-icon-emblems bool true
-thunar /shortcuts-icon-size string THUNAR_ICON_SIZE_24
-xfce4-power-manager /xfce4-power-manager/logind-handle-lid-switch bool true
-xfce4-session /general/LockCommand string loginctl lock-session
-EOF
-fi
-ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
-ensure_symlink claude/settings.json ~/.claude/settings.json
-ensure_symlink claude/skills ~/.claude/skills
-ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
-ensure_symlink git/.git-template ~/.git-template
-ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
-ensure_symlink git/.gitignore ~/.gitignore
-ensure_symlink micro/bindings.json ~/.config/micro/bindings.json
-ensure_symlink micro/colorschemes ~/.config/micro/colorschemes
-ensure_symlink micro/plug ~/.config/micro/plug
-ensure_symlink micro/settings.json ~/.config/micro/settings.json
-ensure_symlink mise/global.toml ~/.config/mise/config.toml
-ensure_symlink mpv/mpv.conf ~/.config/mpv/mpv.conf
-ensure_symlink opencode/opencode.json ~/.config/opencode/opencode.json
-if [[ "$(uname -n)" == 'art-macbook-pro' ]]; then
-  ensure_symlink opencode/opencode-work.jsonc ~/.config/opencode/opencode.jsonc
-else
-  ensure_symlink opencode/opencode-personal.jsonc ~/.config/opencode/opencode.jsonc
-fi
-ensure_symlink opencode/plugins ~/.config/opencode/plugins
-merge_json opencode/cli.json ~/.config/opencode/cli.json
-ensure_symlink pi/extensions ~/.pi/agent/extensions
-ensure_symlink pi/keybindings.json ~/.pi/agent/keybindings.json
-ensure_symlink pi/mcp.json ~/.pi/agent/mcp.json
-ensure_symlink pi/session-summary.json ~/.pi/agent/session-summary.json
-if [[ -f pi/models.json ]]; then
-  ensure_symlink pi/models.json ~/.pi/agent/models.json
-else
-  logE "Didn't find pi/models.json! Please copy it from another machine"
-fi
-ensure_symlink pi/settings.json ~/.pi/agent/settings.json
-ensure_symlink pi/web-search.json ~/.pi/web-search.json
-ensure_symlink ripgrep/.rgignore ~/.rgignore
-ensure_symlink tmux/.tmux.conf ~/.tmux.conf
-ensure_symlink yazi ~/.config/yazi
-ensure_symlink zsh/.zshenv ~/.zshenv
-ensure_symlink zsh/.zshrc ~/.zshrc
 
 # Install RTK
 if command -v rtk > /dev/null; then
