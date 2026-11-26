@@ -314,6 +314,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       pipewire
       pipewire-alsa
       pipewire-pulse
+      qownnotes
       ristretto
       sysstat
       thunar
