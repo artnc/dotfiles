@@ -10,7 +10,6 @@ fallback='CC ?'
 
 if [[ ! -r ${config_file} ]]; then
   echo "${fallback}"
-  echo "${fallback}"
   exit 0
 fi
 
@@ -26,13 +25,11 @@ response="$(curl -fsS --max-time 10 --compressed \
   -H 'content-type: application/json' \
   -H "Cookie: sessionKey=${SESSION_KEY}" 2> /dev/null)" || {
   echo "${fallback}"
-  echo "${fallback}"
   exit 0
 }
 
 parsed="$(echo "${response}" | jq -r \
   '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || {
-  echo "${fallback}"
   echo "${fallback}"
   exit 0
 }
@@ -97,5 +94,4 @@ color_pct() {
 }
 
 output="CC $(color_pct "${session_pct}") $(time_until "${session_reset}") $(color_pct "${weekly_pct}") $(time_until "${weekly_reset}")"
-echo "${output}"
 echo "${output}"

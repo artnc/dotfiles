@@ -1,0 +1,6 @@
+# Use i3's dark gray instead of swaylock's default white
+color=222222
+# Fork once locked so that `swayidle -w` waits for the lock before sleep
+daemonize
+# Ignore Enter presses that only wake the screen
+ignore-empty-password

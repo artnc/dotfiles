@@ -164,20 +164,18 @@ if [[ ${os_name} == Darwin ]]; then
     macos/settings.sh
   fi
 else
-  # ensure_symlink feh/.fehbg ~/.fehbg
   ensure_symlink dunst ~/.config/dunst
   ensure_symlink fontconfig ~/.config/fontconfig
   ensure_symlink ghostty/config-linux ~/.config/ghostty/config
-  ensure_symlink gtk-2.0/.gtkrc-2.0 ~/.gtkrc-2.0
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0
-  ensure_symlink i3 ~/.config/i3
-  ensure_symlink i3blocks ~/.config/i3blocks
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   merge_ini keepassxc/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
-  ensure_symlink picom ~/.config/picom
-  ensure_symlink x/.xinitrc ~/.xinitrc
+  ensure_symlink sway ~/.config/sway
+  ensure_symlink swaylock ~/.config/swaylock
+  ensure_symlink waybar ~/.config/waybar
   ensure_symlink xdg-autostart ~/.config/autostart
   ensure_symlink yay/config.json ~/.config/yay/config.json
+  ensure_symlink zsh/.zprofile ~/.zprofile
 fi
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json
@@ -279,16 +277,16 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   fi
   # pi isn't packaged: `npm install -g @mariozechner/pi-coding-agent`
 
-  # List packages for graphical machines. Detect them by `xorg-server` rather
-  # than `DISPLAY`, which is unset over SSH/mosh and set by X forwarding. Set
+  # List packages for graphical machines. Detect them by `sway` (or by
+  # `xorg-server` on machines that I haven't moved to Sway yet) rather than
+  # `WAYLAND_DISPLAY`, which is unset whenever Sway isn't running. Set
   # `GRAPHICAL=1` to install these on a new machine
-  if [[ -n ${GRAPHICAL:-} ]] || pacman -Qq xorg-server &> /dev/null; then
+  if [[ -n ${GRAPHICAL:-} ]] || pacman -Qq sway &> /dev/null || pacman -Qq xorg-server &> /dev/null; then
     pkgs+=(
-      acpi
       alsa-utils
-      bc # i3blocks' bandwidth block uses bc to show rates above 1 MiB/s in MiB
+      brightnessctl
+      cliphist
       dex
-      dmenu
       docker
       docker-buildx
       docker-compose
@@ -298,49 +296,45 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       ghostty
       gimp
       gvfs
-      i3-wm
-      i3blocks
-      i3blocks-contrib-git
       imagemagick
       keepassxc
+      libnotify # Provides `notify-send` for Waybar's low-battery warnings
       mpv
       network-manager-applet
       noto-fonts
       noto-fonts-cjk
       noto-fonts-emoji
       pacgraph
-      picom
       pipewire
       pipewire-alsa
       pipewire-pulse
       qownnotes
+      qt6-wayland # Lets Qt apps (e.g. KeePassXC) run natively instead of via XWayland
       ristretto
-      sysstat
+      sway
+      sway-contrib # Provides grimshot
+      swaybg
+      swayidle
+      swaylock
       thunar
       thunar-archive-plugin
       ttf-dejavu
       ttf-liberation
       ttf-ms-fonts # Real Verdana, Georgia, etc. instead of Noto fallbacks
       ttf-roboto
+      upower # Hibernates or powers off at 2% battery. See `CriticalPowerAction` in `/etc/UPower/UPower.conf`
       vocalinux
+      waybar
       wireplumber
+      wl-clipboard
+      wmenu
+      wtype
       xarchiver
-      xclip
-      xdotool
-      xfce-polkit
-      xfce4-clipman-plugin
-      xfce4-power-manager
-      xfce4-screenshooter
-      xorg-server
-      xorg-xinit
-      xorg-xset
+      xdg-desktop-portal-wlr # Lets apps (e.g. Firefox) share and screenshot the screen
+      xfce-polkit            # Shows password prompts when GUI apps need root (e.g. nm-applet)
+      xorg-xwayland
       xpra
-      xsecurelock
-      xss-lock
     )
-    if [[ "$(hostnamectl chassis 2> /dev/null)" == desktop ]]; then
-      pkgs+=(numlockx)
-    fi
   fi
 
   # Find and install missing packages
@@ -377,6 +371,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
 --system cronie.service
 --system docker.service
 --system tailscaled.service
+--system upower.service
 --user ssh-agent.socket
 --user syncthing.service
 EOF
@@ -407,10 +402,8 @@ EOF
     fi
   fi
 
-  # Set xfconf properties, which can't be symlinked since xfconfd saves each
-  # channel via temp file + rename(). Make xfce4-power-manager let logind handle
-  # the lid (for suspend-then-hibernate), and lock via xss-lock since xfpm's
-  # default lockers (e.g. `xflock4`) aren't installed
+  # Set Thunar's xfconf properties, which can't be symlinked since xfconfd saves
+  # each channel via temp file + rename()
   while read -r channel prop type value; do
     if ! command -v xfconf-query > /dev/null; then
       logI "Skipping ${channel}${prop} since xfconf isn't installed"
@@ -434,8 +427,6 @@ thunar /misc-single-click bool false
 thunar /misc-symbolic-icons-in-sidepane bool false
 thunar /shortcuts-icon-emblems bool true
 thunar /shortcuts-icon-size string THUNAR_ICON_SIZE_24
-xfce4-power-manager /xfce4-power-manager/logind-handle-lid-switch bool true
-xfce4-session /general/LockCommand string loginctl lock-session
 EOF
 
   # Install my /etc files from etc/common, then from this machine's overlay (e.g.
@@ -478,16 +469,15 @@ EOF
   done < <(find /etc -name '9[01]-dotfiles.*' 2> /dev/null)
 
   # Apply changed /etc files. Dedupe the commands since several files can share
-  # one. X11 changes need a new X server, which would kill this session. logind
-  # reloads on SIGHUP without dropping sessions since systemd 254. udevd rereads
-  # changed rules by itself before it handles new events, so a trigger is enough
+  # one. logind reloads on SIGHUP without dropping sessions since systemd 254.
+  # udevd rereads changed rules by itself before it handles new events, so a
+  # trigger is enough
   declare -A etc_cmds=()
   for dst in "${etc_changed[@]}"; do
     case ${dst} in
       /etc/NetworkManager/*) etc_cmds['sudo nmcli general reload']=1 ;;
       /etc/mkinitcpio.conf.d/*) etc_cmds['sudo mkinitcpio -P']=1 ;;
       /etc/systemd/journald.conf.d/*) etc_cmds['sudo systemctl restart systemd-journald']=1 ;;
-      /etc/X11/*) logE "Changed ${dst}. Please log out and back in to apply" ;;
       /etc/systemd/logind.conf.d/*) etc_cmds['sudo systemctl reload systemd-logind']=1 ;;
       /etc/udev/rules.d/*) etc_cmds['sudo udevadm trigger --subsystem-match=serio']=1 ;;
     esac

@@ -357,10 +357,10 @@ function send() (
     else
       # Strip each file URI's `file://` prefix and decode its `%XX` escapes
       local uri
-      for uri in ${(M)${(f)"$(xclip -sel c -t text/uri-list -o 2>/dev/null | tr -d '\r')"}:#file://*}; do
+      for uri in ${(M)${(f)"$(wl-paste -n -t text/uri-list 2>/dev/null | tr -d '\r')"}:#file://*}; do
         items+=("$(printf '%b' "${${uri#file://}//\%/\\x}")")
       done
-      (( ${#items} )) || xclip -sel c -t image/png -o > "${tmp}" 2>/dev/null || xclip -sel c -o > "${tmp}"
+      (( ${#items} )) || wl-paste -t image/png > "${tmp}" 2>/dev/null || wl-paste -n > "${tmp}"
     fi
     (( ${#items} )) || items=("${tmp}")
   fi
@@ -504,20 +504,19 @@ autoload bashcompinit && bashcompinit
 export PATH
 PATH="${HOME}/.local/bin:${HOME}/bin:${PATH}"
 
-# Switch between QWERTY and Dvorak
-if _command_exists setxkbmap; then
-  alias aoeu='setxkbmap us'
-  alias asdf='setxkbmap us dvorak'
-  # alias thai='setxkbmap -layout th -variant pat'
-  # alias  ้ทงก='setxkbmap us dvorak'
+# Switch between QWERTY and Dvorak, i.e. the layouts in my Sway config. Pass the
+# newest IPC socket since SSH lacks `SWAYSOCK` and tmux can keep a stale one
+if _command_exists swaymsg; then
+  alias aoeu='swaymsg -s "${XDG_RUNTIME_DIR}"/sway-ipc.*.sock(=om[1]) input type:keyboard xkb_switch_layout 1'
+  alias asdf='swaymsg -s "${XDG_RUNTIME_DIR}"/sway-ipc.*.sock(=om[1]) input type:keyboard xkb_switch_layout 0'
 fi
 
 # Pipe stdout to clipboard via echo "foo" | xc
-if _command_exists xclip; then
-  alias xc='xclip -selection clipboard'
-  alias xp='xclip -selection clipboard -o'
+if _command_exists wl-copy; then
+  alias xc='wl-copy'
+  alias xp='wl-paste -n'
   if _command_exists jq; then
-    alias xj='xclip -selection clipboard -o | jq -S . | xclip -selection clipboard'
+    alias xj='wl-paste -n | jq -S . | wl-copy'
   fi
 elif _command_exists pbcopy; then
   alias xc='pbcopy'
@@ -583,13 +582,6 @@ else
       paccache -rk1
       paccache -ruk0
       yay -Sac --noconfirm
-    fi
-
-    # Reapply input settings
-    if _command_exists synclient; then
-      synclient TapButton1=1
-      synclient TapButton2=3
-      synclient TapButton3=2
     fi
 
     # Restart outdated Claude sessions
@@ -857,9 +849,17 @@ if [[ $IS_MAC = true ]]; then
   PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:${PATH}"
 fi
 
-# X
+# Let GUI and clipboard commands from SSH, mosh, and tmux reach my Sway session
+# and its XWayland. Check the sockets first since wlroots would otherwise run a
+# `sway` typed on a TTY nested inside these (nonexistent) displays. Sway skips
+# `wayland-0`, so its first socket is `wayland-1`
 # https://stackoverflow.com/a/79028896
-export DISPLAY=:0
+if [[ -S /tmp/.X11-unix/X0 ]]; then
+  export DISPLAY=:0
+fi
+if [[ -S "${XDG_RUNTIME_DIR:-}/wayland-1" ]]; then
+  export WAYLAND_DISPLAY=wayland-1
+fi
 
 # zsh-autosuggestions
 _source_if_exists /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh

@@ -1,0 +1,6 @@
+# Override `/etc/xdg/autostart/nm-applet.desktop` to show the tray icon via
+# StatusNotifierItem, since Waybar doesn't support XEmbed
+[Desktop Entry]
+Exec=nm-applet --indicator
+Name=Network
+Type=Application

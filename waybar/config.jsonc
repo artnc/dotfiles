@@ -1,0 +1,112 @@
+// See `man 5 waybar` and `man 5 waybar-<module>`, e.g. `man 5 waybar-clock`
+{
+  // Warn before upower hibernates or powers off at 2%, like xfce4-power-manager
+  // did. Each command runs once when the battery enters that state
+  "battery": {
+    "events": {
+      "on-discharging-critical": "notify-send -u critical 'Battery critical' 'Plug in now'",
+      "on-discharging-warning": "notify-send 'Battery low'"
+    },
+    "format": "⚡ {capacity}%",
+    "format-charging": "⚡ {capacity}% CHR {time}",
+    "format-discharging": "⚡ {capacity}% DIS {time}",
+    "format-time": "({H}:{m})",
+    "states": {
+      "critical": 10,
+      "warning": 25
+    }
+  },
+  "clock": {
+    "format": "{:%a %d %b %H:%M:%S}",
+    "interval": 1
+  },
+  "clock#utc": {
+    "format": "UTC {:%H:%M}",
+    "timezone": "Etc/UTC"
+  },
+  // Waybar counts iowait as idle (like htop). That matters on x13, whose kernel
+  // leaks its `nr_iowait` counter. Idle time would otherwise show as ~60% usage
+  "cpu": {
+    "format": "CPU {usage:2}%",
+    "states": {
+      "critical": 80,
+      "warning": 50
+    }
+  },
+  // Show Claude.ai session and weekly usage limits
+  "custom/claude": {
+    "exec": "~/.config/waybar/claude_usage",
+    "interval": 60
+  },
+  // Show usage of `/`, plus `/home` if it's a separate filesystem
+  "custom/disk": {
+    "exec": "df --output=target,pcent / /home | awk 'NR > 1 && !seen[$1]++ {print $2}' | paste -sd ' '",
+    "format": "DISK {}",
+    "interval": 60
+  },
+  // Ping Google to check internet connectivity, since it's more trustworthy
+  // than nm-applet
+  "custom/online": {
+    "exec": "~/.config/waybar/indicator NET ping -c1 -q 8.8.8.8",
+    "interval": 5
+  },
+  // Show days since the last full system upgrade.
+  // https://bbs.archlinux.org/viewtopic.php?id=235555
+  "custom/upgraded": {
+    "exec": "echo $((($(date +%s) - $(date -d \"$(grep 'starting full system upgrade' /var/log/pacman.log | tail -1 | cut -c2-25)\" +%s)) / 86400))",
+    "format": "PU {}d",
+    "interval": 3600
+  },
+  "custom/uptime": {
+    "exec": "awk '{print int($1 / 86400)}' /proc/uptime",
+    "format": "UP {}d",
+    "interval": 3600
+  },
+  // Check whether Tailscale is connected
+  "custom/vpn": {
+    "exec": "~/.config/waybar/indicator VPN tailscale status",
+    "interval": 5
+  },
+  "memory": {
+    "format": "MEM {used:.2f} GB",
+    "states": {
+      "critical": 90
+    }
+  },
+  "modules-left": ["sway/workspaces", "sway/mode"],
+  "modules-right": [
+    "pulseaudio",
+    "network",
+    "custom/online",
+    "custom/vpn",
+    "battery",
+    "temperature",
+    "custom/uptime",
+    "custom/upgraded",
+    "custom/disk",
+    "memory",
+    "cpu",
+    "custom/claude",
+    "clock#utc",
+    "clock",
+    "tray"
+  ],
+  "network": {
+    "format": "▼ {bandwidthDownBytesCompact} ▲ {bandwidthUpBytesCompact}",
+    "interval": 5
+  },
+  // Sway's volume keys change PipeWire's volume via `pactl`. This module
+  // updates as soon as it changes
+  "pulseaudio": {
+    "format": "♪ {volume}%",
+    "format-muted": "♪ MUTE"
+  },
+  "temperature": {
+    "critical-threshold": 90,
+    "format": "❄ {temperatureC}°C",
+    "warning-threshold": 70
+  },
+  "tray": {
+    "spacing": 8
+  }
+}

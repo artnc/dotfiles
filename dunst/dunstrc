@@ -14,7 +14,7 @@ horizontal_padding = 12
 icon_corner_radius = 0
 icon_theme = Adwaita
 max_icon_size = 48
-# Clear the i3bar at the top of the screen
+# Clear Waybar at the top of the screen
 offset = (12, 32)
 origin = top-right
 padding = 10

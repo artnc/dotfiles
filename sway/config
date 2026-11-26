@@ -1,8 +1,7 @@
 # Mod key
 set $mod Mod4
 
-# Font for window titles. Will also be used by the bar unless a different font
-# is used in the bar {} block below.
+# Font for window titles. `waybar/style.css` repeats it since Waybar ignores it
 font pango:DejaVu Sans Mono 9
 
 # Disable focused window styling by setting it equal to unfocused styling
@@ -11,18 +10,15 @@ client.focused #333333 #222222 #888888 #292d2e #222222
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# Hide title bar of some programs
-for_window [title="(Android Studio|Mozilla Firefox|File Manager|urxvt)"] border pixel 0
+# Hide title bars of tiled windows. Tabbed and stacked containers still show
+# titles, and floating windows (e.g. dialogs) keep theirs
+default_border pixel 0
 
 # kill focused window
 bindsym $mod+Shift+apostrophe kill
 
-# start dmenu (a program launcher)
-bindsym $mod+e exec dmenu_run
-# There also is the (new) i3-dmenu-desktop which only displays applications
-# shipping a .desktop file. It is a wrapper around dmenu, so you need that
-# installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+# start wmenu (a program launcher like dmenu)
+bindsym $mod+e exec wmenu-run
 
 # change focus
 # bindsym $mod+h focus left
@@ -86,17 +82,18 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
-# https://unix.stackexchange.com/a/566593
-bindsym $mod+mod2+KP_1 workspace 1
-bindsym $mod+mod2+KP_2 workspace 2
-bindsym $mod+mod2+KP_3 workspace 3
-bindsym $mod+mod2+KP_4 workspace 4
-bindsym $mod+mod2+KP_5 workspace 5
-bindsym $mod+mod2+KP_6 workspace 6
-bindsym $mod+mod2+KP_7 workspace 7
-bindsym $mod+mod2+KP_8 workspace 8
-bindsym $mod+mod2+KP_9 workspace 9
-bindsym $mod+mod2+KP_0 workspace 10
+# Switch workspace with the numpad. Omit NumLock's `Mod2`, which i3 needed
+# (https://unix.stackexchange.com/a/566593), since Sway ignores locked modifiers
+bindsym $mod+KP_1 workspace 1
+bindsym $mod+KP_2 workspace 2
+bindsym $mod+KP_3 workspace 3
+bindsym $mod+KP_4 workspace 4
+bindsym $mod+KP_5 workspace 5
+bindsym $mod+KP_6 workspace 6
+bindsym $mod+KP_7 workspace 7
+bindsym $mod+KP_8 workspace 8
+bindsym $mod+KP_9 workspace 9
+bindsym $mod+KP_0 workspace 10
 
 # switch to previous/next workspace
 bindsym $mod+Shift+Tab workspace prev
@@ -118,18 +115,19 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
-# change volume (don't use amixer! see chaidarun.com/arch-notes), then send
-# signal 10 to refresh the i3blocks volume block
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && pkill -RTMIN+10 i3blocks
+# change volume (don't use amixer! see chaidarun.com/arch-notes)
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+
+# change screen brightness
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 # reload the configuration file
 bindsym $mod+Shift+j reload
-# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+p restart
-# exit i3 (logs you out of your X session)
-bindsym $mod+Shift+period exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+# exit sway (logs you out of your Wayland session)
+bindsym $mod+Shift+period exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -157,28 +155,68 @@ mode "resize" {
 
 bindsym $mod+p mode "resize"
 
-bindsym $mod+l exec --no-startup-id loginctl lock-session
+bindsym $mod+l exec loginctl lock-session
 
-# Take screenshot
-bindsym Print exec --no-startup-id xfce4-screenshooter
+# Take screenshot of a clicked window or output, or a dragged area. Save it to
+# `XDG_PICTURES_DIR` (else `~`) and copy it to the clipboard
+bindsym Print exec grimshot --notify savecopy anything
+
+# Pick a clipboard history entry to copy again. Skip `wl-copy` if I cancel,
+# since it would copy the empty input over the clipboard
+bindsym $mod+v exec sel=$(cliphist list | wmenu -l 10) && echo "$sel" | cliphist decode | wl-copy
 
 # Type email addresses. Sleep first so that typing doesn't start while keys are
 # still down. base64-encoded to evade crude GitHub scrapers
-bindsym Control+Mod1+c exec --no-startup-id sleep 0.3 && xdotool type $(printf %s YXJ0QGNoYWlkYXJ1bi5jb20= | base64 -d)
-bindsym Control+Mod1+d exec --no-startup-id sleep 0.3 && xdotool type $(printf %s YXJ0QGR1b2xpbmdvLmNvbQ== | base64 -d)
-bindsym Control+Mod1+e exec --no-startup-id sleep 0.3 && xdotool type $(printf %s YXJ0Y2hhaWRhcnVuQGdtYWlsLmNvbQ== | base64 -d)
+bindsym Control+Mod1+c exec sleep 0.3 && wtype $(printf %s YXJ0QGNoYWlkYXJ1bi5jb20= | base64 -d)
+bindsym Control+Mod1+d exec sleep 0.3 && wtype $(printf %s YXJ0QGR1b2xpbmdvLmNvbQ== | base64 -d)
+bindsym Control+Mod1+e exec sleep 0.3 && wtype $(printf %s YXJ0Y2hhaWRhcnVuQGdtYWlsLmNvbQ== | base64 -d)
+
+# Push to talk with vocalinux via D-Bus. Its own F1 listener needs the `input`
+# group on Wayland, which would let every app read all keystrokes
+bindsym --no-repeat F1 exec vocalinux --start
+bindsym --release F1 exec vocalinux --stop
 
 # Dismiss notification, or show the previous one again
-bindsym $mod+grave exec --no-startup-id dunstctl close
-bindsym $mod+Shift+grave exec --no-startup-id dunstctl history-pop
+bindsym $mod+grave exec dunstctl close
+bindsym $mod+Shift+grave exec dunstctl history-pop
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
+# Start Waybar instead of swaybar since swaybar can't open tray icons' menus
 bar {
-        position top
-        status_command i3blocks
-        tray_output primary
+  swaybar_command waybar
 }
 
+# Use Dvorak, plus a QWERTY layout that `aoeu` in `.zshrc` switches to. Remap
+# Caps Lock to Super
+input type:keyboard {
+  xkb_layout us,us
+  xkb_numlock enabled
+  xkb_options caps:super
+  xkb_variant dvorak,
+}
+
+# Enable tap-to-click. libinput's default `lrm` button map makes two- and
+# three-finger taps right- and middle-click
+input type:touchpad {
+  tap enabled
+}
+
+# Import `DISPLAY`, `WAYLAND_DISPLAY`, etc. into the systemd user env for
+# D-Bus-activated apps (e.g. dunst and xdg-desktop-portal-wlr). Do this before
+# the execs below so that it starts first. Sway doesn't wait for an `exec` to
+# finish, so an app that activates one of them right away could still win
+include /etc/sway/config.d/*
+
+# Set wallpaper if this machine has the file. `output * bg` would show an error
+# bar on machines without it
+exec swaybg -m stretch -i ~/Pictures/Wallpapers/smoke/01.png
+
+# Lock after 9 minutes idle, before sleep, and on `loginctl lock-session`. Turn
+# off screens 1 minute after the idle lock
+exec swayidle -w timeout 540 swaylock timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep swaylock lock swaylock
+
+# Record clipboard history. cliphist skips entries that apps (e.g. KeePassXC)
+# mark as sensitive via `x-kde-passwordManagerHint`
+exec wl-paste --watch cliphist store
+
 # Run XDG autostart entries (~/.config/autostart, /etc/xdg/autostart)
-exec --no-startup-id dex --autostart --environment i3
+exec dex --autostart --environment sway

@@ -1,0 +1,66 @@
+/* Mimic swaybar's default colors and Sway's `font` setting */
+window#waybar {
+  background: #000000;
+  color: #ffffff;
+  font-family: "DejaVu Sans Mono";
+  font-size: 9pt;
+}
+
+/* Override the GTK theme's button styles. Adwaita's 16px `min-width` makes
+   single-digit buttons wider than swaybar's, which pad 5px around the label */
+#workspaces button {
+  background: #222222;
+  border: 1px solid #333333;
+  border-radius: 0;
+  box-shadow: none;
+  color: #888888;
+  min-height: 0;
+  min-width: 0;
+  padding: 0 5px;
+  text-shadow: none;
+}
+
+/* Highlight workspaces that are visible on another output */
+#workspaces button.visible {
+  background: #5f676a;
+  color: #ffffff;
+}
+
+#workspaces button.focused {
+  background: #285577;
+  border-color: #4c7899;
+  color: #ffffff;
+}
+
+/* Show urgent workspaces and binding modes (e.g. "resize") in red */
+#mode,
+#workspaces button.urgent {
+  background: #900000;
+  border: 1px solid #2f343a;
+  color: #ffffff;
+  padding: 0 5px;
+}
+
+/* Separate status modules with gray lines like swaybar's separators */
+.modules-right > widget > * {
+  padding: 0 7px;
+}
+.modules-right > widget:not(:first-child) > * {
+  border-left: 1px solid #666666;
+}
+
+/* Color modules by their `states` and temperature thresholds */
+.warning {
+  color: #fffc00;
+}
+.critical {
+  color: #ff0000;
+}
+
+/* Give tray menus the normal GTK font (`gtk-font-name`) instead of the bar's.
+   GTK styles menus as children of the widget they're attached to, so they
+   inherit the bar's font otherwise */
+menu {
+  font-family: initial;
+  font-size: initial;
+}

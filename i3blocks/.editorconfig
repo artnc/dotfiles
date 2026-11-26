@@ -1,3 +1,0 @@
-[config]
-# As of i3blocks 1.5, a space must be explicitly appended to each `label` to serve as a separator
-trim_trailing_whitespace=false
