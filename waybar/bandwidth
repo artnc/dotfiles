@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Prints download and upload speeds in MB/s every 5 seconds, e.g. "▼ 0.4 ▲  12".
+# Shows one decimal below 10 and none above, which Waybar's network module can't
+# do. Counts only physical interfaces (those with a `device` link) so that
+# Tailscale and Docker traffic isn't counted twice
+
+set -eu
+shopt -s nullglob
+
+# Prints total bytes received and sent by physical interfaces, e.g. "123 456"
+totals() {
+  local rx=0 tx=0 dev
+  for dev in /sys/class/net/*/device; do
+    rx=$((rx + $(< "${dev%/device}/statistics/rx_bytes")))
+    tx=$((tx + $(< "${dev%/device}/statistics/tx_bytes")))
+  done
+  echo "${rx} ${tx}"
+}
+
+read -r rx tx <<< "$(totals)"
+while sleep 5; do
+  read -r new_rx new_tx <<< "$(totals)"
+
+  # Drop a ".0" suffix, then pad to 3 characters so that the module keeps its
+  # width. Clamp negative deltas, which happen when an interface disappears
+  # (e.g. an unplugged dock)
+  awk -v rx=$((new_rx - rx)) -v tx=$((new_tx - tx)) '
+    function mb(b) {
+      v = (b > 0 ? b : 0) / 5e6
+      s = sprintf(v >= 9.95 ? "%.0f" : "%.1f", v)
+      sub(/\.0$/, "", s)
+      return sprintf("%3s", s)
+    }
+    BEGIN { print "▼", mb(rx), "▲", mb(tx) }
+  '
+  rx=${new_rx} tx=${new_tx}
+done

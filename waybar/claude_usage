@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
-# Shows Claude.ai usage: "CC <session%> <session_reset> <weekly%> <weekly_reset>".
-# Reads ORG_ID and SESSION_KEY from ~/.config/claude-usage/env.
-# Get SESSION_KEY from the `sessionKey` cookie at claude.ai (devtools > Application > Cookies).
+# Prints Claude.ai usage as Waybar JSON, e.g. "CC 12% 4.6h 41% 2.4d" for the
+# session and weekly limits and the time until each resets. Reads `ORG_ID` and
+# `SESSION_KEY` from `~/.config/claude-usage/env`. Get `SESSION_KEY` from the
+# `sessionKey` cookie at claude.ai (devtools > Application > Cookies)
 
 set -eu
 
 config_file="${HOME}/.config/claude-usage/env"
-fallback='CC ?'
+# Pad fields to fixed widths so that the module doesn't resize
+text_format='CC %3s%% %4s %3s%% %4s'
+
+# Print question marks with the reason in the tooltip, then exit
+fail() {
+  jq -cn --arg text "$(printf "${text_format}" '?' '?' '?' '?')" --arg tooltip "${1}" '{$text, $tooltip}'
+  exit 0
+}
 
 if [[ ! -r ${config_file} ]]; then
-  echo "${fallback}"
-  exit 0
+  fail "Can't read ${config_file}"
 fi
 
 # shellcheck source=/dev/null
@@ -23,16 +30,10 @@ response="$(curl -fsS --max-time 10 --compressed \
   -H 'Referer: https://claude.ai/settings/usage' \
   -H 'anthropic-client-platform: web_claude_ai' \
   -H 'content-type: application/json' \
-  -H "Cookie: sessionKey=${SESSION_KEY}" 2> /dev/null)" || {
-  echo "${fallback}"
-  exit 0
-}
+  -H "Cookie: sessionKey=${SESSION_KEY}" 2> /dev/null)" || fail 'Request to claude.ai failed'
 
 parsed="$(echo "${response}" | jq -r \
-  '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || {
-  echo "${fallback}"
-  exit 0
-}
+  '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || fail "Can't parse the response"
 
 IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
 
@@ -42,7 +43,8 @@ IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parse
 [[ ${weekly_pct} =~ ^[0-9]+$ ]] || weekly_pct=0
 
 now_ts="$(date +%s)"
-# Formats time until reset like the Claude Code status line: "Xm" under 1h, "X.Yh" under 1d, else "X.Yd"
+# Formats time until reset like the Claude Code status line: "Xm" under 1h,
+# "X.Yh" under 1d, else "X.Yd"
 time_until() {
   local iso="$1"
   if [[ -z ${iso} ]]; then
@@ -75,23 +77,25 @@ time_until() {
   echo "$((tenths / 10))${suffix%.0}${unit}"
 }
 
-# Color a percentage based on proximity to 100%
-color_pct() {
-  local pct="$1"
-  local color
-  if ((pct >= 90)); then
-    color='#ff4040'
-  elif ((pct >= 75)); then
-    color='#ff8c00'
-  elif ((pct >= 50)); then
-    color='#ffd700'
-  elif ((pct >= 25)); then
-    color='#adff2f'
-  else
-    color='#90ee90'
+# Formats a reset time like the clock module, e.g. "Thu 26 Nov 06:00"
+reset_at() {
+  if [[ -n ${1} ]] && date -d "${1}" '+%a %d %b %H:%M' 2> /dev/null; then
+    return
   fi
-  echo "<span foreground=\"${color}\">${pct}%</span>"
+  echo '?'
 }
 
-output="CC $(color_pct "${session_pct}") $(time_until "${session_reset}") $(color_pct "${weekly_pct}") $(time_until "${weekly_reset}")"
-echo "${output}"
+# Color the module like the CPU and memory modules when either limit is close
+class=''
+if ((session_pct >= 90 || weekly_pct >= 90)); then
+  class='critical'
+elif ((session_pct >= 75 || weekly_pct >= 75)); then
+  class='warning'
+fi
+
+# Show the time until each reset in the text, and the exact times in the tooltip
+jq -cn \
+  --arg class "${class}" \
+  --arg text "$(printf "${text_format}" "${session_pct}" "$(time_until "${session_reset}")" "${weekly_pct}" "$(time_until "${weekly_reset}")")" \
+  --arg tooltip "Session: ${session_pct}%, resets $(reset_at "${session_reset}")"$'\n'"Weekly: ${weekly_pct}%, resets $(reset_at "${weekly_reset}")" \
+  '{$class, $text, $tooltip}'

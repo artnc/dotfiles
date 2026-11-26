@@ -41,6 +41,11 @@ window#waybar {
   padding: 0 5px;
 }
 
+/* Space the focused window's title away from the workspace buttons */
+#window {
+  padding: 0 10px;
+}
+
 /* Separate status modules with gray lines like swaybar's separators */
 .modules-right > widget > * {
   padding: 0 7px;

@@ -1,4 +1,6 @@
-// See `man 5 waybar` and `man 5 waybar-<module>`, e.g. `man 5 waybar-clock`
+// See `man 5 waybar` and `man 5 waybar-<module>`, e.g. `man 5 waybar-clock`.
+// Formats pad numbers to fixed widths (e.g. `{usage:3}`) so that modules don't
+// shift each other as values change
 {
   // Warn before upower hibernates or powers off at 2%, like xfce4-power-manager
   // did. Each command runs once when the battery enters that state
@@ -7,10 +9,12 @@
       "on-discharging-critical": "notify-send -u critical 'Battery critical' 'Plug in now'",
       "on-discharging-warning": "notify-send 'Battery low'"
     },
-    "format": "⚡ {capacity}%",
-    "format-charging": "⚡ {capacity}% CHR {time}",
-    "format-discharging": "⚡ {capacity}% DIS {time}",
+    "align": 0,
+    "format": "⚡ {capacity:3}%",
+    "format-charging": "⚡ {capacity:3}% CHR {time}",
+    "format-discharging": "⚡ {capacity:3}% DIS {time}",
     "format-time": "({H}:{m})",
+    "min-length": 17, // Fits "⚡ 100% DIS (9:59)" so that states share a width
     "states": {
       "critical": 10,
       "warning": 25
@@ -20,27 +24,32 @@
     "format": "{:%a %d %b %H:%M:%S}",
     "interval": 1
   },
-  "clock#utc": {
-    "format": "UTC {:%H:%M}",
-    "timezone": "Etc/UTC"
-  },
   // Waybar counts iowait as idle (like htop). That matters on x13, whose kernel
   // leaks its `nr_iowait` counter. Idle time would otherwise show as ~60% usage
   "cpu": {
-    "format": "CPU {usage:2}%",
+    "format": "CPU {usage:3}%",
     "states": {
       "critical": 80,
       "warning": 50
     }
   },
-  // Show Claude.ai session and weekly usage limits
+  // Show Claude.ai session and weekly usage limits. Click to open the usage page
   "custom/claude": {
     "exec": "~/.config/waybar/claude_usage",
-    "interval": 60
+    "interval": 60,
+    "on-click": "xdg-open https://claude.ai/settings/usage",
+    "return-type": "json"
   },
-  // Show usage of `/`, plus `/home` if it's a separate filesystem
+  // Show network speeds in MB/s, so that small values don't look big (e.g.
+  // "727B" vs "2kB"). The script prints a line every 5 seconds
+  "custom/bandwidth": {
+    "exec": "~/.config/waybar/bandwidth",
+    "restart-interval": 5
+  },
+  // Show usage of `/`, plus `/home` if it's a separate filesystem. The second
+  // line of output is the tooltip
   "custom/disk": {
-    "exec": "df --output=target,pcent / /home | awk 'NR > 1 && !seen[$1]++ {print $2}' | paste -sd ' '",
+    "exec": "df -h --output=target,pcent,avail / /home | awk 'NR > 1 && !seen[$1]++ {p = p s sprintf(\"%3s\", $2); f = f t $1 \": \" $3 \" free\"; s = \" \"; t = \", \"} END {print p; print f}'",
     "format": "DISK {}",
     "interval": 60
   },
@@ -50,57 +59,69 @@
     "exec": "~/.config/waybar/indicator NET ping -c1 -q 8.8.8.8",
     "interval": 5
   },
-  // Show days since the last full system upgrade.
-  // https://bbs.archlinux.org/viewtopic.php?id=235555
+  // Show days since the last full system upgrade
   "custom/upgraded": {
-    "exec": "echo $((($(date +%s) - $(date -d \"$(grep 'starting full system upgrade' /var/log/pacman.log | tail -1 | cut -c2-25)\" +%s)) / 86400))",
-    "format": "PU {}d",
-    "interval": 3600
+    "exec": "~/.config/waybar/upgraded",
+    "format": "PU {text:>2}d",
+    "interval": 3600,
+    "return-type": "json"
   },
+  // Show days since boot, with the boot time in the tooltip
   "custom/uptime": {
-    "exec": "awk '{print int($1 / 86400)}' /proc/uptime",
-    "format": "UP {}d",
+    "exec": "awk '{print int($1 / 86400)}' /proc/uptime && date -d \"$(uptime -s)\" '+Booted %a %d %b %H:%M'",
+    "format": "UP {text:>2}d",
     "interval": 3600
   },
   "memory": {
-    "format": "MEM {used:.2f} GB",
+    "format": "MEM {used:5.2f} GB",
     "states": {
       "critical": 90
     }
   },
-  "modules-left": ["sway/workspaces", "sway/mode"],
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
+  // Group related modules. Order the groups from least to most often checked,
+  // and order system stats from slowest to fastest changing
   "modules-right": [
-    "pulseaudio",
-    "network",
-    "custom/online",
-    "battery",
-    "temperature",
     "custom/uptime",
     "custom/upgraded",
     "custom/disk",
     "memory",
     "cpu",
+    "temperature",
+    "custom/bandwidth",
+    "custom/online",
+    "pulseaudio",
+    "battery",
     "custom/claude",
-    "clock#utc",
     "clock",
     "tray"
   ],
-  "network": {
-    "format": "▼ {bandwidthDownBytesCompact} ▲ {bandwidthUpBytesCompact}",
-    "interval": 5
-  },
   // Sway's volume keys change PipeWire's volume via `pactl`. This module
   // updates as soon as it changes
   "pulseaudio": {
-    "format": "♪ {volume}%",
-    "format-muted": "♪ MUTE"
+    "format": "♪ {volume:3}%",
+    "format-muted": "♪ MUTE",
+    "scroll-step": 5
+  },
+  "reload_style_on_change": true,
+  // Show the focused window's title, since Sway hides title bars. It's on the
+  // left because the right modules extend past the center of the bar
+  "sway/window": {
+    "max-length": 80
   },
   "temperature": {
     "critical-threshold": 90,
-    "format": "❄ {temperatureC}°C",
+    "format": "❄ {temperatureC:3}°C",
     "warning-threshold": 70
   },
+  // Pin tray icons' order. Otherwise they appear in the order that their apps
+  // start in, which varies between logins
   "tray": {
+    "orders": {
+      "nm-applet": 3,
+      "tailscale": 2,
+      "vocalinux": 1
+    },
     "spacing": 8
   }
 }

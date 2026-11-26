@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Prints days since the last full system upgrade as Waybar JSON. Turns yellow
+# after 2 weeks and red after 30 days
+# https://bbs.archlinux.org/viewtopic.php?id=235555
+
+set -euo pipefail
+
+# Read the time of the last `pacman -Syu`, e.g. "2026-11-26T01:02:03-0500"
+upgraded_at="$(grep 'starting full system upgrade' /var/log/pacman.log | tail -1 | cut -c2-25)"
+days=$((($(date +%s) - $(date -d "${upgraded_at}" +%s)) / 86400))
+
+class=''
+if ((days >= 30)); then
+  class='critical'
+elif ((days >= 14)); then
+  class='warning'
+fi
+jq -cn --arg class "${class}" --arg text "${days}" --arg tooltip "Last full system upgrade: $(date -d "${upgraded_at}" '+%a %d %b %Y %H:%M')" '{$class, $text, $tooltip}'
