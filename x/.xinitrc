@@ -18,9 +18,6 @@ fi
 # https://bbs.archlinux.org/viewtopic.php?id=202812
 . /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
 
-# Load modifier key remappings
-[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
-
 # Set wallpaper
 [[ -f ~/.fehbg ]] && sh ~/.fehbg &
 

@@ -176,7 +176,6 @@ else
   merge_ini keepassxc/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
   ensure_symlink picom ~/.config/picom
   ensure_symlink x/.xinitrc ~/.xinitrc
-  ensure_symlink x/.Xmodmap ~/.Xmodmap
   ensure_symlink xdg-autostart ~/.config/autostart
   ensure_symlink yay/config.json ~/.config/yay/config.json
 fi

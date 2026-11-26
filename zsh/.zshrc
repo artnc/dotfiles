@@ -506,10 +506,10 @@ PATH="${HOME}/.local/bin:${HOME}/bin:${PATH}"
 
 # Switch between QWERTY and Dvorak
 if _command_exists setxkbmap; then
-  alias aoeu='setxkbmap us && xmodmap ${HOME}/.Xmodmap'
-  alias asdf='setxkbmap us dvorak && xmodmap ${HOME}/.Xmodmap'
-  # alias thai='setxkbmap -layout th -variant pat && xmodmap ${HOME}/.Xmodmap'
-  # alias  ้ทงก='setxkbmap us dvorak && xmodmap ${HOME}/.Xmodmap'
+  alias aoeu='setxkbmap us'
+  alias asdf='setxkbmap us dvorak'
+  # alias thai='setxkbmap -layout th -variant pat'
+  # alias  ้ทงก='setxkbmap us dvorak'
 fi
 
 # Pipe stdout to clipboard via echo "foo" | xc
@@ -586,9 +586,6 @@ else
     fi
 
     # Reapply input settings
-    if _command_exists xmodmap; then
-      xmodmap ~/.Xmodmap
-    fi
     if _command_exists synclient; then
       synclient TapButton1=1
       synclient TapButton2=3
