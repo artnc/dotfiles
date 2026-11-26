@@ -1,0 +1,6 @@
+# Show Tailscale's tray icon. It needs `tailscale set --operator=$USER` to
+# control tailscaled without root
+[Desktop Entry]
+Exec=tailscale systray
+Name=Tailscale
+Type=Application

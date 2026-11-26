@@ -62,11 +62,6 @@
     "format": "UP {}d",
     "interval": 3600
   },
-  // Check whether Tailscale is connected
-  "custom/vpn": {
-    "exec": "~/.config/waybar/indicator VPN tailscale status",
-    "interval": 5
-  },
   "memory": {
     "format": "MEM {used:.2f} GB",
     "states": {
@@ -78,7 +73,6 @@
     "pulseaudio",
     "network",
     "custom/online",
-    "custom/vpn",
     "battery",
     "temperature",
     "custom/uptime",
