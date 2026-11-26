@@ -560,8 +560,7 @@ else
       # https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#Detecting_more_unneeded_packages
       yay -Qqd | yay -Rsu - 2> >(grep -v ' from target list$' >&2)
     )
-    # https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported
-    alias pn="pu && yay -S"
+    alias pn='yay -S --needed'
     function px() (
       set -e
       yay -Rncs "${@}"
