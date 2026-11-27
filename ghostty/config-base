@@ -6,6 +6,8 @@ confirm-close-surface = false
 cursor-style = bar
 cursor-style-blink = true
 font-family = "DejaVu Sans Mono"
+# Rename tabs without clicking
+keybind = ctrl+shift+r=prompt_tab_title
 # Only integration feature I'd want is `cursor` which doesn't work in tmux
 # https://github.com/ghostty-org/ghostty/discussions/5802#discussioncomment-12218114
 shell-integration = none
