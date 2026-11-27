@@ -6,7 +6,7 @@ window#waybar {
   background: #000000;
   color: #ffffff;
   font-family: "DejaVu Sans Mono";
-  font-size: 9pt;
+  font-size: 10pt;
 }
 
 /* Override the GTK theme's button styles. Adwaita's 16px `min-width` makes

@@ -3,7 +3,7 @@ set $mod Mod4
 
 # Use the UI font for window titles, like Waybar's window title (see
 # `waybar/style.css`, since Waybar ignores this setting)
-font pango:Adwaita Sans 9
+font pango:Adwaita Sans 10
 
 # Use Modus Vivendi colors to match Ghostty (see `waybar/style.css`). Disable
 # focused window styling by giving focused windows the unfocused colors (border,
