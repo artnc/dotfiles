@@ -4,8 +4,16 @@ set $mod Mod4
 # Font for window titles. `waybar/style.css` repeats it since Waybar ignores it
 font pango:DejaVu Sans Mono 9
 
-# Disable focused window styling by setting it equal to unfocused styling
-client.focused #333333 #222222 #888888 #292d2e #222222
+# Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors. Disable focused
+# window styling by giving all title bars the same colors (border, background,
+# text, indicator, and child border)
+set $title_colors #272c42 #1e2132 #818596 #272c42 #1e2132
+client.focused $title_colors
+client.focused_inactive $title_colors
+client.unfocused $title_colors
+client.urgent #e27878 #e27878 #161821 #e27878 #e27878
+# Color wmenu's items, prompt, and selection like Waybar's focused workspace
+set $wmenu_colors -N 161821 -n c6c8d1 -M 84a0c6 -m 161821 -S 84a0c6 -s 161821
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -18,7 +26,7 @@ default_border pixel 0
 bindsym $mod+Shift+apostrophe kill
 
 # start wmenu (a program launcher like dmenu)
-bindsym $mod+e exec wmenu-run
+bindsym $mod+e exec wmenu-run $wmenu_colors
 
 # change focus
 # bindsym $mod+h focus left
@@ -126,8 +134,9 @@ bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 # reload the configuration file
 bindsym $mod+Shift+j reload
-# exit sway (logs you out of your Wayland session)
-bindsym $mod+Shift+period exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+# exit sway (logs you out of your Wayland session). Use Iceberg's dark and
+# light oranges
+bindsym $mod+Shift+period exec swaynag -t warning --background e2a478 --border 161821 --border-bottom c57339 --button-background e9b189 --button-text 161821 --text 161821 -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -163,7 +172,7 @@ bindsym Print exec grimshot --notify savecopy anything
 
 # Pick a clipboard history entry to copy again. Skip `wl-copy` if I cancel,
 # since it would copy the empty input over the clipboard
-bindsym $mod+v exec sel=$(cliphist list | wmenu -l 10) && echo "$sel" | cliphist decode | wl-copy
+bindsym $mod+v exec sel=$(cliphist list | wmenu -l 10 $wmenu_colors) && echo "$sel" | cliphist decode | wl-copy
 
 # Type email addresses. Sleep first so that typing doesn't start while keys are
 # still down. base64-encoded to evade crude GitHub scrapers

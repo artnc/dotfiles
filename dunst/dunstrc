@@ -22,25 +22,25 @@ padding = 10
 show_indicators = no
 width = (200, 500)
 
-# Use the Catppuccin Mocha palette (https://catppuccin.com/palette). Frames are
-# each background darkened to 40%, and `#3d1a22` is a custom dark red
+# Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors. Frames are each
+# background darkened to 40%
 [urgency_low]
-background = "#45475a"
-foreground = "#cdd6f4"
-frame_color = "#1b1c24"
+background = "#3d425b"
+foreground = "#c6c8d1"
+frame_color = "#181a24"
 timeout = 3
 
 [urgency_normal]
-background = "#89b4fa"
-foreground = "#1e1e2e"
-frame_color = "#364864"
-highlight = "#1e1e2e"
+background = "#84a0c6"
+foreground = "#161821"
+frame_color = "#35404f"
+highlight = "#161821"
 timeout = 5
 
 # Keep critical notifications (e.g. low battery) until I dismiss them
 [urgency_critical]
-background = "#f38ba8"
-foreground = "#3d1a22"
-frame_color = "#613743"
-highlight = "#3d1a22"
+background = "#e27878"
+foreground = "#161821"
+frame_color = "#5a3030"
+highlight = "#161821"
 timeout = 0

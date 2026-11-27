@@ -168,6 +168,7 @@ else
   ensure_symlink fontconfig ~/.config/fontconfig
   ensure_symlink ghostty/config-linux ~/.config/ghostty/config
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0
+  ensure_symlink gtk-4.0 ~/.config/gtk-4.0
   ensure_symlink iftop/.iftoprc ~/.iftoprc
   merge_ini keepassxc/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
   ensure_symlink sway ~/.config/sway
@@ -180,6 +181,7 @@ fi
 ensure_symlink claude/CLAUDE.md ~/.claude/CLAUDE.md
 ensure_symlink claude/settings.json ~/.claude/settings.json
 ensure_symlink claude/skills ~/.claude/skills
+ensure_symlink claude/themes ~/.claude/themes
 ensure_symlink ghostty/config-base ~/.config/ghostty/config-base
 ensure_symlink git/.git-template ~/.git-template
 ensure_symlink_if_artnc git/.gitconfig ~/.gitconfig
@@ -283,6 +285,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # `GRAPHICAL=1` to install these on a new machine
   if [[ -n ${GRAPHICAL:-} ]] || pacman -Qq sway &> /dev/null || pacman -Qq xorg-server &> /dev/null; then
     pkgs+=(
+      adw-gtk-theme # GTK 3 port of libadwaita that reads Iceberg colors from `gtk-3.0/gtk.css`
       alsa-utils
       brightnessctl
       cliphist
@@ -390,17 +393,24 @@ EOF
   fi
 
   # Make libadwaita apps (e.g. Ghostty) dark. libadwaita doesn't support
-  # `GTK_THEME`, and setting it strips the background from Ghostty's toasts
-  if ! command -v gsettings > /dev/null; then
-    logI "Skipping dark color scheme since gsettings isn't installed"
-  elif [[ $(gsettings get org.gnome.desktop.interface color-scheme) == "'prefer-dark'" ]]; then
-    logI 'Found existing dark color scheme'
-  else
-    logI 'Setting dark color scheme...'
-    if [[ -z ${DRY_RUN:-} ]]; then
-      gsettings set org.gnome.desktop.interface color-scheme prefer-dark || logE 'Failed to set dark color scheme'
+  # `GTK_THEME`, and setting it strips the background from Ghostty's toasts.
+  # Also set the GTK 3 theme here, since GTK 3 on Wayland reads it from
+  # gsettings and ignores `gtk-theme-name` in `gtk-3.0/settings.ini`
+  while read -r key value; do
+    if ! command -v gsettings > /dev/null; then
+      logI "Skipping ${key} since gsettings isn't installed"
+    elif [[ $(gsettings get org.gnome.desktop.interface "${key}") == "'${value}'" ]]; then
+      logI "Found existing ${key}"
+    else
+      logI "Setting ${key}..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        gsettings set org.gnome.desktop.interface "${key}" "${value}" || logE "Failed to set ${key}"
+      fi
     fi
-  fi
+  done << 'EOF'
+color-scheme prefer-dark
+gtk-theme adw-gtk3-dark
+EOF
 
   # Set Thunar's xfconf properties, which can't be symlinked since xfconfd saves
   # each channel via temp file + rename()

@@ -1,0 +1,17 @@
+{
+  "base": "dark-ansi",
+  "name": "Iceberg",
+  "overrides": {
+    "composerSidebarBackground": "#1e2132",
+    "diffAdded": "#45493e",
+    "diffAddedDimmed": "#2d302f",
+    "diffAddedWord": "#61664f",
+    "diffRemoved": "#53343b",
+    "diffRemovedDimmed": "#34262e",
+    "diffRemovedWord": "#77454a",
+    "memoryBackgroundColor": "#272c42",
+    "selectionBg": "#3e445e",
+    "userMessageBackground": "#272c42",
+    "userMessageBackgroundHover": "#3d425b"
+  }
+}

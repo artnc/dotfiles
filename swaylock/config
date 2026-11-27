@@ -1,30 +1,37 @@
-# Use Catppuccin Mocha (https://catppuccin.com/palette) to match dunst
+# Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors
 
-# Show peach backspaces on the ring
-bs-hl-color=fab387
-# Use black to match Ghostty and Waybar
-color=000000
+# Show orange backspaces on the ring
+bs-hl-color=e2a478
+# Use Iceberg's navy background
+color=161821
 # Fork once locked so that `swayidle -w` waits for the lock before sleep
 daemonize
 # Ignore Enter presses that only wake the screen
 ignore-empty-password
-# Make the inside transparent since these states default to colored fills
+# Make the inside transparent since all states default to black or colored
+# fills, which show against the navy background
 inside-clear-color=00000000
+inside-color=00000000
 inside-ver-color=00000000
 inside-wrong-color=00000000
 # Show blue keypresses on the ring
-key-hl-color=89b4fa
-# Match the Dvorak/QWERTY layout label to the palette
-layout-text-color=cdd6f4
-# Show a peach ring when cleared, dark gray while idle, blue while verifying,
-# and red on failure
-ring-clear-color=fab387
-ring-color=313244
-ring-ver-color=89b4fa
-ring-wrong-color=f38ba8
+key-hl-color=84a0c6
+# Hide the box behind the Dvorak/QWERTY layout label and match its text to
+# the palette
+layout-bg-color=00000000
+layout-text-color=c6c8d1
+# Hide the black lines around the ring by giving them the transparent inside
+# color
+line-uses-inside
+# Show an orange ring when cleared, gray while idle, blue while verifying, and
+# red on failure
+ring-clear-color=e2a478
+ring-color=3d425b
+ring-ver-color=84a0c6
+ring-wrong-color=e27878
 # Hide the lines that separate keypress highlights from the ring
 separator-color=00000000
-# Replace the default black text, which is invisible on a black background
-text-clear-color=fab387
-text-ver-color=89b4fa
-text-wrong-color=f38ba8
+# Replace the default black text, which is hard to read on the navy background
+text-clear-color=e2a478
+text-ver-color=84a0c6
+text-wrong-color=e27878

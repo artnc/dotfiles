@@ -4,7 +4,7 @@
   },
   "basename": true,
   "colorcolumn": 100,
-  "colorscheme": "twilight",
+  "colorscheme": "iceberg",
   "cursorline": false,
   "diffgutter": true,
   "ft:javascript": {

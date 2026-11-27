@@ -1,19 +1,20 @@
-/* Mimic swaybar's default colors and Sway's `font` setting */
+/* Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors and Sway's `font`
+   setting */
 window#waybar {
-  background: #000000;
-  color: #ffffff;
+  background: #161821;
+  color: #c6c8d1;
   font-family: "DejaVu Sans Mono";
   font-size: 9pt;
 }
 
-/* Override the GTK theme's button styles. Adwaita's 16px `min-width` makes
+/* Override the GTK theme's button styles. adw-gtk3's 16px `min-width` makes
    single-digit buttons wider than swaybar's, which pad 5px around the label */
 #workspaces button {
-  background: #222222;
-  border: 1px solid #333333;
+  background: #1e2132;
+  border: 1px solid #272c42;
   border-radius: 0;
   box-shadow: none;
-  color: #888888;
+  color: #818596;
   min-height: 0;
   min-width: 0;
   padding: 0 5px;
@@ -22,22 +23,22 @@ window#waybar {
 
 /* Highlight workspaces that are visible on another output */
 #workspaces button.visible {
-  background: #5f676a;
-  color: #ffffff;
+  background: #3e445e;
+  color: #c6c8d1;
 }
 
 #workspaces button.focused {
-  background: #285577;
-  border-color: #4c7899;
-  color: #ffffff;
+  background: #84a0c6;
+  border-color: #84a0c6;
+  color: #161821;
 }
 
 /* Show urgent workspaces and binding modes (e.g. "resize") in red */
 #mode,
 #workspaces button.urgent {
-  background: #900000;
-  border: 1px solid #2f343a;
-  color: #ffffff;
+  background: #e27878;
+  border: 1px solid #e27878;
+  color: #161821;
   padding: 0 5px;
 }
 
@@ -51,15 +52,15 @@ window#waybar {
   padding: 0 7px;
 }
 .modules-right > widget:not(:first-child) > * {
-  border-left: 1px solid #666666;
+  border-left: 1px solid #444b71;
 }
 
 /* Color modules by their `states` and temperature thresholds */
 .warning {
-  color: #fffc00;
+  color: #e2a478;
 }
 .critical {
-  color: #ff0000;
+  color: #e27878;
 }
 
 /* Give tray menus the normal GTK font (`gtk-font-name`) instead of the bar's.
