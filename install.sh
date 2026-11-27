@@ -166,6 +166,7 @@ if [[ ${os_name} == Darwin ]]; then
 else
   ensure_symlink dunst ~/.config/dunst
   ensure_symlink fontconfig ~/.config/fontconfig
+  ensure_symlink fuzzel ~/.config/fuzzel
   ensure_symlink ghostty/config-linux ~/.config/ghostty/config
   ensure_symlink gtk-3.0 ~/.config/gtk-3.0
   ensure_symlink iftop/.iftoprc ~/.iftoprc
@@ -294,6 +295,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       dunst
       ffmpeg
       firefox
+      fuzzel
       ghostty
       gimp
       gvfs
@@ -328,7 +330,6 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
       waybar
       wireplumber
       wl-clipboard
-      wmenu
       wtype
       xarchiver
       xdg-desktop-portal-wlr # Lets apps (e.g. Firefox) share and screenshot the screen

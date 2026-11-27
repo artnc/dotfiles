@@ -14,11 +14,6 @@ client.focused $unfocused_colors
 client.focused_inactive #303030 #535353 #ffffff #535353 #535353
 client.unfocused $unfocused_colors
 client.urgent #303030 #9d1f1f #ffffff #9d1f1f #9d1f1f
-# Give wmenu the UI font at its default size instead of its default monospace.
-# Color its items white on Modus Vivendi's `bg-inactive` gray (13:1 contrast),
-# which sets them apart from the black windows behind since wmenu can't draw a
-# border. Color its prompt and selection like Waybar's focused workspace
-set $wmenu_flags -f 'Adwaita Sans 10' -N 303030 -n ffffff -M 1640b0 -m ffffff -S 1640b0 -s ffffff
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -30,8 +25,8 @@ default_border pixel 0
 # kill focused window
 bindsym $mod+Shift+apostrophe kill
 
-# start wmenu (a program launcher like dmenu)
-bindsym $mod+e exec wmenu-run $wmenu_flags
+# Start fuzzel's app launcher (see `fuzzel/fuzzel.ini`)
+bindsym $mod+e exec fuzzel
 
 # change focus
 # bindsym $mod+h focus left
@@ -176,9 +171,11 @@ bindsym $mod+l exec loginctl lock-session
 # `XDG_PICTURES_DIR` (else `~`) and copy it to the clipboard
 bindsym Print exec grimshot --notify savecopy anything
 
-# Pick a clipboard history entry to copy again. Skip `wl-copy` if I cancel,
-# since it would copy the empty input over the clipboard
-bindsym $mod+v exec sel=$(cliphist list | wmenu -l 10 $wmenu_flags) && echo "$sel" | cliphist decode | wl-copy
+# Pick a clipboard history entry to copy again. Show only the preview column,
+# though fuzzel still prints the whole line, since `cliphist decode` needs the ID
+# before the tab. Skip `wl-copy` if I cancel, since it would copy the empty
+# input over the clipboard
+bindsym $mod+v exec sel=$(cliphist list | fuzzel --dmenu --with-nth 2) && echo "$sel" | cliphist decode | wl-copy
 
 # Type email addresses. Sleep first so that typing doesn't start while keys are
 # still down. base64-encoded to evade crude GitHub scrapers
