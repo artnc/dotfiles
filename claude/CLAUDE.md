@@ -1,4 +1,4 @@
-Be concise. Ask me before you modify, create, or delete any files or directories outside of the current working directory or /tmp. Avoid project-specific Claude config; just modify the global settings instead. Never run `git commit` for me unless I explicitly tell you to. You have access to jq, yq, ripgrep, and python3.
+Be concise. Ask me before you modify, create, or delete any files or directories outside of the current working directory or /tmp. Avoid project-specific Claude config; just modify the global settings instead. Keep a repo's `AGENTS.md` current: update it when a change makes a rule there wrong, or when I state a new preference for the repo. Save such preferences there instead of in memory, which doesn't follow the repo to other machines. Never run `git commit` for me unless I explicitly tell you to. You have access to jq, yq, ripgrep, and python3.
 
 When writing English prose such as code comments, documentation, and PR descriptions:
 
