@@ -9,12 +9,12 @@
       "on-discharging-critical": "notify-send -u critical 'Battery critical' 'Plug in now'",
       "on-discharging-warning": "notify-send 'Battery low'"
     },
-    "align": 0,
-    "format": "⚡ {capacity:3}%",
-    "format-charging": "⚡ {capacity:3}% CHR {time}",
-    "format-discharging": "⚡ {capacity:3}% DIS {time}",
+    // `\ufe0e` asks for the text glyph. Otherwise Pango draws a yellow emoji
+    // from Noto Color Emoji, since U+26A1 defaults to emoji presentation
+    "format": "⚡\ufe0e {capacity:3}%",
+    "format-charging": "⚡\ufe0e {capacity:3}% CHR {time}",
+    "format-discharging": "⚡\ufe0e {capacity:3}% DIS {time}",
     "format-time": "({H}:{m})",
-    "min-length": 17, // Fits "⚡ 100% DIS (9:59)" so that states share a width
     "states": {
       "critical": 10,
       "warning": 25
