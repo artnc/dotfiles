@@ -13,9 +13,11 @@ window#waybar {
   font-size: 10pt;
 }
 
-/* Override the GTK theme's button styles. Adwaita's 16px `min-width` makes
-   single-digit buttons wider than swaybar's, which pad 5px around the label.
-   Omit swaybar's borders, since the backgrounds already set buttons apart */
+/* Override the GTK theme's button styles. Reset Adwaita's 16px `min-width`
+   so that the padding alone sets the width. Pad the label more than swaybar
+   (5px on each side) to give single digits more room. The vertical padding
+   also sets the bar's height. Omit swaybar's borders, since the backgrounds
+   already set buttons apart */
 #workspaces button {
   background: #1e1e1e;
   border: none;
@@ -24,7 +26,7 @@ window#waybar {
   color: #989898;
   min-height: 0;
   min-width: 0;
-  padding: 0 5px;
+  padding: 2px 7px;
   text-shadow: none;
 }
 
@@ -44,7 +46,7 @@ window#waybar {
 #workspaces button.urgent {
   background: #9d1f1f;
   color: #ffffff;
-  padding: 0 5px;
+  padding: 2px 7px;
 }
 
 /* Space the focused window's title away from the workspace buttons */
