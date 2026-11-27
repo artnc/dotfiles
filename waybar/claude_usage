@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Prints Claude usage as Waybar JSON, e.g. "CC 12% 4.6h 41% 2.4d" for the
-# session and weekly limits and the time until each resets. Calls the endpoint
-# that Claude Code's `/usage` uses, since Cloudflare blocks `curl` at
-# claude.ai/api with a "Just a moment..." challenge page (HTTP 403)
+# session and weekly limits and the time until each resets. Reads the
+# `rate_limits` that the Claude Code status line caches (see `statusLine` in
+# `claude/settings.json`), since polling api.anthropic.com/api/oauth/usage
+# every minute fails with HTTP 429 ("Rate limited. Please try again later.")
+# after a few calls
 
 set -eu
 
-credentials_file="${HOME}/.claude/.credentials.json"
+cache_file="${HOME}/.cache/claude_rate_limits.json"
 # Pad fields to fixed widths so that the module doesn't resize
 section_format='%3s%% %4s'
 
@@ -17,39 +19,25 @@ fail() {
   exit 0
 }
 
-token="$(jq -er .claudeAiOauth.accessToken "${credentials_file}" 2> /dev/null)" || fail "Can't read the OAuth token from ${credentials_file}"
-
-# Send the token via stdin so that other users can't see it in `ps`. It expires
-# after a few hours, and only a running Claude Code refreshes it. Show `curl`'s
-# error on failure so that an expired token (HTTP 401) differs from no network
-response="$(curl -fsS --max-time 10 -H 'anthropic-beta: oauth-2025-04-20' -H @- https://api.anthropic.com/api/oauth/usage <<< "Authorization: Bearer ${token}" 2>&1)" || fail "${response}. Start Claude Code to refresh its OAuth token if it expired"
-
-parsed="$(echo "${response}" | jq -r \
-  '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | join(",")' 2> /dev/null)" || fail "Can't parse the response"
+# Get each window's usage and reset time. Count a window that has reset as 0%
+# with an unknown reset time, since the next request starts a new window. Share
+# bash's clock so that the seconds until a reset are never negative. Use `-e` to
+# fail on an empty file, since jq prints nothing for it and `section()` then
+# fails with "arithmetic syntax error"
+now_ts="$(date +%s)"
+parsed="$(jq -er --argjson now "${now_ts}" '[(.five_hour, .seven_day) | if (.resets_at // 0) > $now then (.used_percentage // 0 | floor), (.resets_at | floor) else 0, "" end] | join(",")' "${cache_file}" 2> /dev/null)" || fail "Can't read ${cache_file}. Start Claude Code and send a message to create it"
 
 # Split on commas instead of tabs, since `read` merges consecutive tabs and
 # shifts the fields when a reset time is empty (e.g. no active session)
 IFS=, read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
 
-# Render a non-integer percentage as 0, since bash arithmetic fails on jq's
-# output for NaN ("null: unbound variable") or huge numbers (e.g. "1e+300")
-[[ ${session_pct} =~ ^[0-9]+$ ]] || session_pct=0
-[[ ${weekly_pct} =~ ^[0-9]+$ ]] || weekly_pct=0
+# Find the seconds until each reset, or nothing if it's unknown
+session_left="${session_reset:+$((session_reset - now_ts))}"
+weekly_left="${weekly_reset:+$((weekly_reset - now_ts))}"
 
-now_ts="$(date +%s)"
-
-# Prints the seconds until a reset time, or nothing if it's unknown
-secs_until() {
-  local reset_ts
-  [[ -n ${1} ]] && reset_ts="$(date -d "${1}" +%s 2> /dev/null)" || return 0
-  echo "$((reset_ts > now_ts ? reset_ts - now_ts : 0))"
-}
-session_left="$(secs_until "${session_reset}")"
-weekly_left="$(secs_until "${weekly_reset}")"
-
-# Formats seconds until reset like the Claude Code status line: "Xm" under 1h,
+# Formats a number of seconds like the Claude Code status line: "Xm" under 1h,
 # "X.Yh" under 1d, else "X.Yd"
-time_until() {
+fuzzy_duration() {
   local -r diff="${1}"
   if [[ -z ${diff} ]]; then
     echo '?'
@@ -74,7 +62,7 @@ time_until() {
 
 # Formats a reset time like the clock module, e.g. "Thu 26 Nov 06:00"
 reset_at() {
-  if [[ -n ${1} ]] && date -d "${1}" '+%a %d %b %H:%M' 2> /dev/null; then
+  if [[ -n ${1} ]] && date -d "@${1}" '+%a %d %b %H:%M'; then
     return
   fi
   echo '?'
@@ -90,7 +78,7 @@ weekly_elapsed=$((100 - ${weekly_left:-0} * 100 / 604800))
 # the window) or the limit is close. Uses Pango markup with the `.warning` and
 # `.critical` colors from `style.css`, since CSS can't style part of a label
 section() {
-  local -r ahead=$((${1} - ${2})) text="$(printf "${section_format}" "${1}" "$(time_until "${3}")")"
+  local -r ahead=$((${1} - ${2})) text="$(printf "${section_format}" "${1}" "$(fuzzy_duration "${3}")")"
   if ((${1} >= 90 || ahead >= 25)); then
     echo "<span color='#ff5f59'>${text}</span>"
   elif ((ahead >= 10)); then
@@ -101,8 +89,10 @@ section() {
 }
 
 # Show the time until each reset in the text, and the pace and exact reset times
-# in the tooltip. Omit the pace if the reset time is unknown
+# in the tooltip. Omit the pace if the reset time is unknown. Show when the
+# cache changed, since it misses usage from other devices until Claude Code here
+# sends a message
 jq -cn \
   --arg text "CC $(section "${session_pct}" "${session_elapsed}" "${session_left}") $(section "${weekly_pct}" "${weekly_elapsed}" "${weekly_left}")" \
-  --arg tooltip "Session: ${session_pct}% used${session_left:+ after ${session_elapsed}% of 5h}, resets $(reset_at "${session_reset}")"$'\n'"Weekly: ${weekly_pct}% used${weekly_left:+ after ${weekly_elapsed}% of 7d}, resets $(reset_at "${weekly_reset}")" \
+  --arg tooltip "Session: ${session_pct}% used${session_left:+ after ${session_elapsed}% of 5h}, resets $(reset_at "${session_reset}")"$'\n'"Weekly: ${weekly_pct}% used${weekly_left:+ after ${weekly_elapsed}% of 7d}, resets $(reset_at "${weekly_reset}")"$'\n'"Updated $(fuzzy_duration "$((now_ts - $(date -r "${cache_file}" +%s)))") ago" \
   '{$text, $tooltip}'
