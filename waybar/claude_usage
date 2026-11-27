@@ -8,11 +8,12 @@ set -eu
 
 credentials_file="${HOME}/.claude/.credentials.json"
 # Pad fields to fixed widths so that the module doesn't resize
-text_format='CC %3s%% %4s %3s%% %4s'
+section_format='%3s%% %4s'
 
 # Print question marks with the reason in the tooltip, then exit
 fail() {
-  jq -cn --arg text "$(printf "${text_format}" '?' '?' '?' '?')" --arg tooltip "${1}" '{$text, $tooltip}'
+  local -r section="$(printf "${section_format}" '?' '?')"
+  jq -cn --arg text "CC ${section} ${section}" --arg tooltip "${1}" '{$text, $tooltip}'
   exit 0
 }
 
@@ -84,19 +85,24 @@ reset_at() {
 session_elapsed=$((100 - ${session_left:-0} * 100 / 18000))
 weekly_elapsed=$((100 - ${weekly_left:-0} * 100 / 604800))
 
-# Color the module like the CPU and memory modules when usage gets ahead of the
-# elapsed time (e.g. 30% used after 10% of the window) or either limit is close
-class=''
-if ((session_pct >= 90 || weekly_pct >= 90 || session_pct - session_elapsed >= 25 || weekly_pct - weekly_elapsed >= 25)); then
-  class='critical'
-elif ((session_pct - session_elapsed >= 10 || weekly_pct - weekly_elapsed >= 10)); then
-  class='warning'
-fi
+# Prints a limit's usage and time until reset, colored like the CPU and memory
+# modules when usage gets ahead of the elapsed time (e.g. 30% used after 10% of
+# the window) or the limit is close. Uses Pango markup with the `.warning` and
+# `.critical` colors from `style.css`, since CSS can't style part of a label
+section() {
+  local -r ahead=$((${1} - ${2})) text="$(printf "${section_format}" "${1}" "$(time_until "${3}")")"
+  if ((${1} >= 90 || ahead >= 25)); then
+    echo "<span color='#ff5f59'>${text}</span>"
+  elif ((ahead >= 10)); then
+    echo "<span color='#fec43f'>${text}</span>"
+  else
+    echo "${text}"
+  fi
+}
 
 # Show the time until each reset in the text, and the pace and exact reset times
 # in the tooltip. Omit the pace if the reset time is unknown
 jq -cn \
-  --arg class "${class}" \
-  --arg text "$(printf "${text_format}" "${session_pct}" "$(time_until "${session_left}")" "${weekly_pct}" "$(time_until "${weekly_left}")")" \
+  --arg text "CC $(section "${session_pct}" "${session_elapsed}" "${session_left}") $(section "${weekly_pct}" "${weekly_elapsed}" "${weekly_left}")" \
   --arg tooltip "Session: ${session_pct}% used${session_left:+ after ${session_elapsed}% of 5h}, resets $(reset_at "${session_reset}")"$'\n'"Weekly: ${weekly_pct}% used${weekly_left:+ after ${weekly_elapsed}% of 7d}, resets $(reset_at "${weekly_reset}")" \
-  '{$class, $text, $tooltip}'
+  '{$text, $tooltip}'
