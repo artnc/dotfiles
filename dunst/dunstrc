@@ -22,6 +22,8 @@ padding = 10
 show_indicators = no
 width = (200, 500)
 
+# Use the Catppuccin Mocha palette (https://catppuccin.com/palette). Frames are
+# each background darkened to 40%, and `#3d1a22` is a custom dark red
 [urgency_low]
 background = "#45475a"
 foreground = "#cdd6f4"

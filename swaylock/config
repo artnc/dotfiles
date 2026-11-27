@@ -1,6 +1,30 @@
-# Use i3's dark gray instead of swaylock's default white
-color=222222
+# Use Catppuccin Mocha (https://catppuccin.com/palette) to match dunst
+
+# Show peach backspaces on the ring
+bs-hl-color=fab387
+# Use black to match Ghostty and Waybar
+color=000000
 # Fork once locked so that `swayidle -w` waits for the lock before sleep
 daemonize
 # Ignore Enter presses that only wake the screen
 ignore-empty-password
+# Make the inside transparent since these states default to colored fills
+inside-clear-color=00000000
+inside-ver-color=00000000
+inside-wrong-color=00000000
+# Show blue keypresses on the ring
+key-hl-color=89b4fa
+# Match the Dvorak/QWERTY layout label to the palette
+layout-text-color=cdd6f4
+# Show a peach ring when cleared, dark gray while idle, blue while verifying,
+# and red on failure
+ring-clear-color=fab387
+ring-color=313244
+ring-ver-color=89b4fa
+ring-wrong-color=f38ba8
+# Hide the lines that separate keypress highlights from the ring
+separator-color=00000000
+# Replace the default black text, which is invisible on a black background
+text-clear-color=fab387
+text-ver-color=89b4fa
+text-wrong-color=f38ba8
