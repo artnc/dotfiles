@@ -1,6 +1,6 @@
 # Use no flavor so that the ANSI UI colors of Yazi's default theme inherit
-# Ghostty's Iceberg (https://cocopon.github.io/iceberg.vim/) palette. File icons
-# keep the preset's hex colors
+# Ghostty's Twilight palette (see `ghostty/config-base`). File icons keep the
+# preset's hex colors
 
 [indicator]
 parent = { underline = false }

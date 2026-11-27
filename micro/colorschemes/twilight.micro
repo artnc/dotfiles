@@ -1,0 +1,52 @@
+# Twilight by Michael Sheets, ported from TextMate
+# (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+# and customized from micro's bundled colorscheme. Keep the original `#141414`
+# background, which TextMate lightened to `#181818` in 2013 to offset macOS
+# 10.6's gamma change
+# (https://github.com/textmate/themes.tmbundle/commit/23d425fa6c). TextMate
+# doesn't define UI grays, so other apps in this repo take theirs from here
+color-link default "#F8F8F8,#141414"
+color-link color-column "#1E1E1E"
+color-link comment "#5F5A60"
+color-link constant "#CF6A4C"
+color-link constant.number "#CF6A4C"
+color-link constant.specialChar "#DDF2A4"
+color-link constant.string "#8F9D6A"
+color-link cursor-line "#1E1E1E"
+color-link divider "#1E1E1E"
+color-link error "#D2A8A1"
+color-link diff-added "#00AF00"
+color-link diff-modified "#FFAF00"
+color-link diff-deleted "#D70000"
+color-link gutter-error "#9B859D"
+color-link gutter-warning "#9B859D"
+# Empty fg keeps the default light text; bg is a subtle dark gray over the
+# #141414 editor bg. micro's renderer replaces the whole cell style for search
+# matches (it can't merge bg onto each token's syntax color), so highlighted
+# words show in this fg, not their syntax color. Shared with manual Find
+color-link hlsearch ",#454545"
+color-link identifier "#9B703F"
+color-link identifier.class "#DAD085"
+color-link identifier.var "#7587A6"
+color-link indent-char "#363636"
+color-link line-number "#868686,#141414"
+color-link current-line-number "#868686,#141414"
+color-link preproc "#E0C589"
+color-link scrollbar "#515151,#515151"
+color-link special "#E0C589"
+color-link statement "#CDA869"
+color-link statusline "#CDCDCD,#252525"
+color-link symbol "#AC885B"
+color-link symbol.brackets "#F8F8F8"
+color-link symbol.operator "#CDA869"
+color-link symbol.tag "#AC885B"
+color-link tabbar "#5F5A60,#252525"
+color-link tabbar.active "#F8F8F8,#252525"
+color-link todo "#8B98AB"
+color-link type "#F9EE98"
+color-link type.keyword "#CDA869"
+color-link underlined "#8996A8"
+color-link match-brace "#141414,#E0C589"
+color-link message "#F8F8F8,#252525"
+color-link tab-error "#D75F5F"
+color-link trailingws "#D75F5F"

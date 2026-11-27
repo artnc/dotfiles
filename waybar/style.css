@@ -1,8 +1,10 @@
-/* Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors and Sway's `font`
+/* Use Twilight colors from TextMate
+   (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+   with grays from `micro/colorschemes/twilight.micro`, and Sway's `font`
    setting */
 window#waybar {
-  background: #161821;
-  color: #c6c8d1;
+  background: #141414;
+  color: #f8f8f8;
   font-family: "DejaVu Sans Mono";
   font-size: 9pt;
 }
@@ -10,11 +12,11 @@ window#waybar {
 /* Override the GTK theme's button styles. adw-gtk3's 16px `min-width` makes
    single-digit buttons wider than swaybar's, which pad 5px around the label */
 #workspaces button {
-  background: #1e2132;
-  border: 1px solid #272c42;
+  background: #1e1e1e;
+  border: 1px solid #252525;
   border-radius: 0;
   box-shadow: none;
-  color: #818596;
+  color: #868686;
   min-height: 0;
   min-width: 0;
   padding: 0 5px;
@@ -23,22 +25,22 @@ window#waybar {
 
 /* Highlight workspaces that are visible on another output */
 #workspaces button.visible {
-  background: #3e445e;
-  color: #c6c8d1;
+  background: #454545;
+  color: #f8f8f8;
 }
 
 #workspaces button.focused {
-  background: #84a0c6;
-  border-color: #84a0c6;
-  color: #161821;
+  background: #cda869;
+  border-color: #cda869;
+  color: #141414;
 }
 
 /* Show urgent workspaces and binding modes (e.g. "resize") in red */
 #mode,
 #workspaces button.urgent {
-  background: #e27878;
-  border: 1px solid #e27878;
-  color: #161821;
+  background: #cf6a4c;
+  border: 1px solid #cf6a4c;
+  color: #141414;
   padding: 0 5px;
 }
 
@@ -52,15 +54,15 @@ window#waybar {
   padding: 0 7px;
 }
 .modules-right > widget:not(:first-child) > * {
-  border-left: 1px solid #444b71;
+  border-left: 1px solid #454545;
 }
 
 /* Color modules by their `states` and temperature thresholds */
 .warning {
-  color: #e2a478;
+  color: #e9c062;
 }
 .critical {
-  color: #e27878;
+  color: #cf6a4c;
 }
 
 /* Give tray menus the normal GTK font (`gtk-font-name`) instead of the bar's.

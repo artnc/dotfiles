@@ -285,7 +285,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # `GRAPHICAL=1` to install these on a new machine
   if [[ -n ${GRAPHICAL:-} ]] || pacman -Qq sway &> /dev/null || pacman -Qq xorg-server &> /dev/null; then
     pkgs+=(
-      adw-gtk-theme # GTK 3 port of libadwaita that reads Iceberg colors from `gtk-3.0/gtk.css`
+      adw-gtk-theme # GTK 3 port of libadwaita that reads Twilight colors from `gtk-3.0/gtk.css`
       alsa-utils
       brightnessctl
       cliphist

@@ -1,6 +1,6 @@
-/* Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors in libadwaita
-   apps (e.g. Ghostty's dialogs and toasts). Reuse the named colors from
-   `gtk-3.0/gtk.css`, since libadwaita 1.6+ reads CSS variables instead */
+/* Use Twilight colors in libadwaita apps (e.g. Ghostty's tab bars, dialogs,
+   and toasts). Reuse the named colors from `gtk-3.0/gtk.css`, since
+   libadwaita 1.6+ reads CSS variables instead */
 @import url("../gtk-3.0/gtk.css");
 
 :root {

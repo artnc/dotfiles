@@ -6,12 +6,30 @@ confirm-close-surface = false
 cursor-style = bar
 cursor-style-blink = true
 font-family = "DejaVu Sans Mono"
+# Use TextMate's white instead of the Twilight theme's pale yellow `#ffffd4`
+foreground = #f8f8f8
+# The Twilight theme's ANSI palette is a guess, since TextMate's Twilight has
+# none. Its blues (`#44474a` and `#5a5e62`) are dark grays with 2.0:1 and 2.8:1
+# contrast on its `#141414` background, which hides `ls` directories and my
+# clean git branch in the prompt. Its magentas (`#b4be7c` and `#d0dc8e`) are
+# yellow-greens that look like its greens. Its whites (`#ffffd4`) are pale
+# yellow. Use TextMate's blues, purple, and white instead, and brighten the
+# purple by the theme's 1.16x normal-to-bright ratio
+# (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+palette = 4=#7587a6
+palette = 5=#9b859d
+palette = 7=#f8f8f8
+palette = 12=#8996a8
+palette = 13=#b39ab5
+palette = 15=#f8f8f8
+# Match selected text to `foreground`
+selection-foreground = #f8f8f8
 # Only integration feature I'd want is `cursor` which doesn't work in tmux
 # https://github.com/ghostty-org/ghostty/discussions/5802#discussioncomment-12218114
 shell-integration = none
-# Use Iceberg (https://cocopon.github.io/iceberg.vim/), which Ghostty bundles.
-# It sets the background, foreground, cursor, selection, and ANSI palette
-theme = Iceberg Dark
+# Use Twilight, which Ghostty bundles. It sets the background, foreground,
+# cursor, selection, and ANSI palette. My settings above override parts of it
+theme = Twilight
 window-decoration = false
 window-padding-x = 2
 window-padding-y = 2

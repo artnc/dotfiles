@@ -1,37 +1,40 @@
-# Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors
+# Use Twilight colors from TextMate
+# (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+# with Ghostty's Twilight selection gray (`#313131`)
 
-# Show orange backspaces on the ring
-bs-hl-color=e2a478
-# Use Iceberg's navy background
-color=161821
+# Show blue backspaces on the ring so that they stand out from tan keypresses
+bs-hl-color=7587a6
+# Use Twilight's near-black background
+color=141414
 # Fork once locked so that `swayidle -w` waits for the lock before sleep
 daemonize
 # Ignore Enter presses that only wake the screen
 ignore-empty-password
 # Make the inside transparent since all states default to black or colored
-# fills, which show against the navy background
+# fills, which show against the near-black background
 inside-clear-color=00000000
 inside-color=00000000
 inside-ver-color=00000000
 inside-wrong-color=00000000
-# Show blue keypresses on the ring
-key-hl-color=84a0c6
+# Show tan keypresses on the ring
+key-hl-color=cda869
 # Hide the box behind the Dvorak/QWERTY layout label and match its text to
 # the palette
 layout-bg-color=00000000
-layout-text-color=c6c8d1
+layout-text-color=f8f8f8
 # Hide the black lines around the ring by giving them the transparent inside
 # color
 line-uses-inside
-# Show an orange ring when cleared, gray while idle, blue while verifying, and
-# red on failure
-ring-clear-color=e2a478
-ring-color=3d425b
-ring-ver-color=84a0c6
-ring-wrong-color=e27878
+# Show a blue ring when cleared, gray while idle, tan while verifying, and
+# orange-red on failure
+ring-clear-color=7587a6
+ring-color=313131
+ring-ver-color=cda869
+ring-wrong-color=cf6a4c
 # Hide the lines that separate keypress highlights from the ring
 separator-color=00000000
-# Replace the default black text, which is hard to read on the navy background
-text-clear-color=e2a478
-text-ver-color=84a0c6
-text-wrong-color=e27878
+# Replace the default black text, which is hard to read on the near-black
+# background
+text-clear-color=7587a6
+text-ver-color=cda869
+text-wrong-color=cf6a4c

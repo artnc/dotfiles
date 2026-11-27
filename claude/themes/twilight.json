@@ -1,0 +1,17 @@
+{
+  "base": "dark-ansi",
+  "name": "Twilight",
+  "overrides": {
+    "composerSidebarBackground": "#1e1e1e",
+    "diffAdded": "#253b22",
+    "diffAddedDimmed": "#1c281b",
+    "diffAddedWord": "#405434",
+    "diffRemoved": "#420e09",
+    "diffRemovedDimmed": "#2b110e",
+    "diffRemovedWord": "#65251a",
+    "memoryBackgroundColor": "#313131",
+    "selectionBg": "#454545",
+    "userMessageBackground": "#313131",
+    "userMessageBackgroundHover": "#454545"
+  }
+}

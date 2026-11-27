@@ -1,43 +1,45 @@
-/* Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors. adw-gtk3 reads
-   these libadwaita named colors (https://github.com/lassekongo83/adw-colors),
-   and `gtk-4.0/gtk.css` passes them on to libadwaita apps. Layer surfaces from
-   darkest to lightest: views, windows, header bars and sidebars, then dialogs
-   and popovers */
-@define-color accent_bg_color #84a0c6;
+/* Use Twilight colors from TextMate
+   (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+   with grays from `micro/colorschemes/twilight.micro` and Ghostty's
+   Twilight. adw-gtk3 reads these libadwaita named colors
+   (https://github.com/lassekongo83/adw-colors), and `gtk-4.0/gtk.css` passes
+   them on to libadwaita apps. Layer surfaces from darkest to lightest: views,
+   windows, header bars and sidebars, then dialogs and popovers */
+@define-color accent_bg_color #cda869;
 @define-color accent_color @accent_bg_color;
 @define-color accent_fg_color @view_bg_color;
 @define-color card_fg_color @window_fg_color;
-@define-color destructive_bg_color #e27878;
+@define-color destructive_bg_color #cf6a4c;
 @define-color destructive_color @destructive_bg_color;
 @define-color destructive_fg_color @view_bg_color;
-@define-color dialog_bg_color #3d425b;
+@define-color dialog_bg_color #313131;
 @define-color dialog_fg_color @window_fg_color;
-@define-color error_bg_color #e27878;
+@define-color error_bg_color #cf6a4c;
 @define-color error_color @error_bg_color;
 @define-color error_fg_color @view_bg_color;
 @define-color headerbar_backdrop_color @window_bg_color;
-@define-color headerbar_bg_color #272c42;
+@define-color headerbar_bg_color #252525;
 @define-color headerbar_fg_color @window_fg_color;
 @define-color popover_bg_color @dialog_bg_color;
 @define-color popover_fg_color @window_fg_color;
 @define-color sidebar_backdrop_color @window_bg_color;
 @define-color sidebar_bg_color @headerbar_bg_color;
 @define-color sidebar_fg_color @window_fg_color;
-@define-color success_bg_color #b4be82;
+@define-color success_bg_color #8f9d6a;
 @define-color success_color @success_bg_color;
 @define-color success_fg_color @view_bg_color;
-@define-color view_bg_color #161821;
+@define-color view_bg_color #141414;
 @define-color view_fg_color @window_fg_color;
-@define-color warning_bg_color #e2a478;
+@define-color warning_bg_color #e9c062;
 @define-color warning_color @warning_bg_color;
 @define-color warning_fg_color @view_bg_color;
-@define-color window_bg_color #1e2132;
-@define-color window_fg_color #c6c8d1;
+@define-color window_bg_color #1e1e1e;
+@define-color window_fg_color #f8f8f8;
 
-/* adw-gtk3 hardcodes white text on suggested buttons, which is hard to read on
-   Iceberg's light blue. Skip flat and disabled buttons, which have no blue
+/* adw-gtk3 hardcodes white text on suggested buttons, which has 2.2:1 contrast
+   on Twilight's tan. Skip flat and disabled buttons, which have no tan
    background. User CSS beats the theme regardless of specificity, which would
-   make the navy text invisible on them */
+   make the near-black text invisible on them */
 button.suggested-action:not(.flat):not(:disabled) {
   color: @accent_fg_color;
 }

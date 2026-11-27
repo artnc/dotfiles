@@ -22,25 +22,27 @@ padding = 10
 show_indicators = no
 width = (200, 500)
 
-# Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors. Frames are each
+# Use Twilight colors from TextMate
+# (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+# with Ghostty's Twilight selection gray (`#313131`). Frames are each
 # background darkened to 40%
 [urgency_low]
-background = "#3d425b"
-foreground = "#c6c8d1"
-frame_color = "#181a24"
+background = "#313131"
+foreground = "#f8f8f8"
+frame_color = "#141414"
 timeout = 3
 
 [urgency_normal]
-background = "#84a0c6"
-foreground = "#161821"
-frame_color = "#35404f"
-highlight = "#161821"
+background = "#cda869"
+foreground = "#141414"
+frame_color = "#52432a"
+highlight = "#141414"
 timeout = 5
 
 # Keep critical notifications (e.g. low battery) until I dismiss them
 [urgency_critical]
-background = "#e27878"
-foreground = "#161821"
-frame_color = "#5a3030"
-highlight = "#161821"
+background = "#cf6a4c"
+foreground = "#141414"
+frame_color = "#532a1e"
+highlight = "#141414"
 timeout = 0

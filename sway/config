@@ -4,16 +4,18 @@ set $mod Mod4
 # Font for window titles. `waybar/style.css` repeats it since Waybar ignores it
 font pango:DejaVu Sans Mono 9
 
-# Use Iceberg (https://cocopon.github.io/iceberg.vim/) colors. Disable focused
-# window styling by giving all title bars the same colors (border, background,
-# text, indicator, and child border)
-set $title_colors #272c42 #1e2132 #818596 #272c42 #1e2132
+# Use Twilight colors from TextMate
+# (https://github.com/textmate/themes.tmbundle/blob/master/Themes/Twilight.tmTheme)
+# with grays from `micro/colorschemes/twilight.micro`. Disable
+# focused window styling by giving all title bars the same colors (border,
+# background, text, indicator, and child border)
+set $title_colors #252525 #1e1e1e #868686 #252525 #1e1e1e
 client.focused $title_colors
 client.focused_inactive $title_colors
 client.unfocused $title_colors
-client.urgent #e27878 #e27878 #161821 #e27878 #e27878
+client.urgent #cf6a4c #cf6a4c #141414 #cf6a4c #cf6a4c
 # Color wmenu's items, prompt, and selection like Waybar's focused workspace
-set $wmenu_colors -N 161821 -n c6c8d1 -M 84a0c6 -m 161821 -S 84a0c6 -s 161821
+set $wmenu_colors -N 141414 -n f8f8f8 -M cda869 -m 141414 -S cda869 -s 141414
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -134,9 +136,9 @@ bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 # reload the configuration file
 bindsym $mod+Shift+j reload
-# exit sway (logs you out of your Wayland session). Use Iceberg's dark and
-# light oranges
-bindsym $mod+Shift+period exec swaynag -t warning --background e2a478 --border 161821 --border-bottom c57339 --button-background e9b189 --button-text 161821 --text 161821 -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+# exit sway (logs you out of your Wayland session). Use Twilight's gold,
+# brown, and pale yellow
+bindsym $mod+Shift+period exec swaynag -t warning --background e9c062 --border 141414 --border-bottom 9b703f --button-background f9ee98 --button-text 141414 --text 141414 -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
