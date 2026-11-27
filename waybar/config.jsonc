@@ -20,9 +20,15 @@
       "warning": 25
     }
   },
+  // Show UTC time in the tooltip, which is empty without `tooltip-format`.
+  // `{tz_list}` skips the local timezone (""). Scrolling doesn't switch the
+  // bar's timezone unless `actions` maps it to `tz_up` or `tz_down`
   "clock": {
     "format": "{:%a %d %b %H:%M:%S}",
-    "interval": 1
+    "interval": 1,
+    "timezone-tooltip-format": "{:%a %d %b %H:%M:%S %Z}",
+    "timezones": ["", "Etc/UTC"],
+    "tooltip-format": "{tz_list}"
   },
   // Waybar counts iowait as idle (like htop). That matters on x13, whose kernel
   // leaks its `nr_iowait` counter. Idle time would otherwise show as ~60% usage
