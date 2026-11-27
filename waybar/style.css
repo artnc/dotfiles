@@ -1,7 +1,11 @@
 /* Use Modus Vivendi colors to match Ghostty. Its intense blue and red
    backgrounds pair with white text, and its dim gray text has 5.8:1 contrast
    on the dim gray buttons
-   https://github.com/protesilaos/modus-themes/blob/main/modus-themes.el */
+   https://github.com/protesilaos/modus-themes/blob/main/modus-themes.el
+
+   Use monospace everywhere, not just where digits would shift. Adwaita Sans
+   at 10pt renders 1px shorter than DejaVu Sans Mono and looks smaller beside
+   the status modules */
 window#waybar {
   background: #000000;
   color: #ffffff;
@@ -10,10 +14,11 @@ window#waybar {
 }
 
 /* Override the GTK theme's button styles. Adwaita's 16px `min-width` makes
-   single-digit buttons wider than swaybar's, which pad 5px around the label */
+   single-digit buttons wider than swaybar's, which pad 5px around the label.
+   Omit swaybar's borders, since the backgrounds already set buttons apart */
 #workspaces button {
   background: #1e1e1e;
-  border: 1px solid #303030;
+  border: none;
   border-radius: 0;
   box-shadow: none;
   color: #989898;
@@ -31,7 +36,6 @@ window#waybar {
 
 #workspaces button.focused {
   background: #1640b0;
-  border-color: #2fafff;
   color: #ffffff;
 }
 
@@ -39,15 +43,8 @@ window#waybar {
 #mode,
 #workspaces button.urgent {
   background: #9d1f1f;
-  border: 1px solid #303030;
   color: #ffffff;
   padding: 0 5px;
-}
-
-/* Use the UI font for workspaces and the window title. Only the status modules
-   need monospace digits to keep from shifting each other */
-.modules-left {
-  font-family: "Adwaita Sans";
 }
 
 /* Space the focused window's title away from the workspace buttons */
