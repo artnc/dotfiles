@@ -1,6 +1,6 @@
-/* Use Modus Vivendi colors to match Ghostty, and Sway's `font` setting. Its
-   intense blue and red backgrounds pair with white text, and its dim gray text
-   has 5.8:1 contrast on the dim gray buttons
+/* Use Modus Vivendi colors to match Ghostty. Its intense blue and red
+   backgrounds pair with white text, and its dim gray text has 5.8:1 contrast
+   on the dim gray buttons
    https://github.com/protesilaos/modus-themes/blob/main/modus-themes.el */
 window#waybar {
   background: #000000;
@@ -42,6 +42,12 @@ window#waybar {
   border: 1px solid #303030;
   color: #ffffff;
   padding: 0 5px;
+}
+
+/* Use the UI font for workspaces and the window title. Only the status modules
+   need monospace digits to keep from shifting each other */
+.modules-left {
+  font-family: "Adwaita Sans";
 }
 
 /* Space the focused window's title away from the workspace buttons */

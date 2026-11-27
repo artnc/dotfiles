@@ -6,7 +6,7 @@ corner_radius = 0
 enable_recursive_icon_lookup = true
 # Show on the monitor with keyboard focus instead of always the primary
 follow = keyboard
-font = DejaVu Sans 12
+font = Adwaita Sans 12
 format = "<b>%s</b>\n%b"
 frame_width = 2
 gap_size = 8

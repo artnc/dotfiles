@@ -283,6 +283,7 @@ if command -v pacman > /dev/null && [[ -z ${CODESPACES:-} ]]; then
   # `GRAPHICAL=1` to install these on a new machine
   if [[ -n ${GRAPHICAL:-} ]] || pacman -Qq sway &> /dev/null || pacman -Qq xorg-server &> /dev/null; then
     pkgs+=(
+      adwaita-fonts # Provides Adwaita Sans, which dunst and fontconfig use
       alsa-utils
       brightnessctl
       cliphist
@@ -389,18 +390,29 @@ EOF
     fi
   fi
 
-  # Make libadwaita apps (e.g. Ghostty) dark. libadwaita doesn't support
-  # `GTK_THEME`, and setting it strips the background from Ghostty's toasts
-  if ! command -v gsettings > /dev/null; then
-    logI "Skipping dark color scheme since gsettings isn't installed"
-  elif [[ $(gsettings get org.gnome.desktop.interface color-scheme) == "'prefer-dark'" ]]; then
-    logI 'Found existing dark color scheme'
-  else
-    logI 'Setting dark color scheme...'
-    if [[ -z ${DRY_RUN:-} ]]; then
-      gsettings set org.gnome.desktop.interface color-scheme prefer-dark || logE 'Failed to set dark color scheme'
+  # Set GNOME interface settings, which GTK apps read. Use the same fonts as
+  # `fontconfig/fonts.conf`. Make libadwaita apps (e.g. Ghostty) dark, since
+  # libadwaita doesn't support `GTK_THEME`, and setting it strips the background
+  # from Ghostty's toasts
+  while read -r key value; do
+    # Check the schema instead of just `gsettings`, since headless machines can
+    # have glib2 without `gsettings-desktop-schemas`, which makes every `get`
+    # and `set` fail with "No such schema “org.gnome.desktop.interface”"
+    if ! gsettings list-keys org.gnome.desktop.interface &> /dev/null; then
+      logI "Skipping ${key} since gsettings or its GNOME schemas aren't installed"
+    elif [[ $(gsettings get org.gnome.desktop.interface "${key}") == "'${value}'" ]]; then
+      logI "Found existing ${key}"
+    else
+      logI "Setting ${key}..."
+      if [[ -z ${DRY_RUN:-} ]]; then
+        gsettings set org.gnome.desktop.interface "${key}" "${value}" || logE "Failed to set ${key}"
+      fi
     fi
-  fi
+  done << 'EOF'
+color-scheme prefer-dark
+font-name Adwaita Sans 11
+monospace-font-name DejaVu Sans Mono 11
+EOF
 
   # Set Thunar's xfconf properties, which can't be symlinked since xfconfd saves
   # each channel via temp file + rename()
