@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Prints Claude.ai usage as Waybar JSON, e.g. "CC 12% 4.6h 41% 2.4d" for the
-# session and weekly limits and the time until each resets. Reads `ORG_ID` and
-# `SESSION_KEY` from `~/.config/claude-usage/env`. Get `SESSION_KEY` from the
-# `sessionKey` cookie at claude.ai (devtools > Application > Cookies)
+# Prints Claude usage as Waybar JSON, e.g. "CC 12% 4.6h 41% 2.4d" for the
+# session and weekly limits and the time until each resets. Calls the endpoint
+# that Claude Code's `/usage` uses, since Cloudflare blocks `curl` at
+# claude.ai/api with a "Just a moment..." challenge page (HTTP 403)
 
 set -eu
 
-config_file="${HOME}/.config/claude-usage/env"
+credentials_file="${HOME}/.claude/.credentials.json"
 # Pad fields to fixed widths so that the module doesn't resize
 text_format='CC %3s%% %4s %3s%% %4s'
 
@@ -16,49 +16,43 @@ fail() {
   exit 0
 }
 
-if [[ ! -r ${config_file} ]]; then
-  fail "Can't read ${config_file}"
-fi
+token="$(jq -er .claudeAiOauth.accessToken "${credentials_file}" 2> /dev/null)" || fail "Can't read the OAuth token from ${credentials_file}"
 
-# shellcheck source=/dev/null
-source "${config_file}"
-
-response="$(curl -fsS --max-time 10 --compressed \
-  "https://claude.ai/api/organizations/${ORG_ID}/usage" \
-  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:150.0) Gecko/20100101 Firefox/150.0' \
-  -H 'Accept: */*' \
-  -H 'Referer: https://claude.ai/settings/usage' \
-  -H 'anthropic-client-platform: web_claude_ai' \
-  -H 'content-type: application/json' \
-  -H "Cookie: sessionKey=${SESSION_KEY}" 2> /dev/null)" || fail 'Request to claude.ai failed'
+# Send the token via stdin so that other users can't see it in `ps`. It expires
+# after a few hours, and only a running Claude Code refreshes it. Show `curl`'s
+# error on failure so that an expired token (HTTP 401) differs from no network
+response="$(curl -fsS --max-time 10 -H 'anthropic-beta: oauth-2025-04-20' -H @- https://api.anthropic.com/api/oauth/usage <<< "Authorization: Bearer ${token}" 2>&1)" || fail "${response}. Start Claude Code to refresh its OAuth token if it expired"
 
 parsed="$(echo "${response}" | jq -r \
-  '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | @tsv' 2> /dev/null)" || fail "Can't parse the response"
+  '[(.five_hour.utilization | tonumber? // 0 | floor), (.five_hour.resets_at // ""), (.seven_day.utilization | tonumber? // 0 | floor), (.seven_day.resets_at // "")] | join(",")' 2> /dev/null)" || fail "Can't parse the response"
 
-IFS=$'\t' read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
+# Split on commas instead of tabs, since `read` merges consecutive tabs and
+# shifts the fields when a reset time is empty (e.g. no active session)
+IFS=, read -r session_pct session_reset weekly_pct weekly_reset <<< "${parsed}"
 
-# Defensive: if the API shape changes and a percentage field arrives non-numeric
-# (e.g. a date string leaking through), render it as 0 rather than garbage
+# Render a non-integer percentage as 0, since bash arithmetic fails on jq's
+# output for NaN ("null: unbound variable") or huge numbers (e.g. "1e+300")
 [[ ${session_pct} =~ ^[0-9]+$ ]] || session_pct=0
 [[ ${weekly_pct} =~ ^[0-9]+$ ]] || weekly_pct=0
 
 now_ts="$(date +%s)"
-# Formats time until reset like the Claude Code status line: "Xm" under 1h,
+
+# Prints the seconds until a reset time, or nothing if it's unknown
+secs_until() {
+  local reset_ts
+  [[ -n ${1} ]] && reset_ts="$(date -d "${1}" +%s 2> /dev/null)" || return 0
+  echo "$((reset_ts > now_ts ? reset_ts - now_ts : 0))"
+}
+session_left="$(secs_until "${session_reset}")"
+weekly_left="$(secs_until "${weekly_reset}")"
+
+# Formats seconds until reset like the Claude Code status line: "Xm" under 1h,
 # "X.Yh" under 1d, else "X.Yd"
 time_until() {
-  local iso="$1"
-  if [[ -z ${iso} ]]; then
+  local -r diff="${1}"
+  if [[ -z ${diff} ]]; then
     echo '?'
     return
-  fi
-  local reset_ts
-  reset_ts="$(date -d "${iso}" +%s 2> /dev/null)" || {
-    echo '?'
-    return
-  }
-  local diff=$((reset_ts - now_ts))
-  if ((diff < 0)); then
-    diff=0
   fi
   if ((diff < 3600)); then
     echo "$((diff / 60))m"
@@ -85,17 +79,24 @@ reset_at() {
   echo '?'
 }
 
-# Color the module like the CPU and memory modules when either limit is close
+# Find the percentage of each 5h and 7d window that has elapsed. Count an
+# unknown reset time as a finished window, so that it never looks ahead of pace
+session_elapsed=$((100 - ${session_left:-0} * 100 / 18000))
+weekly_elapsed=$((100 - ${weekly_left:-0} * 100 / 604800))
+
+# Color the module like the CPU and memory modules when usage gets ahead of the
+# elapsed time (e.g. 30% used after 10% of the window) or either limit is close
 class=''
-if ((session_pct >= 90 || weekly_pct >= 90)); then
+if ((session_pct >= 90 || weekly_pct >= 90 || session_pct - session_elapsed >= 25 || weekly_pct - weekly_elapsed >= 25)); then
   class='critical'
-elif ((session_pct >= 75 || weekly_pct >= 75)); then
+elif ((session_pct - session_elapsed >= 10 || weekly_pct - weekly_elapsed >= 10)); then
   class='warning'
 fi
 
-# Show the time until each reset in the text, and the exact times in the tooltip
+# Show the time until each reset in the text, and the pace and exact reset times
+# in the tooltip. Omit the pace if the reset time is unknown
 jq -cn \
   --arg class "${class}" \
-  --arg text "$(printf "${text_format}" "${session_pct}" "$(time_until "${session_reset}")" "${weekly_pct}" "$(time_until "${weekly_reset}")")" \
-  --arg tooltip "Session: ${session_pct}%, resets $(reset_at "${session_reset}")"$'\n'"Weekly: ${weekly_pct}%, resets $(reset_at "${weekly_reset}")" \
+  --arg text "$(printf "${text_format}" "${session_pct}" "$(time_until "${session_left}")" "${weekly_pct}" "$(time_until "${weekly_left}")")" \
+  --arg tooltip "Session: ${session_pct}% used${session_left:+ after ${session_elapsed}% of 5h}, resets $(reset_at "${session_reset}")"$'\n'"Weekly: ${weekly_pct}% used${weekly_left:+ after ${weekly_elapsed}% of 7d}, resets $(reset_at "${weekly_reset}")" \
   '{$class, $text, $tooltip}'
