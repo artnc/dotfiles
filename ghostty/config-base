@@ -1,5 +1,4 @@
 auto-update = off
-background = 000000
 bell-audio-volume = 1
 bell-features = attention,audio
 bold-color = bright
@@ -7,26 +6,13 @@ confirm-close-surface = false
 cursor-style = bar
 cursor-style-blink = true
 font-family = "DejaVu Sans Mono"
-foreground = ffffff
-palette = 0=000000
-palette = 1=cd0000
-palette = 2=00cd00
-palette = 3=cdcd00
-palette = 4=0000ee
-palette = 5=cd00cd
-palette = 6=00cdcd
-palette = 7=e5e5e5
-palette = 8=7f7f7f
-palette = 9=ff0000
-palette = 10=00ff00
-palette = 11=ffff00
-palette = 12=5c5cff
-palette = 13=ff00ff
-palette = 14=00ffff
-palette = 15=ffffff
 # Only integration feature I'd want is `cursor` which doesn't work in tmux
 # https://github.com/ghostty-org/ghostty/discussions/5802#discussioncomment-12218114
 shell-integration = none
+# Use Modus Vivendi, which Ghostty bundles, for white text on black and ANSI
+# colors with at least 7:1 contrast (except 3.0:1 for the dim gray `#595959`)
+# https://protesilaos.com/emacs/modus-themes
+theme = Modus Vivendi
 window-decoration = false
 window-padding-x = 2
 window-padding-y = 2

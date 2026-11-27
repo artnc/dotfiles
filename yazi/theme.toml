@@ -1,14 +1,26 @@
-# https://github.com/gosxrgxx/flexoki-dark.yazi
-[flavor]
-dark = "flexoki-dark"
-# Pin light mode too. Yazi trusts the terminal's color scheme report (DSR 996)
-# over the actual background color, and ghostty answers that query from state
-# that defaults to "light" and only updates on macOS appearance *changes* (its
-# AppDelegate observes effectiveAppearance without .initial), so a fresh window
-# in always-dark mode can report "light". Our background is always black, so
-# the dark flavor is correct either way
-light = "flexoki-dark"
+# Use no flavor so that the ANSI UI colors of yazi's default theme inherit
+# Ghostty's Modus Vivendi palette (see `ghostty/config-base`). File icons keep
+# the preset's hex colors
 
 [indicator]
 parent = { underline = false }
 preview = { underline = false }
+
+# Use black text on the colored and gray segments of the status bar, tabs, and
+# counts. With Modus Vivendi, the preset's white on `blue` is 2.4:1 and `blue`
+# on `gray` is 1.0:1, but black on `blue`, `gray`, `green`, or `red` is 7:1+
+[mgr]
+count_copied = { bg = "green", fg = "black" }
+count_cut = { bg = "red", fg = "black" }
+
+[mode]
+normal_alt = { bg = "gray", fg = "black" }
+normal_main = { bg = "blue", bold = true, fg = "black" }
+select_alt = { bg = "gray", fg = "black" }
+select_main = { bg = "red", bold = true, fg = "black" }
+unset_alt = { bg = "gray", fg = "black" }
+unset_main = { bg = "red", bold = true, fg = "black" }
+
+[tabs]
+active = { bg = "blue", bold = true, fg = "black" }
+inactive = { bg = "gray", fg = "black" }

@@ -1,4 +1,7 @@
-/* Mimic swaybar's default colors and Sway's `font` setting */
+/* Use Modus Vivendi colors to match Ghostty, and Sway's `font` setting. Its
+   intense blue and red backgrounds pair with white text, and its dim gray text
+   has 5.8:1 contrast on the dim gray buttons
+   https://github.com/protesilaos/modus-themes/blob/main/modus-themes.el */
 window#waybar {
   background: #000000;
   color: #ffffff;
@@ -9,11 +12,11 @@ window#waybar {
 /* Override the GTK theme's button styles. Adwaita's 16px `min-width` makes
    single-digit buttons wider than swaybar's, which pad 5px around the label */
 #workspaces button {
-  background: #222222;
-  border: 1px solid #333333;
+  background: #1e1e1e;
+  border: 1px solid #303030;
   border-radius: 0;
   box-shadow: none;
-  color: #888888;
+  color: #989898;
   min-height: 0;
   min-width: 0;
   padding: 0 5px;
@@ -22,21 +25,21 @@ window#waybar {
 
 /* Highlight workspaces that are visible on another output */
 #workspaces button.visible {
-  background: #5f676a;
+  background: #535353;
   color: #ffffff;
 }
 
 #workspaces button.focused {
-  background: #285577;
-  border-color: #4c7899;
+  background: #1640b0;
+  border-color: #2fafff;
   color: #ffffff;
 }
 
 /* Show urgent workspaces and binding modes (e.g. "resize") in red */
 #mode,
 #workspaces button.urgent {
-  background: #900000;
-  border: 1px solid #2f343a;
+  background: #9d1f1f;
+  border: 1px solid #303030;
   color: #ffffff;
   padding: 0 5px;
 }
@@ -51,15 +54,15 @@ window#waybar {
   padding: 0 7px;
 }
 .modules-right > widget:not(:first-child) > * {
-  border-left: 1px solid #666666;
+  border-left: 1px solid #646464;
 }
 
 /* Color modules by their `states` and temperature thresholds */
 .warning {
-  color: #fffc00;
+  color: #fec43f;
 }
 .critical {
-  color: #ff0000;
+  color: #ff5f59;
 }
 
 /* Give tray menus the normal GTK font (`gtk-font-name`) instead of the bar's.

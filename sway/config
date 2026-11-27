@@ -4,8 +4,18 @@ set $mod Mod4
 # Font for window titles. `waybar/style.css` repeats it since Waybar ignores it
 font pango:DejaVu Sans Mono 9
 
-# Disable focused window styling by setting it equal to unfocused styling
-client.focused #333333 #222222 #888888 #292d2e #222222
+# Use Modus Vivendi colors to match Ghostty (see `waybar/style.css`). Disable
+# focused window styling by giving focused windows the unfocused colors (border,
+# background, text, indicator, and child border). Keep Sway's brighter tab for
+# the focused window of an unfocused container
+set $unfocused_colors #303030 #1e1e1e #989898 #303030 #1e1e1e
+client.focused $unfocused_colors
+client.focused_inactive #303030 #535353 #ffffff #535353 #535353
+client.unfocused $unfocused_colors
+client.urgent #303030 #9d1f1f #ffffff #9d1f1f #9d1f1f
+# Color wmenu's items white on black like Waybar, and its prompt and selection
+# like Waybar's focused workspace
+set $wmenu_colors -N 000000 -n ffffff -M 1640b0 -m ffffff -S 1640b0 -s ffffff
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -18,7 +28,7 @@ default_border pixel 0
 bindsym $mod+Shift+apostrophe kill
 
 # start wmenu (a program launcher like dmenu)
-bindsym $mod+e exec wmenu-run
+bindsym $mod+e exec wmenu-run $wmenu_colors
 
 # change focus
 # bindsym $mod+h focus left
@@ -126,8 +136,9 @@ bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 # reload the configuration file
 bindsym $mod+Shift+j reload
-# exit sway (logs you out of your Wayland session)
-bindsym $mod+Shift+period exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+# exit sway (logs you out of your Wayland session). Use Modus Vivendi's warm
+# yellow, pale ochre, and intense yellow background
+bindsym $mod+Shift+period exec swaynag -t warning --background fec43f --border 7a6100 --border-bottom 7a6100 --button-background e0d38c --button-text 000000 --text 000000 -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -163,7 +174,7 @@ bindsym Print exec grimshot --notify savecopy anything
 
 # Pick a clipboard history entry to copy again. Skip `wl-copy` if I cancel,
 # since it would copy the empty input over the clipboard
-bindsym $mod+v exec sel=$(cliphist list | wmenu -l 10) && echo "$sel" | cliphist decode | wl-copy
+bindsym $mod+v exec sel=$(cliphist list | wmenu -l 10 $wmenu_colors) && echo "$sel" | cliphist decode | wl-copy
 
 # Type email addresses. Sleep first so that typing doesn't start while keys are
 # still down. base64-encoded to evade crude GitHub scrapers

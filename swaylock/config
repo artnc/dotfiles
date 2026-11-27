@@ -1,7 +1,8 @@
-# Use Catppuccin Mocha (https://catppuccin.com/palette) to match dunst
+# Use Modus Vivendi colors to match Ghostty and dunst
+# https://github.com/protesilaos/modus-themes/blob/main/modus-themes.el
 
-# Show peach backspaces on the ring
-bs-hl-color=fab387
+# Show yellow backspaces on the ring
+bs-hl-color=fec43f
 # Use black to match Ghostty and Waybar
 color=000000
 # Fork once locked so that `swayidle -w` waits for the lock before sleep
@@ -13,18 +14,18 @@ inside-clear-color=00000000
 inside-ver-color=00000000
 inside-wrong-color=00000000
 # Show blue keypresses on the ring
-key-hl-color=89b4fa
+key-hl-color=2fafff
 # Match the Dvorak/QWERTY layout label to the palette
-layout-text-color=cdd6f4
-# Show a peach ring when cleared, dark gray while idle, blue while verifying,
+layout-text-color=ffffff
+# Show a yellow ring when cleared, dark gray while idle, blue while verifying,
 # and red on failure
-ring-clear-color=fab387
-ring-color=313244
-ring-ver-color=89b4fa
-ring-wrong-color=f38ba8
+ring-clear-color=fec43f
+ring-color=303030
+ring-ver-color=2fafff
+ring-wrong-color=ff5f59
 # Hide the lines that separate keypress highlights from the ring
 separator-color=00000000
 # Replace the default black text, which is invisible on a black background
-text-clear-color=fab387
-text-ver-color=89b4fa
-text-wrong-color=f38ba8
+text-clear-color=fec43f
+text-ver-color=2fafff
+text-wrong-color=ff5f59

@@ -14,33 +14,37 @@ horizontal_padding = 12
 icon_corner_radius = 0
 icon_theme = Adwaita
 max_icon_size = 48
-# Clear Waybar at the top of the screen
-offset = (12, 32)
+# Leave equal 12px gaps from the screen's right edge and from Waybar's bottom
+# edge. Sway already places dunst below Waybar's exclusive zone, so the old 32px
+# offset left 49px from the top of the screen and a 32px gap under the 17px bar
+offset = (12, 12)
 origin = top-right
 padding = 10
 # Hide the "(A)" and "(U)" title prefixes for notifications with actions or URLs
 show_indicators = no
 width = (200, 500)
 
-# Use the Catppuccin Mocha palette (https://catppuccin.com/palette). Frames are
-# each background darkened to 40%, and `#3d1a22` is a custom dark red
+# Use Modus Vivendi colors to match Ghostty: `bg-active`, `bg-blue-intense`, and
+# `red` from `modus-themes-vivendi-palette` with white or black text for at
+# least 7:1 contrast. Frames are each background darkened to 40%
+# https://github.com/protesilaos/modus-themes/blob/main/modus-themes.el
 [urgency_low]
-background = "#45475a"
-foreground = "#cdd6f4"
-frame_color = "#1b1c24"
+background = "#535353"
+foreground = "#ffffff"
+frame_color = "#212121"
 timeout = 3
 
 [urgency_normal]
-background = "#89b4fa"
-foreground = "#1e1e2e"
-frame_color = "#364864"
-highlight = "#1e1e2e"
+background = "#1640b0"
+foreground = "#ffffff"
+frame_color = "#091a46"
+highlight = "#ffffff"
 timeout = 5
 
 # Keep critical notifications (e.g. low battery) until I dismiss them
 [urgency_critical]
-background = "#f38ba8"
-foreground = "#3d1a22"
-frame_color = "#613743"
-highlight = "#3d1a22"
+background = "#ff5f59"
+foreground = "#000000"
+frame_color = "#662624"
+highlight = "#000000"
 timeout = 0
