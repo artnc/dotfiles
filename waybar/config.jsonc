@@ -41,10 +41,12 @@
     "return-type": "json"
   },
   // Show network speeds in MB/s, so that small values don't look big (e.g.
-  // "727B" vs "2kB"). The script prints a line every 5 seconds
+  // "727B" vs "2kB"). The script prints a line every 5 seconds, colored by
+  // internet connectivity
   "custom/bandwidth": {
     "exec": "~/.config/waybar/bandwidth",
-    "restart-interval": 5
+    "restart-interval": 5,
+    "return-type": "json"
   },
   // Show usage of `/`, plus `/home` if it's a separate filesystem. The second
   // line of output is the tooltip
@@ -52,12 +54,6 @@
     "exec": "df -h --output=target,pcent,avail / /home | awk 'NR > 1 && !seen[$1]++ {p = p s sprintf(\"%3s\", $2); f = f t $1 \": \" $3 \" free\"; s = \" \"; t = \", \"} END {print p; print f}'",
     "format": "DISK {}",
     "interval": 60
-  },
-  // Ping Google to check internet connectivity, since it's more trustworthy
-  // than nm-applet
-  "custom/online": {
-    "exec": "~/.config/waybar/indicator NET ping -c1 -q 8.8.8.8",
-    "interval": 5
   },
   // Show days since the last full system upgrade
   "custom/upgraded": {
@@ -89,7 +85,6 @@
     "cpu",
     "temperature",
     "custom/bandwidth",
-    "custom/online",
     "pulseaudio",
     "battery",
     "custom/claude",

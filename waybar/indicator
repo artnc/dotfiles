@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Prints a label (first arg) in green if a command (other args) succeeds, else in
-# red. Waybar renders the Pango markup
-
-color='#ff0000'
-if "${@:2}" &> /dev/null; then
-  color='#00ff00'
-fi
-echo "<span color='${color}'>${1}</span>"

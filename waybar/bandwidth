@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Prints download and upload speeds in MB/s every 5 seconds, e.g. "▼ 0.4 ▲  12".
-# Shows one decimal below 10 and none above, which Waybar's network module can't
-# do. Counts only physical interfaces (those with a `device` link) so that
-# Tailscale and Docker traffic isn't counted twice
+# Prints download and upload speeds in MB/s as Waybar JSON every 5 seconds, e.g.
+# "▼ 0.4 ▲  12". Shows one decimal below 10 and none above, which Waybar's
+# network module can't do. Counts only physical interfaces (those with a
+# `device` link) so that Tailscale and Docker traffic isn't counted twice. Turns
+# yellow behind a captive portal and red when offline
 
 set -eu
 shopt -s nullglob
@@ -18,8 +19,28 @@ totals() {
 }
 
 read -r rx tx <<< "$(totals)"
-while sleep 5; do
+while true; do
+  # Check connectivity during the sleep so that each delta still covers 5
+  # seconds. Cap `ping` at 4 seconds since it otherwise waits 2 RTTs for a lost
+  # reply. Any reply counts as online, so that one dropped packet doesn't flash
+  # red. The RTT is empty if no reply came
+  sleep 5 &
+  connectivity="$(nmcli -t -f CONNECTIVITY general 2> /dev/null || echo unknown)"
+  rtt="$(ping -c3 -i0.2 -w4 -q 8.8.8.8 2> /dev/null | awk -F/ '/^rtt/ {printf "%.0f", $5}')"
+  wait
   read -r new_rx new_tx <<< "$(totals)"
+
+  # Trust the ping to decide if the internet is reachable, since it's more
+  # trustworthy than `nm-applet`. Use NetworkManager's own check only to detect a
+  # captive portal. Its "limited" state means no internet (e.g. an ISP outage),
+  # so that stays red
+  if [[ -n ${rtt} ]]; then
+    class=''
+  elif [[ ${connectivity} == portal ]]; then
+    class='warning'
+  else
+    class='critical'
+  fi
 
   # Drop a ".0" suffix, then pad to 3 characters so that the module keeps its
   # width. Clamp negative deltas, which happen when an interface disappears
@@ -32,6 +53,6 @@ while sleep 5; do
       return sprintf("%3s", s)
     }
     BEGIN { print "▼", mb(rx), "▲", mb(tx) }
-  '
+  ' | jq -cR --arg class "${class}" --arg tooltip "8.8.8.8: ${rtt:-no reply}${rtt:+ ms}, connectivity: ${connectivity}" '{$class, text: ., $tooltip}'
   rx=${new_rx} tx=${new_tx}
 done
